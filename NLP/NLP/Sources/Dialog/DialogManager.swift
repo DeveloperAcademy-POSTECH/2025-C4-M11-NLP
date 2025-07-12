@@ -11,7 +11,6 @@ import SwiftUI
 
 @MainActor
 class DialogManager: ObservableObject {
-    @Published var nextUtterance: String?
     @Published var isGenerating = false
     @Published var currentPartner: DialogPartnerType?
     @Published var conversationLogs: [DialogPartnerType: [Dialog]] = [:]
@@ -22,16 +21,56 @@ class DialogManager: ObservableObject {
     func initConversation(dialogPartner: DialogPartnerType) {
         let newSession: LanguageModelSession = LanguageModelSession(
             model: .default,
-            tools: [UnlockTool()],
+            tools: [
+                UnlockTool(rightPasswordAction: { [weak self] in
+                    // MARK: computer instruction 변경(암호를 맞춘 후, 컴퓨터가 어떠한 응답을 내뱉어줄지에 대한 instruction으로) 및 세션 초기화
+                    self?.initializeSession(
+                        dialogPartner: .computer,
+                        instructions: ConstantInstruction.computerOnboarding,
+                        tools: [] // TODO: 미결정
+                    )
+                })
+            ],
             instructions: dialogPartner.instructions
         )
+        
         newSession.prewarm()
         conversations[dialogPartner] = newSession
         conversationLogs[dialogPartner] = []
     }
     
-    func respond(_ userInput: String, dialogPartnerType: DialogPartnerType, isLogged: Bool) {
-        if isLogged { conversationLogs[dialogPartnerType]?.append(Dialog(content: userInput, sender: .user)) }
+    private func initializeSession(
+        dialogPartner: DialogPartnerType,
+        instructions: String,
+        tools: [any Tool]
+    ) {
+        let newSession: LanguageModelSession = LanguageModelSession(
+            model: .default,
+            tools: [
+                UnlockTool(rightPasswordAction: { [weak self] in
+                // MARK: computer instruction 변경(기획에 따라 추가 예정) 및 세션 초기화
+                self?.initializeSession(
+                    dialogPartner: .computer,
+                    instructions: "", tools: [] // TODO: 미결정
+                )
+            })],
+            instructions: instructions
+        )
+        newSession.prewarm()
+        conversations[dialogPartner] = newSession
+    }
+    
+    func respond(
+        _ userInput: String,
+        dialogPartnerType: DialogPartnerType,
+        isLogged: Bool
+    ) {
+        if isLogged {
+            conversationLogs[dialogPartnerType]?.append(Dialog(
+                    content: userInput,
+                    sender: .user
+                ))
+        }
         currentPartner = dialogPartnerType
 
         currentTask = Task {
@@ -39,19 +78,16 @@ class DialogManager: ObservableObject {
                 let session = conversations[dialogPartnerType]
                 guard let session = session else { return }
                 let response = try await session.respond(to: userInput)
-                if isLogged { conversationLogs[dialogPartnerType]?.append(Dialog(content: response.content, sender: .partner)) }
-                print("저장됨. \(response.content)")
-                // nextUtterance = response.content
+                if isLogged {
+                    conversationLogs[dialogPartnerType]?.append(Dialog(
+                        content: response.content,
+                        sender: .partner
+                    ))
+                }
                 isGenerating = false
             } catch {
-                nextUtterance = "error"
                 isGenerating = false
             }
         }
     }
-}
-
-struct Dialog: Hashable {
-    var content: String
-    var sender: DialogSender
 }
