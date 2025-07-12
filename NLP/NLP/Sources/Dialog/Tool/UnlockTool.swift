@@ -17,8 +17,8 @@ struct UnlockTool: Tool {
     
     @Generable
     struct Arguments {
-        @Guide(description: "Unknown Command에서 벗어나기 위한 암호")
-        var text: String
+        @Guide(description: "암호")
+        var password: String
     }
     
     func call(arguments: Arguments) async -> ToolOutput {
