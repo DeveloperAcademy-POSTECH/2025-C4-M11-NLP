@@ -32,7 +32,7 @@ class MainGameScene: GameScene {
             }
         }
         
-        gameState?.$isButtonVisible
+        gameState?.$isChatting
             .receive(on: RunLoop.main)
             .sink { [weak self] isPresented in
                 if isPresented {
@@ -54,10 +54,10 @@ extension MainGameScene: SKPhysicsContactDelegate {
 
         if let player = nodeA as? PlayerSprite, let computer = nodeB as? ChapOneComputerSprite {
             // applySoftPush(from: player, to: computer)
-            gameState?.isButtonVisible = true
+            gameState?.isChatting = true
         } else if let player = nodeB as? PlayerSprite, let computer = nodeA as? ChapOneComputerSprite {
             // applySoftPush(from: player, to: computer)
-            gameState?.isButtonVisible = true
+            gameState?.isChatting = true
         }
     }
     
