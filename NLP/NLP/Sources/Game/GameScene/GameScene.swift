@@ -53,7 +53,7 @@ class GameScene: SKScene {
         }
         
         for node in self.children {
-            if (node.name == "TileNodes") {
+            if (node.name == NodeType.tileNodes) {
                 if let someTileMap: SKTileMapNode = node as? SKTileMapNode {
                     someTileMap.giveTileMapPhysicsBody(parentScene: self)
                 }
@@ -127,7 +127,7 @@ extension SKTileMapNode {
                     tileNode.texture?.filteringMode = .nearest
                     
                     // 플레이어 - 벽 충돌 활성화
-                    if tileDefinition.name != "Floor" {
+                    if tileDefinition.name != NodeType.floor {
                         tileNode.physicsBody = SKPhysicsBody(
                             texture: tileTextures,
                             size: tileNode.size
