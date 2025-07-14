@@ -28,13 +28,13 @@ extension JoyStick {
         
         self.joystickBase = SKShapeNode(circleOfRadius: radius)
         self.joystickBase.fillColor = .gray
-        self.joystickBase.alpha = 0.4
+        self.joystickBase.alpha = 0.2
         self.joystickBase.zPosition = 1000
         self.joystickBase.position = position
 
         self.joystickKnob = SKShapeNode(circleOfRadius: 25)
         self.joystickKnob.fillColor = .white
-        self.joystickKnob.alpha = 0.8
+        self.joystickKnob.alpha = 0.4
         self.joystickKnob.zPosition = 1001
         self.joystickKnob.position = self.joystickBase.position
 
