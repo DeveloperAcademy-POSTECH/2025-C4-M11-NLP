@@ -10,6 +10,8 @@ import SpriteKit
 class MainGameScene: GameScene {
     var box: BoxSprite?
     var computer: ChapOneComputerSprite?
+    weak var gameState: MainGameState?
+
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -41,6 +43,21 @@ class MainGameScene: GameScene {
                 }
             }
             .store(in: &cancellables)
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let camera = self.camera else { return }
+        guard let touchLocation = touches.first?.location(in: camera) else { return }
+
+        if self.joyStick.isJoyStickAvailableLocation(touchLocation) {
+            isJoystickTouchActive = true
+            self.joyStick.startMove(touchLocation)
+        } else {
+            if let gs = gameState, gs.isChatting { return }
+            self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
+            isJoystickTouchActive = true
+            self.joyStick.startMove(touchLocation)
+        }
     }
 }
 
