@@ -11,6 +11,7 @@ struct DialogView: View {
     @ObservedObject var dialogManager: DialogManager
     @Binding var isPresented: Bool
     @State var inputText: String = ""
+
     
     
     var body: some View {
@@ -33,57 +34,42 @@ struct DialogView: View {
             
             Spacer()
             
+            //StreamingText View로 텍스트 재활용
             Rectangle()
-                .fill(.black.opacity(0.3))
-                .frame(width: ConstantScreenSize.screenWidth, height: ConstantScreenSize.screenHeight / 2)
-                .overlay(
-                    VStack(spacing: 10) {
-                        ScrollView {
-                            if let currentPartner = dialogManager.currentPartner {
-                                VStack(spacing: 10) {
-                                    ForEach(dialogManager.conversationLogs[currentPartner] ?? [], id: \.self) { dialog in
-                                        Text(dialog.content)
-                                            .foregroundStyle(.white)
-                                            .frame(width: ConstantScreenSize.screenWidth - 40)
-                                            .padding(.all, 8)
-                                            .multilineTextAlignment(.leading)
-                                            .background(
-                                                Rectangle()
-                                                    .fill(.black)
-                                                    .stroke(.white, lineWidth: 8)
-                                            )
-                                    }
-                                }
-                            }
-                        }
-                        HStack(spacing: 10) {
-                            Rectangle()
-                                .fill(.black)
-                                .stroke(.white, lineWidth: 8)
-                                .overlay(
-                                    TextField("", text: $inputText)
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 10)
-                                )
-                            
-                            Rectangle()
-                                .fill(.black)
-                                .stroke(.white, lineWidth: 8)
-                                .frame(width: 40)
-                                .onTapGesture {
-                                    if !dialogManager.isGenerating {
-                                        dialogManager.respond(inputText, dialogPartnerType: .computer, isLogged: true)
-                                        inputText = ""
-                                    }
-                                }
-                        }
-                        .frame(height: 40)
-                        .padding(.horizontal, 24)
+                .fill(.black.opacity(0.8))
+                .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.3)
+                .border(Color.yellow, width: 7)
+            HStack {
+                TextField("", text: $inputText)
+                    .font(.system(size: 16, weight: .bold))
+                    .padding(.horizontal, 12)
+                    .frame(height: 50)
+                    .background(Color.black)
+                    .foregroundStyle(.white)
+                    .overlay(
+                        Rectangle().stroke(Color.white, lineWidth: 3)
+                    )
+                Button {
+                    if !dialogManager.isGenerating {
+                        dialogManager.respond(inputText, dialogPartnerType: .computer, isLogged: true)
+                        inputText = ""
                     }
-                )
-                .padding(.bottom, 40)
+                    
+                } label: {
+                    Image(systemName: "arrowshape.up.fill")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 50, height: 50)
+                        .background(Color.black)
+                        .overlay(
+                            Rectangle().stroke(Color.white, lineWidth: 3)
+                        )
+                }
+            }
+                .frame(width: ConstantScreenSize.screenWidth * 0.9, height: 50)
+                .padding(.bottom, 110) //
+            }
         }
     }
-}
 
 
