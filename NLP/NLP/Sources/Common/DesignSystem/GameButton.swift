@@ -72,6 +72,7 @@ struct GameButton: View {
                 )
                 .overlay(
                     Text(buttonText)
+                        .font(NLPFont.gameButton)
                         .foregroundStyle(.white) /** 흰색 텍스트 */
                 )
         }
