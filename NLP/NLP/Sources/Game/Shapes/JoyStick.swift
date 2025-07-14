@@ -12,6 +12,8 @@ class JoyStick {
     var joystickKnob: SKShapeNode!
     var joystickVector: CGVector = .zero
     var isTracking = false
+    private var defaultPosition: CGPoint = .zero
+    private var isDynamicMode = false
 }
 
 extension JoyStick {
@@ -23,8 +25,43 @@ extension JoyStick {
     
     // MARK: - 조이스틱 UI 생성
     func setupJoystick(camera: SKCameraNode, position: CGPoint) {
-        let radius: CGFloat = 100
+        defaultPosition = position
+        createJoystickAtPosition(position, camera: camera)
+    }
+    
+    // MARK: - 동적 조이스틱 생성
+    func createDynamicJoystick(at position: CGPoint, camera: SKCameraNode) {
+        // 기존 조이스틱 제거
+        removeJoystick()
         
+        // 새로운 위치에 조이스틱 생성
+        createJoystickAtPosition(position, camera: camera)
+        isDynamicMode = true
+    }
+    
+    // MARK: - 기본 위치로 조이스틱 복원
+    func restoreDefaultJoystick(camera: SKCameraNode) {
+        // 기존 조이스틱 제거
+        removeJoystick()
+        
+        // 기본 위치에 조이스틱 생성
+        createJoystickAtPosition(defaultPosition, camera: camera)
+        isDynamicMode = false
+    }
+    
+    // MARK: - 조이스틱 제거
+    private func removeJoystick() {
+        joystickBase?.removeFromParent()
+        joystickKnob?.removeFromParent()
+        joystickBase = nil
+        joystickKnob = nil
+        isTracking = false
+        joystickVector = .zero
+    }
+    
+    // MARK: - 조이스틱 생성 헬퍼 메서드
+    private func createJoystickAtPosition(_ position: CGPoint, camera: SKCameraNode) {
+        let radius: CGFloat = 100
         
         self.joystickBase = SKShapeNode(circleOfRadius: radius)
         self.joystickBase.fillColor = .gray
@@ -86,5 +123,10 @@ extension JoyStick {
     
     func getJoyStickMoveVector() -> CGPoint {
         return CGPoint(x: self.joystickVector.dx, y: self.joystickVector.dy)
+    }
+    
+    // MARK: - 동적 모드 확인
+    func isInDynamicMode() -> Bool {
+        return isDynamicMode
     }
 }

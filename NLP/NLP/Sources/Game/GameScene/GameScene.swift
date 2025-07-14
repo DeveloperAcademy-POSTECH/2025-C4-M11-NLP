@@ -19,7 +19,13 @@ class GameScene: SKScene {
         guard let camera = self.camera else { return }
         guard let touchLocation = touches.first?.location(in: camera) else { return }
         
+        // 기존 조이스틱 영역을 터치한 경우
         if self.joyStick.isJoyStickAvailableLocation(touchLocation) {
+            isJoystickTouchActive = true
+            self.joyStick.startMove(touchLocation)
+        } else {
+            // 조이스틱 영역 밖을 터치한 경우, 터치한 위치에 동적 조이스틱 생성
+            self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         }
@@ -34,10 +40,22 @@ class GameScene: SKScene {
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.joyStick.resetJoystick()
+        isJoystickTouchActive = false
+        
+        // 동적 조이스틱이었다면 기본 위치로 복원
+        if self.joyStick.isInDynamicMode() {
+            self.joyStick.restoreDefaultJoystick(camera: self.camera!)
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.joyStick.resetJoystick()
+        isJoystickTouchActive = false
+        
+        // 동적 조이스틱이었다면 기본 위치로 복원
+        if self.joyStick.isInDynamicMode() {
+            self.joyStick.restoreDefaultJoystick(camera: self.camera!)
+        }
     }
     
     // SpriteKit 내부에서 물리 엔진 충돌/힘 등을 계산할 때 호출 (플레이어의 움직임이 있을 때 등.. 카메라의 움직임을 위해 사용하면 좋음.)
