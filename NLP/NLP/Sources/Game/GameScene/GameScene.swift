@@ -11,15 +11,24 @@ class GameScene: SKScene {
     // MARK: 매 프레임마다 호출. scene.isPaused == false 여야 호출됨.
     override func update(_ currentTime: TimeInterval) {
         if self.joyStick.isTracking, let player {
-            player.movePlayer(self.joyStick.getJoyStickMoveVector())
+            let moveVector = self.joyStick.getJoyStickMoveVector()
+            let strength = self.joyStick.getJoystickStrength()
+            let maxSpeed = ConstantValues.playerMaxSpeed
+            let norm = sqrt(moveVector.x * moveVector.x + moveVector.y * moveVector.y)
+            let direction = norm > 0 ? CGVector(dx: moveVector.x / norm, dy: moveVector.y / norm) : .zero
+            player.movePlayer(direction: direction, strength: strength, maxSpeed: maxSpeed)
         }
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let camera = self.camera else { return }
         guard let touchLocation = touches.first?.location(in: camera) else { return }
-        
+
         if self.joyStick.isJoyStickAvailableLocation(touchLocation) {
+            isJoystickTouchActive = true
+            self.joyStick.startMove(touchLocation)
+        } else {
+            self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         }
@@ -34,10 +43,22 @@ class GameScene: SKScene {
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.joyStick.resetJoystick()
+        isJoystickTouchActive = false
+        
+        // 동적 조이스틱이었다면 기본 위치로 복원
+        if self.joyStick.isInDynamicMode() {
+            self.joyStick.restoreDefaultJoystick(camera: self.camera!)
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.joyStick.resetJoystick()
+        isJoystickTouchActive = false
+        
+        // 동적 조이스틱이었다면 기본 위치로 복원
+        if self.joyStick.isInDynamicMode() {
+            self.joyStick.restoreDefaultJoystick(camera: self.camera!)
+        }
     }
     
     // SpriteKit 내부에서 물리 엔진 충돌/힘 등을 계산할 때 호출 (플레이어의 움직임이 있을 때 등.. 카메라의 움직임을 위해 사용하면 좋음.)
@@ -84,7 +105,7 @@ class GameScene: SKScene {
                 self.joyStick.setupJoystick(
                     camera: cam,
                     position: CGPoint(
-                        x: self.size.width/2 - 200,
+                        x: self.size.width/2 - 230,
                         y: -self.size.height/2 + 200
                     )
                 )
