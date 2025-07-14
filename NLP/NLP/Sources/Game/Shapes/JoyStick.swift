@@ -61,7 +61,7 @@ extension JoyStick {
     
     // MARK: - 조이스틱 생성 헬퍼 메서드
     private func createJoystickAtPosition(_ position: CGPoint, camera: SKCameraNode) {
-        let radius: CGFloat = 100
+        let radius: CGFloat = ConstantValues.joystickRadius
         
         self.joystickBase = SKShapeNode(circleOfRadius: radius)
         self.joystickBase.fillColor = .gray
