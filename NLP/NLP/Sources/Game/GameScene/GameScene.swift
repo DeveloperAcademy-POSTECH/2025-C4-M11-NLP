@@ -84,7 +84,7 @@ class GameScene: SKScene {
                 self.joyStick.setupJoystick(
                     camera: cam,
                     position: CGPoint(
-                        x: self.size.width/2 - 200,
+                        x: self.size.width/2 - 230,
                         y: -self.size.height/2 + 200
                     )
                 )
