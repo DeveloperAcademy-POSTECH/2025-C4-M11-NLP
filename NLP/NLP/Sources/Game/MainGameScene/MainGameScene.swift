@@ -32,7 +32,7 @@ class MainGameScene: GameScene {
             }
         }
         
-        gameState?.$isButtonVisible
+        gameState?.$isChatting
             .receive(on: RunLoop.main)
             .sink { [weak self] isPresented in
                 if isPresented {
@@ -52,12 +52,10 @@ extension MainGameScene: SKPhysicsContactDelegate {
         let nodeA = contact.bodyA.node
         let nodeB = contact.bodyB.node
 
-        if let player = nodeA as? PlayerSprite, let computer = nodeB as? ChapOneComputerSprite {
-            // applySoftPush(from: player, to: computer)
-            gameState?.isButtonVisible = true
-        } else if let player = nodeB as? PlayerSprite, let computer = nodeA as? ChapOneComputerSprite {
-            // applySoftPush(from: player, to: computer)
-            gameState?.isButtonVisible = true
+        if let _ = nodeA as? PlayerSprite, let _ = nodeB as? ChapOneComputerSprite {
+            gameState?.isChatting = true
+        } else if let _ = nodeB as? PlayerSprite, let _ = nodeA as? ChapOneComputerSprite {
+            gameState?.isChatting = true
         }
     }
     
@@ -66,9 +64,9 @@ extension MainGameScene: SKPhysicsContactDelegate {
         
         isJoystickTouchActive = false
         
-        player.zPosition = -1
+        setNodeVisibility(player, visibility: false)
 
-        // ✅ 카메라 애니메이션 이동 + 확대
+        // 카메라 애니메이션 이동 + 확대
         let moveAction = SKAction.move(to: computer.position, duration: 0.5)
         let scaleAction = SKAction.scale(to: 0.3, duration: 0.5)
         let group = SKAction.group([moveAction, scaleAction])
@@ -78,9 +76,9 @@ extension MainGameScene: SKPhysicsContactDelegate {
     func computerInteractionEnd() {
         guard let player, let camera else { return }
 
-        player.zPosition = 1
+        setNodeVisibility(player, visibility: true)
 
-        // ✅ 카메라 애니메이션 복귀
+        // 카메라 애니메이션 복귀
         let moveAction = SKAction.move(to: player.position, duration: 0.5)
         let scaleAction = SKAction.scale(to: 1.0, duration: 0.5)
         let group = SKAction.group([moveAction, scaleAction])
@@ -99,10 +97,14 @@ extension MainGameScene: SKPhysicsContactDelegate {
         let bodyA = contact.bodyA.node
         let bodyB = contact.bodyB.node
         
-        if let player = bodyA as? PlayerSprite, let computer = bodyB as? ChapOneComputerSprite {
-            // computerInteractionEnd()
-        } else if let player = bodyB as? PlayerSprite, let computer = bodyA as? ChapOneComputerSprite {
-            // computerInteractionEnd()
+        if let _ = bodyA as? PlayerSprite, let _ = bodyB as? ChapOneComputerSprite {
+            // TODO
+        } else if let _ = bodyB as? PlayerSprite, let _ = bodyA as? ChapOneComputerSprite {
+            // TODO
         }
+    }
+    
+    private func setNodeVisibility(_ node: SKNode, visibility: Bool) {
+        node.zPosition = visibility ? 1 : -1
     }
 }

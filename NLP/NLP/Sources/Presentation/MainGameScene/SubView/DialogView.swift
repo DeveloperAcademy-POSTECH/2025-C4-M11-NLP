@@ -35,7 +35,7 @@ struct DialogView: View {
             
             Rectangle()
                 .fill(.black.opacity(0.3))
-                .frame(width: ConstantValues.screenWidth, height: ConstantValues.screenHeight / 2)
+                .frame(width: ConstantScreenSize.screenWidth, height: ConstantScreenSize.screenHeight / 2)
                 .overlay(
                     VStack(spacing: 10) {
                         ScrollView {
@@ -44,7 +44,7 @@ struct DialogView: View {
                                     ForEach(dialogManager.conversationLogs[currentPartner] ?? [], id: \.self) { dialog in
                                         Text(dialog.content)
                                             .foregroundStyle(.white)
-                                            .frame(width: ConstantValues.screenWidth - 40)
+                                            .frame(width: ConstantScreenSize.screenWidth - 40)
                                             .padding(.all, 8)
                                             .multilineTextAlignment(.leading)
                                             .background(

@@ -8,6 +8,7 @@
 import SwiftUI
 import SpriteKit
 
+
 struct MainGameView: View {
     @StateObject var mainGameState = MainGameState()
     @StateObject var dialogManager = DialogManager()
@@ -40,10 +41,10 @@ struct MainGameView: View {
             }
             .buttonStyle(.plain)
             
-            DialogView(dialogManager: dialogManager, isPresented: $mainGameState.isButtonVisible)
-                .opacity(mainGameState.isButtonVisible ? 1 : 0)
-                .offset(y: mainGameState.isButtonVisible ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: mainGameState.isButtonVisible)
+            DialogView(dialogManager: dialogManager, isPresented: $mainGameState.isChatting)
+                .opacity(mainGameState.isChatting ? 1 : 0)
+                .offset(y: mainGameState.isChatting ? 0 : 100)
+                .animation(.spring(duration: 0.5, bounce: 0.1), value: mainGameState.isChatting)
             
             PauseView(isPaused: $mainGameState.isPaused)
                 .opacity(mainGameState.isPaused ? 1 : 0)
