@@ -42,36 +42,9 @@ class PlayerSprite: SKSpriteNode {
         }
     }
     
-    func movePlayer(_ location: CGPoint) {
-        guard let physicsBody = self.physicsBody else { return }
-
-        let dx = location.x - position.x
-        let dy = location.y - position.y
-        let distance = sqrt(dx*dx + dy*dy)
-
-        // 도착한 것으로 간주할 거리 임계값
-        let arrivalThreshold: CGFloat = 10.0
-
-        if distance < arrivalThreshold {
-            // 위치 보정 및 속도 정지
-            physicsBody.velocity = .zero
-            position = location // 정확한 위치 보정 (선택)
-            return
-        }
-
-        let direction = CGVector(
-            dx: dx / distance,
-            dy: dy / distance
-        )
-        
-        let speed: CGFloat = 250 // 빠르게 이동하고
-
-        // 빠르게, 도착 후 정지.
-        // MARK: 박스를 움직일 때 플레이어의 position을 직접 바꿔주는 식으로 하면, 플레이어의 velocity(얼마의 세기로 움직이는지)를 계산하지 못함. 그래서 position.x, position.y 로 설정해주지 않고, physicsBody의 velocity를 설정.
-        physicsBody.velocity = CGVector(
-            dx: direction.dx * speed,
-            dy: direction.dy * speed
-        )
+    func movePlayer(direction: CGVector, strength: CGFloat, maxSpeed: CGFloat) {
+        let velocity = CGVector(dx: direction.dx * maxSpeed * strength, dy: direction.dy * maxSpeed * strength)
+        self.physicsBody?.velocity = velocity
     }
 }
 
