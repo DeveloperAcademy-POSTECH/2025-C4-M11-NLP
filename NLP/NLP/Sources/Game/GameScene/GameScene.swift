@@ -29,6 +29,11 @@ class GameScene: SKScene {
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         } else {
+            if self.joyStick.isJoyStickAvailableLocation(touchLocation) {
+                isJoystickTouchActive = true
+                self.joyStick.startMove(touchLocation)
+                return
+            } 
             if let gs = gameState, gs.isChatting { return }
             self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
