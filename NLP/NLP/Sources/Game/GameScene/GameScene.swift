@@ -14,7 +14,7 @@ class GameScene: SKScene {
         if self.joyStick.isTracking, let player {
             let moveVector = self.joyStick.getJoyStickMoveVector()
             let strength = self.joyStick.getJoystickStrength()
-            let maxSpeed: CGFloat = 400 // 최대 속도
+            let maxSpeed = ConstantValues.playerMaxSpeed // 최대 속도 상수 사용
             let norm = sqrt(moveVector.x * moveVector.x + moveVector.y * moveVector.y)
             let direction = norm > 0 ? CGVector(dx: moveVector.x / norm, dy: moveVector.y / norm) : .zero
             let velocity = CGVector(dx: direction.dx * maxSpeed * strength, dy: direction.dy * maxSpeed * strength)
