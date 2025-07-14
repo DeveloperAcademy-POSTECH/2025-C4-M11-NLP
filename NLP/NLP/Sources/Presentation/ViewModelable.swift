@@ -16,6 +16,7 @@ import SwiftUI
  
  다음은 예시입니다.
  ```swift
+ @MainActor // MARK: 메인 스레드에서의 작업을 보장합니다!
  class ExampleViewModel: ViewModelable {
      struct State {
          var userName: String?
@@ -37,6 +38,7 @@ import SwiftUI
  }
  ```
  */
+@MainActor
 protocol ViewModelable: ObservableObject {
     associatedtype State
     associatedtype Action

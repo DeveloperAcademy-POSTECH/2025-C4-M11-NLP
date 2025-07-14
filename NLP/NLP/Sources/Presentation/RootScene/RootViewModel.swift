@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 class RootViewModel: ViewModelable {
     struct State {
         // TODO

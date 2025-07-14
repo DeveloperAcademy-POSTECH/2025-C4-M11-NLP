@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 class StartGameViewModel: ViewModelable {
     struct State {
         
