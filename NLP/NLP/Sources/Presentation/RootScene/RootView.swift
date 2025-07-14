@@ -31,7 +31,7 @@ struct RootView: View {
                         EmptyView()
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageOneScene:
-                        MainGameView()
+                        StageOneGameView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageTwoScene:
                         EmptyView()

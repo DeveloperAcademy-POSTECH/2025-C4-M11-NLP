@@ -1,22 +1,26 @@
 //
-//  MainGameView.swift
-//  SpriteKitExample
+//  StageOneGameView.swift
+//  NLP
 //
-//  Created by 한건희 on 7/9/25.
+//  Created by 양시준 on 7/14/25.
 //
 
 import SwiftUI
 import SpriteKit
 
 
-struct MainGameView: View {
-    @StateObject var mainGameState = MainGameState()
+struct StageOneGameView: View {
+    @StateObject var viewModel: StageOneGameViewModel
     @StateObject var dialogManager = DialogManager()
+    
+    init(coordinator: Coordinator) {
+        self._viewModel = StateObject(wrappedValue: StageOneGameViewModel(coordinator: coordinator))
+    }
     
     var scene: SKScene? {
         // MARK: GameScene.sks 파일로 scene 을 초기화하기 위해서는 fileNamed: 파라미터를 반드시 붙여주어야 함.
-        let scene = MainGameScene(fileNamed: "MainGameScene")
-        scene?.gameState = mainGameState
+        let scene = StageOneGameScene(fileNamed: "StageOneGameScene")
+        scene?.viewModel = viewModel
         scene?.scaleMode = .aspectFill
         return scene
     }
@@ -29,7 +33,7 @@ struct MainGameView: View {
                     .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             }
             Button(action: {
-                mainGameState.isPaused.toggle()
+                viewModel.state.isPaused.toggle()
             }) {
                 Image(systemName: "pause.circle.fill")
                     .resizable()
@@ -41,14 +45,14 @@ struct MainGameView: View {
             }
             .buttonStyle(.plain)
             
-            DialogView(dialogManager: dialogManager, isPresented: $mainGameState.isChatting)
-                .opacity(mainGameState.isChatting ? 1 : 0)
-                .offset(y: mainGameState.isChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: mainGameState.isChatting)
+            DialogView(dialogManager: dialogManager, isPresented: $viewModel.state.isChatting)
+                .opacity(viewModel.state.isChatting ? 1 : 0)
+                .offset(y: viewModel.state.isChatting ? 0 : 100)
+                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
-            PauseView(isPaused: $mainGameState.isPaused)
-                .opacity(mainGameState.isPaused ? 1 : 0)
-                .animation(.spring(duration: 0.5), value: mainGameState.isPaused)
+            PauseView(isPaused: $viewModel.state.isPaused)
+                .opacity(viewModel.state.isPaused ? 1 : 0)
+                .animation(.spring(duration: 0.5), value: viewModel.state.isPaused)
         }
         .onAppear {
             dialogManager.initConversation(dialogPartner: .computer)
@@ -59,5 +63,7 @@ struct MainGameView: View {
 
 
 #Preview {
-    MainGameView()
+    var coordinator = Coordinator()
+    coordinator.push(.stageOneScene)
+    return StageOneGameView(coordinator: coordinator)
 }

@@ -1,17 +1,17 @@
 //
-//  MainGameScene.swift
-//  SpriteKitExample
+//  StageOneGameScene.swift
+//  NLP
 //
-//  Created by 한건희 on 7/9/25.
+//  Created by 양시준 on 7/14/25.
 //
+
 import Combine
 import SpriteKit
 
-class MainGameScene: GameScene {
+class StageOneGameScene: GameScene {
     var box: BoxSprite?
     var computer: ChapOneComputerSprite?
-    weak var gameState: MainGameState?
-
+    weak var viewModel: StageOneGameViewModel?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -33,10 +33,10 @@ class MainGameScene: GameScene {
             }
         }
         
-        gameState?.$isChatting
+        viewModel?.$state
             .receive(on: RunLoop.main)
-            .sink { [weak self] isPresented in
-                if isPresented {
+            .sink { [weak self] state in
+                if state.isChatting {
                     self?.computerInteractionStart()
                 } else {
                     self?.computerInteractionEnd()
@@ -53,7 +53,7 @@ class MainGameScene: GameScene {
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         } else {
-            if let gs = gameState, gs.isChatting { return }
+            if let gs = viewModel?.state, gs.isChatting { return }
             self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
@@ -62,16 +62,16 @@ class MainGameScene: GameScene {
 }
 
 // MARK: 각 게임 Scene 마다 설정해줘야 함.
-extension MainGameScene: SKPhysicsContactDelegate {
+extension StageOneGameScene: SKPhysicsContactDelegate {
     // MARK: 컴퓨터와 플레이어가 부딪힐 때 호출되는 함수
     func didBegin(_ contact: SKPhysicsContact) {
         let nodeA = contact.bodyA.node
         let nodeB = contact.bodyB.node
 
         if let _ = nodeA as? PlayerSprite, let _ = nodeB as? ChapOneComputerSprite {
-            gameState?.isChatting = true
+            viewModel?.state.isChatting = true
         } else if let _ = nodeB as? PlayerSprite, let _ = nodeA as? ChapOneComputerSprite {
-            gameState?.isChatting = true
+            viewModel?.state.isChatting = true
         }
     }
     
