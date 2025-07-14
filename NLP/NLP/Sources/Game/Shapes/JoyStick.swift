@@ -125,6 +125,15 @@ extension JoyStick {
         return CGPoint(x: self.joystickVector.dx, y: self.joystickVector.dy)
     }
     
+    func getJoystickStrength() -> CGFloat {
+        guard let base = joystickBase, let knob = joystickKnob else { return 0 }
+        let dx = knob.position.x - base.position.x
+        let dy = knob.position.y - base.position.y
+        let distance = sqrt(dx*dx + dy*dy)
+        let maxDistance: CGFloat = 80 // 조이스틱 최대 거리와 동일하게
+        return min(distance / maxDistance, 1.0)
+    }
+    
     // MARK: - 동적 모드 확인
     func isInDynamicMode() -> Bool {
         return isDynamicMode

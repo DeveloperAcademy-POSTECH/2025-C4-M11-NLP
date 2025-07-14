@@ -11,7 +11,13 @@ class GameScene: SKScene {
     // MARK: 매 프레임마다 호출. scene.isPaused == false 여야 호출됨.
     override func update(_ currentTime: TimeInterval) {
         if self.joyStick.isTracking, let player {
-            player.movePlayer(self.joyStick.getJoyStickMoveVector())
+            let moveVector = self.joyStick.getJoyStickMoveVector()
+            let strength = self.joyStick.getJoystickStrength()
+            let maxSpeed: CGFloat = 400 // 최대 속도
+            let norm = sqrt(moveVector.x * moveVector.x + moveVector.y * moveVector.y)
+            let direction = norm > 0 ? CGVector(dx: moveVector.x / norm, dy: moveVector.y / norm) : .zero
+            let velocity = CGVector(dx: direction.dx * maxSpeed * strength, dy: direction.dy * maxSpeed * strength)
+            player.physicsBody?.velocity = velocity
         }
     }
 
