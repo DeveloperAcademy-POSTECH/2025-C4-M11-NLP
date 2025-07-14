@@ -10,7 +10,6 @@ import SpriteKit
 class MainGameScene: GameScene {
     var box: BoxSprite?
     var computer: ChapOneComputerSprite?
-    weak var gameState: MainGameState?
     
     private var cancellables = Set<AnyCancellable>()
     

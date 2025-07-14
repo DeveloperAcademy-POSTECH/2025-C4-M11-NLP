@@ -7,6 +7,7 @@ class GameScene: SKScene {
     var playerPhysicsType: PlayerPhysicsType = .normal
     var joyStick = JoyStick()
     var isJoystickTouchActive: Bool = false
+    weak var gameState: MainGameState?
 
     // MARK: 매 프레임마다 호출. scene.isPaused == false 여야 호출됨.
     override func update(_ currentTime: TimeInterval) {
@@ -24,13 +25,12 @@ class GameScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let camera = self.camera else { return }
         guard let touchLocation = touches.first?.location(in: camera) else { return }
-        
-        // 기존 조이스틱 영역을 터치한 경우
+
         if self.joyStick.isJoyStickAvailableLocation(touchLocation) {
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         } else {
-            // 조이스틱 영역 밖을 터치한 경우, 터치한 위치에 동적 조이스틱 생성
+            if let gs = gameState, gs.isChatting { return }
             self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
