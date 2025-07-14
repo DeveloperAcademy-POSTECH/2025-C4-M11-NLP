@@ -8,6 +8,7 @@
 import SwiftUI
 import SpriteKit
 
+
 struct MainGameView: View {
     @StateObject var mainGameState = MainGameState()
     @StateObject var dialogManager = DialogManager()

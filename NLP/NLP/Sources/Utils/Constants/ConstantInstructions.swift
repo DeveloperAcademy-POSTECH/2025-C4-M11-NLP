@@ -1,11 +1,11 @@
 //
-//  ConstantInstruction.swift
+//  ConstantInstructions.swift
 //  NLP
 //
 //  Created by Ted on 7/12/25.
 //
 
-struct ConstantInstruction {
+struct ConstantInstructions {
     static let computerOnboarding: String =
     """
         당신은 지금부터 우주정거장 내부에 설치된, 10년 전에 제작된 인공지능 컴퓨터입니다.

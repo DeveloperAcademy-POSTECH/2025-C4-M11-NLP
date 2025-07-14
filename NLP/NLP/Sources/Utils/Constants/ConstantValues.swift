@@ -8,8 +8,5 @@
 import SwiftUI
 
 struct ConstantValues {
-    static var screenWidth = UIScreen.main.bounds.width
-    static var screenHeight = UIScreen.main.bounds.height
-    
     static var mapBlockSize: Int = 128
 }
