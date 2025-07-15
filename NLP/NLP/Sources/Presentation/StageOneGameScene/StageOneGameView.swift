@@ -18,13 +18,7 @@ struct StageOneGameView: View {
         self.dialogManager = dialogManager
     }
     
-    var scene: SKScene? {
-        // MARK: GameScene.sks 파일로 scene 을 초기화하기 위해서는 fileNamed: 파라미터를 반드시 붙여주어야 함.
-        let scene = StageOneGameScene(fileNamed: "StageOneGameScene")
-        scene?.viewModel = viewModel
-        scene?.scaleMode = .aspectFill
-        return scene
-    }
+    @State private var scene: StageOneGameScene?
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -33,6 +27,7 @@ struct StageOneGameView: View {
                     .ignoresSafeArea()
                     .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             }
+            
             Button(action: {
                 viewModel.state.isPaused.toggle()
             }) {
@@ -68,6 +63,14 @@ struct StageOneGameView: View {
                 .animation(.spring(duration: 0.5), value: viewModel.state.isPaused)
         }
         .onAppear {
+            if scene == nil {
+                // 기존의 생성 로직을 그대로 가져옵니다.
+                let scene = StageOneGameScene(fileNamed: "StageOneGameScene")
+                scene?.viewModel = viewModel
+                scene?.scaleMode = .aspectFill
+                self.scene = scene // @State 변수에 생성된 Scene을 할당합니다.
+            }
+            
             dialogManager.initConversation(dialogPartner: .computer)
         }
     }

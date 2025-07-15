@@ -10,6 +10,7 @@ import SpriteKit
 
 class StageOneGameScene: GameScene {
     var box: BoxSprite?
+
     var computer: ChapOneComputerSprite?
     var flashlight: FlashlightSprite?
     var noLight: NoLightSprite?
@@ -120,11 +121,16 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         
         isJoystickTouchActive = false
         
+        // 채팅시 플레이어와 조이스틱 가리기
         setNodeVisibility(player, visibility: false)
+        setNodeVisibility(joyStick.joystickBase, visibility: false)
+        setNodeVisibility(joyStick.joystickKnob, visibility: false)
+
 
         // 카메라 애니메이션 이동 + 확대
-        let moveAction = SKAction.move(to: computer.position, duration: 0.5)
-        let scaleAction = SKAction.scale(to: 0.3, duration: 0.5)
+        let targetPosition = CGPoint(x: computer.position.x, y: computer.position.y-30)
+        let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 0.17, duration: 0.5)
         let group = SKAction.group([moveAction, scaleAction])
         camera.run(group)
     }
