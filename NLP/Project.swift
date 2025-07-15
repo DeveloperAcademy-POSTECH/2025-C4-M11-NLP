@@ -21,10 +21,21 @@ let project = Project(
                     "UISupportedInterfaceOrientations": [
                         "UIInterfaceOrientationPortrait",
                     ],
+                    "UIAppFonts": [
+                        "DOSGothic.ttf",
+                        "DOSIyagiBoldface.ttf",
+                        "DOSMyungjo.ttf",
+                        "DOSPilgi.ttf",
+                        "DOSSaemmul.ttf",
+                        "MiraeroNormal.ttf",
+                        "Sam3KRFont.ttf"
+                    ]
                 ]
             ),
             sources: ["NLP/Sources/**"],
-            resources: ["NLP/Resources/**"],
+            resources: [
+                "NLP/Resources/**"
+            ],
             dependencies: [
             ]
         )

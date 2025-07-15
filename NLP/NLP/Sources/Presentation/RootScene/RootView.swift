@@ -28,7 +28,7 @@ struct RootView: View {
                         EmptyView()
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageOneIntroScene:
-                        EmptyView()
+                        StageOneIntroView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageOneScene:
                         MainGameView()
