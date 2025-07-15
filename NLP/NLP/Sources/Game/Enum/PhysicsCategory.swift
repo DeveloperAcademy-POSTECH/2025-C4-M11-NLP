@@ -13,4 +13,5 @@ enum PhysicsCategory: UInt32 {
     case box = 0b100 // 4
     case computer = 0b1000 // 8
     case flashlight = 0b10000 // 16
+    case robot = 0b100000
 }

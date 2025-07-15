@@ -28,6 +28,7 @@ import SwiftUI
 struct StreamingText: View {
     var fullDialog: String
     var streamingSpeed: Double
+    @State var timer: Timer?
     @State var currentText: String = ""
     @State var index: Int = 0
     @State var streamingCompleted: (() -> Void)?
@@ -36,22 +37,32 @@ struct StreamingText: View {
         Text(String(currentText + "_"))
             .font(NLPFont.chapterDescription)
             .onAppear {
-                Timer.scheduledTimer(
-                    withTimeInterval: TimeInterval(floatLiteral: streamingSpeed),
-                    repeats: true
-                ) { timer in
-                    let nextIndex = fullDialog.index(fullDialog.startIndex, offsetBy: index)
-                    currentText += String(fullDialog[nextIndex])
-                    
-                    index += 1
-                    
-                    guard index < fullDialog.count else {
-                        guard let dialogCompleted = streamingCompleted else { return }
-                        dialogCompleted()
-                        timer.invalidate()
-                        return
-                    }
-                }
+                startTimer()
             }
+            .onChange(of: fullDialog) { _, _ in
+                timer?.invalidate()
+                currentText = ""
+                index = 0
+                startTimer()
+            }
+    }
+    
+    private func startTimer() {
+        timer = Timer.scheduledTimer(
+            withTimeInterval: TimeInterval(floatLiteral: streamingSpeed),
+            repeats: true
+        ) { timer in
+            let nextIndex = fullDialog.index(fullDialog.startIndex, offsetBy: index)
+            currentText += String(fullDialog[nextIndex])
+            index += 1
+            guard index < fullDialog.count - 1 else {
+                guard let dialogCompleted = streamingCompleted else {
+                    timer.invalidate()
+                    return
+                }
+                dialogCompleted()
+                return
+            }
+        }
     }
 }
