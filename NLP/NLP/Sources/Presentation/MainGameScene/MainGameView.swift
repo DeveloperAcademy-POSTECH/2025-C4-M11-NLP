@@ -12,14 +12,15 @@ import SpriteKit
 struct MainGameView: View {
     @StateObject var mainGameState = MainGameState()
     @StateObject var dialogManager = DialogManager()
+    @State private var scene: MainGameScene?
     
-    var scene: SKScene? {
-        // MARK: GameScene.sks 파일로 scene 을 초기화하기 위해서는 fileNamed: 파라미터를 반드시 붙여주어야 함.
-        let scene = MainGameScene(fileNamed: "MainGameScene")
-        scene?.gameState = mainGameState
-        scene?.scaleMode = .aspectFill
-        return scene
-    }
+//    var scene: SKScene? {
+//        // MARK: GameScene.sks 파일로 scene 을 초기화하기 위해서는 fileNamed: 파라미터를 반드시 붙여주어야 함.
+//        let scene = MainGameScene(fileNamed: "MainGameScene")
+//        scene?.gameState = mainGameState
+//        scene?.scaleMode = .aspectFill
+//        return scene
+//    }
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -51,6 +52,14 @@ struct MainGameView: View {
                 .animation(.spring(duration: 0.5), value: mainGameState.isPaused)
         }
         .onAppear {
+            if scene == nil {
+                    // 기존의 생성 로직을 그대로 가져옵니다.
+                    let mainScene = MainGameScene(fileNamed: "MainGameScene")
+                    mainScene?.gameState = mainGameState
+                    mainScene?.scaleMode = .aspectFill
+                    self.scene = mainScene // @State 변수에 생성된 Scene을 할당합니다.
+                }
+            
             dialogManager.initConversation(dialogPartner: .computer)
         }
     }
