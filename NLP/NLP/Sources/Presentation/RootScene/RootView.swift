@@ -17,7 +17,9 @@ struct RootView: View {
     var body: some View {
         NavigationStack(path: $coordinator.paths) {
             // MARK: 바로 아래 StartGameView는 앱 실행 시 처음 보이는 뷰로, 개발 Feature에 따라서 해당 부분 다른 뷰로 변경하여 테스트 하시면 됩니다!
-            StartGameView(coordinator: coordinator)
+//            StartGameView(coordinator: coordinator)
+            StageTwoView(coordinator: self.coordinator)
+//            StageOneIntroView(coordinator: coordinator)
                 .toolbar(.hidden, for: .navigationBar)
                 .navigationDestination(for: CoordinatorPath.self) { path in
                     switch path {
