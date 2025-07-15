@@ -9,7 +9,9 @@ import SwiftUI
 struct MonologueView<T: MonologuePhase>: View {
     @Binding var phase: T
     @Binding var isPresented: Bool
-    var nextButtonAction: (() -> Void)
+    
+    var firstButtonAction: (() -> Void)
+    var secondButtonAction: (() -> Void)
     
     var body: some View {
         VStack {
@@ -22,15 +24,24 @@ struct MonologueView<T: MonologuePhase>: View {
             if phase.buttonTexts.count == 2 {
                 HStack(spacing: 10) {
                     GameButton(buttonText: phase.buttonTexts[0]) {
+                        // 첫번째 버튼 액션을 따로 호출할 필요가 있다면
+                        if phase.isFirstButtonActionEnabled {
+                            firstButtonAction()
+                            return
+                        }
+                        
+                        // 그렇지 않다면 이전 페이즈로 가는데, 이전 페이즈 없으면 모달 내려버리고
                         guard let previousPhase = phase.previousPhase else {
                             isPresented = false
                             return
                         }
+                        
+                        // 페이즈 있으면 이전 페이지로 정상 이동
                         phase = previousPhase
                     }
                     GameButton(buttonText: phase.buttonTexts[1]) {
-                        if phase.isNextButtonActionEnabled {
-                            nextButtonAction()
+                        if phase.isSecondButtonActionEnabled {
+                            secondButtonAction()
                             return
                         }
                         phase = phase.nextPhase!
@@ -38,11 +49,11 @@ struct MonologueView<T: MonologuePhase>: View {
                 }
             } else {
                 GameButton(buttonText: phase.buttonTexts[0]) {
-                    if phase.isNextButtonActionEnabled {
-                        nextButtonAction()
+                    if phase.isSecondButtonActionEnabled {
+                        secondButtonAction()
                         return
                     }
-                    phase = phase.nextPhase!
+                    phase = phase.nextPhase ?? T.lastPhase
                 }
             }
         }
