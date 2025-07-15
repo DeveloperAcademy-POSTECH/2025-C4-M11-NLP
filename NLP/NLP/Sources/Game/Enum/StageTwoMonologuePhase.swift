@@ -103,7 +103,7 @@ enum StageTwoMonologuePhase: MonologuePhase {
     
     var isSecondButtonActionEnabled: Bool {
         switch self {
-        case .meetBot, .giveOrTalkChoice:
+        case .meetBot, .tryEmotionalApproach, .giveOrTalkChoice, .unexpectedBotReaction, .unexpectedAffectionMoment:
             return true
         default:
             return false

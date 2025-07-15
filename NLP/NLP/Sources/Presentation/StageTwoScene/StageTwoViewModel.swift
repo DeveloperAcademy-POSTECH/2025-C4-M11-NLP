@@ -9,6 +9,8 @@ import SwiftUI
 
 final class StageTwoViewModel: ViewModelable {
     struct State {
+        var isMonologuePresented: Bool = false
+        var isItemCollecting: Bool = false
         var isDialogPresented: Bool = false
         var stageTwoPhase: StageTwoMonologuePhase = .stageArrived
     }
@@ -27,7 +29,7 @@ final class StageTwoViewModel: ViewModelable {
     func action(_ action: Action) {
         switch action {
         case .robotEncountered:
-            state.isDialogPresented = true
+            state.isMonologuePresented = true
         }
     }
 }
