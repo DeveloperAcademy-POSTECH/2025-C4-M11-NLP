@@ -28,8 +28,18 @@ struct StageTwoView: View {
             SpriteView(scene: scene)
                 .ignoresSafeArea()
             
-//            MonologueView(phase: )
-//                .opacity(viewModel.state.isDialogPresented ? 1 : 0)
+            if viewModel.state.isDialogPresented {
+                MonologueView(
+                    phase: $viewModel.state.stageTwoPhase,
+                    isPresented: $viewModel.state.isDialogPresented
+                ) {
+                    viewModel.state.isDialogPresented = false
+                    print("hi")
+                }
+            }
         }
     }
 }
+
+
+

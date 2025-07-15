@@ -14,6 +14,8 @@ class StageTwoScene: GameScene {
     override func setUpScene() {
         super.setUpScene()
         
+        physicsWorld.contactDelegate = self
+        
         for child in self.children {
             if let robot = child as? RobotSprite {
                 robot.configurePhysics()
@@ -30,10 +32,10 @@ extension StageTwoScene: SKPhysicsContactDelegate {
         
         if let player = nodeA as? PlayerSprite, let robot = nodeB as? RobotSprite {
             // 충돌 액션 구현
-            viewModel?.state.isDialogPresented = true
+            viewModel?.action(.robotEncountered)
         } else if let robot = nodeA as? RobotSprite, let player = nodeB as? PlayerSprite {
             // 충돌 액션 구현
-            viewModel?.state.isDialogPresented = true
+            viewModel?.action(.robotEncountered)
         }
     }
 }
