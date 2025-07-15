@@ -39,9 +39,39 @@ struct DialogView: View {
                 .fill(.black.opacity(0.8))
                 .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.3)
                 .border(Color.yellow, width: 7)
+                .overlay(
+                    ScrollView{
+                        VStack(alignment: .leading, spacing: 5){
+                            if let partner = dialogManager.currentPartner {
+                                ForEach(dialogManager.conversationLogs[partner] ?? [], id: \.self) { dialog in
+                                    if (dialog.sender == .user){
+                                        Text(dialog.content)
+                                            .font(NLPFont.chapterDescription)
+                                            .foregroundStyle(.white)
+                                    } else {
+                                        StreamingText(fullDialog:dialog.content, streamingSpeed: 0.05)
+                                            .font(NLPFont.chapterDescription)
+                                            .foregroundStyle(.white)
+                                    }
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading) // 추가 보장
+                        
+
+                    }
+                        .frame(
+                                width: ConstantScreenSize.screenWidth * 0.8,
+                                height: ConstantScreenSize.screenHeight * 0.25
+                            )
+
+                )
+            
+            
+            
             HStack {
                 TextField("", text: $inputText)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(NLPFont.chapterDescription)
                     .padding(.horizontal, 12)
                     .frame(height: 50)
                     .background(Color.black)
