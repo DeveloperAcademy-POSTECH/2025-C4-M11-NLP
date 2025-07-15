@@ -10,7 +10,6 @@ import SpriteKit
 
 class StageOneGameScene: GameScene {
     var box: BoxSprite?
-
     var computer: ChapOneComputerSprite?
     var flashlight: FlashlightSprite?
     var noLight: NoLightSprite?
@@ -51,18 +50,16 @@ class StageOneGameScene: GameScene {
                     }
                 }
             }
-//            if let noLight = child as? NoLightSprite {
-//                self.noLight = noLight
-//            }
-//            
-//            if let turnOnFlashlight = child as? TurnOnFlashlightSprite {
-//                self.turnOnFlashlight = turnOnFlashlight
-//            }
         }
         
         viewModel?.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
+                if state.isDialogPresented {
+                    self?.dialogPresentStart()
+                } else {
+                    self?.dialogPresentEnd()
+                }
                 if state.isChatting {
                     self?.computerInteractionStart()
                 } else {
@@ -78,6 +75,9 @@ class StageOneGameScene: GameScene {
                     self?.showFlashlight()
                 } else {
                     self?.showNoFlashlight()
+                }
+                if state.isMovingToCentralControlRoom {
+                    self?.moveToCenteralControlRoom()
                 }
             }
             .store(in: &cancellables)
@@ -97,6 +97,7 @@ class StageOneGameScene: GameScene {
             self.joyStick.startMove(touchLocation)
         }
     }
+    
 }
 
 // MARK: 각 게임 Scene 마다 설정해줘야 함.
@@ -113,6 +114,26 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.action(.findFlashlight)
         } else if let _ = nodeA as? FlashlightSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.findFlashlight)
+        }
+    }
+    
+    func dialogPresentStart() {
+        isJoystickTouchActive = false
+        setNodeVisibility(joyStick.joystickBase, visibility: false)
+        setNodeVisibility(joyStick.joystickKnob, visibility: false)
+    }
+    
+    func dialogPresentEnd() {
+        isJoystickTouchActive = true
+        setNodeVisibility(joyStick.joystickBase, visibility: true)
+        setNodeVisibility(joyStick.joystickKnob, visibility: true)
+    }
+    
+    func moveToCenteralControlRoom() {
+        // 위치 미정
+        let moveAction = SKAction.move(to: ConstantPositions.centeralControlRoomDoorPoisition, duration: 3.0)
+        if let player = player {
+            player.run(moveAction)
         }
     }
     
@@ -139,6 +160,8 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         guard let player, let camera else { return }
 
         setNodeVisibility(player, visibility: true)
+        setNodeVisibility(joyStick.joystickBase, visibility: true)
+        setNodeVisibility(joyStick.joystickKnob, visibility: true)
 
         // 카메라 애니메이션 복귀
         let moveAction = SKAction.move(to: player.position, duration: 0.5)
