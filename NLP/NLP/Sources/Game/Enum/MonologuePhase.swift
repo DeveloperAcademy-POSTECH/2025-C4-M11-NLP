@@ -6,9 +6,11 @@
 //
 
 protocol MonologuePhase {
+    static var lastPhase: Self { get }
     var monologue: String { get }
     var previousPhase: Self? { get }
     var nextPhase: Self? { get }
     var buttonTexts: [String] { get }
-    var isNextButtonActionEnabled: Bool { get }
+    var isFirstButtonActionEnabled: Bool { get }
+    var isSecondButtonActionEnabled: Bool { get }
 }
