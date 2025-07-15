@@ -12,11 +12,13 @@ class StageOneGameViewModel: ViewModelable {
     struct State {
         var isPaused: Bool = false
         var isChatting: Bool = false
+        var isFoundFlashlight: Bool = false
+        var hasFlashlight: Bool = false
         var isFlashlightOn: Bool = false
     }
     
     enum Action {
-//        case findFlashlight
+        case findFlashlight
         case toggleFlashlight
     }
     
@@ -30,7 +32,8 @@ class StageOneGameViewModel: ViewModelable {
     
     func action(_ action: Action) {
         switch action {
-//        case .findFlashlight:
+        case .findFlashlight:
+            state.isFoundFlashlight = true
         case .toggleFlashlight:
             state.isFlashlightOn.toggle()
         }

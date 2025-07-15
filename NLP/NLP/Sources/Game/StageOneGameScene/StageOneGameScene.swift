@@ -11,6 +11,9 @@ import SpriteKit
 class StageOneGameScene: GameScene {
     var box: BoxSprite?
     var computer: ChapOneComputerSprite?
+    var flashlight: FlashlightSprite?
+    var noLight: NoLightSprite?
+    var turnOnFlashlight: TurnOnFlashlightSprite?
     weak var viewModel: StageOneGameViewModel?
     
     private var cancellables = Set<AnyCancellable>()
@@ -26,11 +29,34 @@ class StageOneGameScene: GameScene {
                 self.computer = computer
             }
             
-            // MARK: 상속 받는 게임 Scene에서 호출
             if let box = child as? BoxSprite {
                 box.configurePhysics()
                 self.box = box
             }
+            
+            if let flashlight = child as? FlashlightSprite {
+                flashlight.configurePhysics()
+                self.flashlight = flashlight
+            }
+            
+            if let player = child as? PlayerSprite {
+                for child in player.children {
+                    if let noLight = child as? NoLightSprite {
+                        self.noLight = noLight
+                    }
+                    
+                    if let turnOnFlashlight = child as? TurnOnFlashlightSprite {
+                        self.turnOnFlashlight = turnOnFlashlight
+                    }
+                }
+            }
+//            if let noLight = child as? NoLightSprite {
+//                self.noLight = noLight
+//            }
+//            
+//            if let turnOnFlashlight = child as? TurnOnFlashlightSprite {
+//                self.turnOnFlashlight = turnOnFlashlight
+//            }
         }
         
         viewModel?.$state
@@ -40,6 +66,17 @@ class StageOneGameScene: GameScene {
                     self?.computerInteractionStart()
                 } else {
                     self?.computerInteractionEnd()
+                }
+                if state.isFoundFlashlight {
+                    self?.flashlightInteractionStart()
+                }
+                if state.hasFlashlight {
+                    self?.flashlightInteractionEnd()
+                }
+                if state.isFlashlightOn {
+                    self?.showFlashlight()
+                } else {
+                    self?.showNoFlashlight()
                 }
             }
             .store(in: &cancellables)
@@ -63,7 +100,6 @@ class StageOneGameScene: GameScene {
 
 // MARK: 각 게임 Scene 마다 설정해줘야 함.
 extension StageOneGameScene: SKPhysicsContactDelegate {
-    // MARK: 컴퓨터와 플레이어가 부딪힐 때 호출되는 함수
     func didBegin(_ contact: SKPhysicsContact) {
         let nodeA = contact.bodyA.node
         let nodeB = contact.bodyB.node
@@ -72,6 +108,10 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.state.isChatting = true
         } else if let _ = nodeB as? PlayerSprite, let _ = nodeA as? ChapOneComputerSprite {
             viewModel?.state.isChatting = true
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? FlashlightSprite {
+            viewModel?.action(.findFlashlight)
+        } else if let _ = nodeA as? FlashlightSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.action(.findFlashlight)
         }
     }
     
@@ -100,6 +140,34 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         let group = SKAction.group([moveAction, scaleAction])
         camera.run(group)
     }
+    
+    func flashlightInteractionStart() {
+        isJoystickTouchActive = false
+    }
+    
+    func flashlightInteractionEnd() {
+        guard let flashlight else { return }
+        
+        isJoystickTouchActive = true
+        
+        flashlight.removeFromParent()
+    }
+    
+    func showFlashlight() {
+        guard let turnOnFlashlight, let noLight else { return }
+//        guard let noLight else { return }
+        print("show flashlight")
+        turnOnFlashlight.alpha = 1
+        noLight.alpha = 0
+        setNodeVisibility(noLight, visibility: false)
+    }
+    
+    func showNoFlashlight() {
+        guard let turnOnFlashlight, let noLight else { return }
+//        guard let noLight else { return }
+        turnOnFlashlight.alpha = 0
+        noLight.alpha = 1
+    }
 
     func applySoftPush(from player: PlayerSprite, to box: BoxSprite) {
         guard let playerVelocity = player.physicsBody?.velocity else { return }
@@ -108,7 +176,6 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         box.physicsBody?.applyForce(pushForce)
     }
 
-    // MARK: 보물상자와 플레이어가 멀어졌을 때 호출되는 함수
     func didEnd(_ contact: SKPhysicsContact) {
         let bodyA = contact.bodyA.node
         let bodyB = contact.bodyB.node

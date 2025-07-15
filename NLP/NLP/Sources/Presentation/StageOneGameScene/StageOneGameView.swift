@@ -50,6 +50,18 @@ struct StageOneGameView: View {
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
+            // TODO: 대화창으로 변경
+            Rectangle()
+                .frame(width: 200, height: 200)
+                .background(Color.blue)
+                .opacity(viewModel.state.isFoundFlashlight ? 1 : 0)
+                .animation(.spring(duration: 0.5), value: viewModel.state.isFoundFlashlight)
+                .onTapGesture {
+                    viewModel.state.isFoundFlashlight = false
+                    viewModel.state.hasFlashlight = true
+                    viewModel.state.isFlashlightOn = true
+                }
+            
             PauseView(isPaused: $viewModel.state.isPaused)
                 .opacity(viewModel.state.isPaused ? 1 : 0)
                 .animation(.spring(duration: 0.5), value: viewModel.state.isPaused)
@@ -63,7 +75,7 @@ struct StageOneGameView: View {
 
 
 #Preview {
-    var coordinator = Coordinator()
+    let coordinator = Coordinator()
     coordinator.push(.stageOneScene)
     return StageOneGameView(coordinator: coordinator)
 }
