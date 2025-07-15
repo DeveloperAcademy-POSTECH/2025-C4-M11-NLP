@@ -40,10 +40,6 @@ struct StreamingText: View {
                     withTimeInterval: TimeInterval(floatLiteral: streamingSpeed),
                     repeats: true
                 ) { timer in
-                    let nextIndex = fullDialog.index(fullDialog.startIndex, offsetBy: index)
-                    currentText += String(fullDialog[nextIndex])
-                    
-                    index += 1
                     
                     guard index < fullDialog.count else {
                         guard let dialogCompleted = streamingCompleted else { return }
@@ -51,6 +47,11 @@ struct StreamingText: View {
                         timer.invalidate()
                         return
                     }
+                    
+                    let nextIndex = fullDialog.index(fullDialog.startIndex, offsetBy: index)
+                    currentText += String(fullDialog[nextIndex])
+                    index += 1
+
                 }
             }
     }
