@@ -9,11 +9,6 @@ import SwiftUI
 struct MonologueView<T: MonologuePhase>: View {
     let actions: [T: [MonologueAction]]
     @Binding var phase: T
-    @Binding var isPresented: Bool
-    var monologueCloseAction: (() -> Void)?
-    
-    var firstButtonAction: (() -> Void)
-    var secondButtonAction: (() -> Void)
     
     var body: some View {
         VStack {

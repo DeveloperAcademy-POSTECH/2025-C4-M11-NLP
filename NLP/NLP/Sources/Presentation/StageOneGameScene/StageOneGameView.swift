@@ -28,37 +28,15 @@ struct StageOneGameView: View {
             
             if viewModel.state.isDialogPresented {
                 MonologueView(
-                    phase: $viewModel.state.stageOnePhase,
-                    isPresented: $viewModel.state.isDialogPresented,
-                    firstButtonAction: {
-                        switch viewModel.state.stageOnePhase {
-                        default:
-                            break
-                        }
-                    },
-                    secondButtonAction: {
-                        switch viewModel.state.stageOnePhase {
-                        case .stageArrived:
-                            viewModel.action(.hideDialog)
-                        case .goToCenteralControlRoom:
-                            viewModel.action(.hideDialog)
-                            scene.moveToCenteralControlRoom() {
-                                viewModel.state.stageOnePhase = .lockedDoor
-                                viewModel.action(.showDialog)
-                            }
-                        case .lockedDoor:
-                            viewModel.action(.hideDialog)
-                            // TODO: 비밀번호 입력 창 오픈
-                        case .startFinding:
-                            viewModel.action(.hideDialog)
-                        default:
-                            break
-                        }
-                    }
+                    actions: configureMonologueActions(),
+                    phase: $viewModel.state.stageOnePhase
                 )
             }
             
-            DialogView(dialogManager: dialogManager, isPresented: $viewModel.state.isChatting)
+            DialogView(
+                dialogManager: dialogManager,
+                isPresented: $viewModel.state.isChatting
+            )
                 .opacity(viewModel.state.isChatting ? 1 : 0)
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
@@ -90,6 +68,50 @@ struct StageOneGameView: View {
     private func initializeScene() {
         scene.viewModel = viewModel
         scene.scaleMode = .aspectFill
+    }
+        
+    private func configureMonologueActions() -> [StageOneMonologuePhase: [MonologueAction]] {
+        return [
+            .stageArrived: [
+                MonologueAction(
+                    monologue: "돌아다니기",
+                    action: {
+                        viewModel.action(.hideDialog)
+                    }
+                )
+            ],
+            .goToCenteralControlRoom: [
+                MonologueAction(
+                    monologue: "이동하기",
+                    action: {
+                        viewModel.action(.hideDialog)
+                        scene.moveToCenteralControlRoom {
+                            viewModel.action(.showDialog)
+                            viewModel.state.stageOnePhase = .goToCenteralControlRoom.nextPhase!
+                        }
+                    }
+                )
+            ],
+            .lockedDoor: [
+                MonologueAction(
+                    monologue: "비밀번호 입력하기",
+                    action: {
+                        viewModel.action(.hideDialog)
+                        // TODO: 비밀번호 입력 창
+                        viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
+                        viewModel.action(.showDialog)
+                    }
+                )
+            ],
+            .startFinding: [
+                MonologueAction(
+                    monologue: "주위 둘러보기",
+                    action: {
+                        viewModel.action(.hideDialog)
+                    }
+                )
+            ]
+        ]
     }
 }
 
