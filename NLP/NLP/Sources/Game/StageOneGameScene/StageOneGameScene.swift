@@ -43,10 +43,12 @@ class StageOneGameScene: GameScene {
                 for child in player.children {
                     if let noLight = child as? NoLightSprite {
                         self.noLight = noLight
+                        self.noLight?.alpha = 1
                     }
                     
                     if let turnOnFlashlight = child as? TurnOnFlashlightSprite {
                         self.turnOnFlashlight = turnOnFlashlight
+                        self.turnOnFlashlight?.alpha = 0
                     }
                 }
             }
@@ -177,35 +179,16 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         guard let noLight, let turnOnFlashlight else { return }
         switch lightMode {
         case .noLight:
-//            setNodeVisibility(noLight, visibility: true)
-//            setNodeVisibility(turnOnFlashlight, visibility: false)
             noLight.alpha = 1
             turnOnFlashlight.alpha = 0
         case .turnOnFlashlight:
-//            setNodeVisibility(noLight, visibility: false)
-//            setNodeVisibility(turnOnFlashlight, visibility: true)
             noLight.alpha = 0
             turnOnFlashlight.alpha = 1
         case .lightOn:
-//            setNodeVisibility(noLight, visibility: false)
-//            setNodeVisibility(turnOnFlashlight, visibility: false)
             noLight.alpha = 0
             turnOnFlashlight.alpha = 0
         }
     }
-    
-//    func showFlashlight() {
-//        guard let turnOnFlashlight, let noLight else { return }
-//        turnOnFlashlight.alpha = 1
-//        noLight.alpha = 0
-//        setNodeVisibility(noLight, visibility: false)
-//    }
-//    
-//    func showNoFlashlight() {
-//        guard let turnOnFlashlight, let noLight else { return }
-//        turnOnFlashlight.alpha = 0
-//        noLight.alpha = 1
-//    }
     
     func hideFlashlight() {
         guard let flashlight else { return }
