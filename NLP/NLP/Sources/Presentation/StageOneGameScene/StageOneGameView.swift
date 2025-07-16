@@ -32,39 +32,15 @@ struct StageOneGameView: View {
             
             if viewModel.state.isDialogPresented {
                 MonologueView(
+                    actions: configureMonologueActions(),
                     phase: $viewModel.state.stageOnePhase,
-                    isPresented: $viewModel.state.isDialogPresented,
-                    firstButtonAction: {
-                        switch viewModel.state.stageOnePhase {
-                        default:
-                            break
-                        }
-                    },
-                    secondButtonAction: {
-                        switch viewModel.state.stageOnePhase {
-                        case .stageArrived:
-                            viewModel.action(.toggleDialogPresentation)
-                        case .goToCenteralControlRoom:
-                            viewModel.action(.toggleDialogPresentation)
-                            viewModel.state.isMovingToCentralControlRoom = true
-                            viewModel.state.isMovingToCentralControlRoom = false
-                            viewModel.action(.toggleDialogPresentation)
-                            viewModel.state.stageOnePhase = .goToCenteralControlRoom.nextPhase!
-                        case .lockedDoor:
-                            viewModel.action(.toggleDialogPresentation)
-                            // TODO: 비밀번호 입력 창
-                            viewModel.action(.toggleDialogPresentation)
-                            viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
-                        case .startFinding:
-                            viewModel.action(.toggleDialogPresentation)
-                        default:
-                            break
-                        }
-                    }
                 )
             }
             
-            DialogView(dialogManager: dialogManager, isPresented: $viewModel.state.isChatting)
+            DialogView(
+                dialogManager: dialogManager,
+                isPresented: $viewModel.state.isChatting
+            )
                 .opacity(viewModel.state.isChatting ? 1 : 0)
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
@@ -86,6 +62,50 @@ struct StageOneGameView: View {
         .onAppear {
             dialogManager.initConversation(dialogPartner: .computer)
         }
+    }
+    
+    private func configureMonologueActions() -> [StageOneMonologuePhase: [MonologueAction]] {
+        return [
+            .stageArrived: [
+                MonologueAction(
+                    monologue: "돌아다니기",
+                    action: {
+                        viewModel.action(.toggleDialogPresentation)
+                    }
+                )
+            ],
+            .goToCenteralControlRoom: [
+                MonologueAction(
+                    monologue: "이동하기",
+                    action: {
+                        viewModel.action(.toggleDialogPresentation)
+                        viewModel.state.isMovingToCentralControlRoom = true
+                        viewModel.state.isMovingToCentralControlRoom = false
+                        viewModel.action(.toggleDialogPresentation)
+                        viewModel.state.stageOnePhase = .goToCenteralControlRoom.nextPhase!
+                    }
+                )
+            ],
+            .lockedDoor: [
+                MonologueAction(
+                    monologue: "비밀번호 입력하기",
+                    action: {
+                        viewModel.action(.toggleDialogPresentation)
+                        // TODO: 비밀번호 입력 창
+                        viewModel.action(.toggleDialogPresentation)
+                        viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
+                    }
+                )
+            ],
+            .startFinding: [
+                MonologueAction(
+                    monologue: "주위 둘러보기",
+                    action: {
+                        viewModel.action(.toggleDialogPresentation)
+                    }
+                )
+            ]
+        ]
     }
 }
 
