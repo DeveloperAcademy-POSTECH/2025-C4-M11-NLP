@@ -8,6 +8,7 @@
 enum DialogPartnerType {
     case computer
     case robot
+  
     var instructions: String {
         switch self {
         //암호 일치 전 컴퓨터

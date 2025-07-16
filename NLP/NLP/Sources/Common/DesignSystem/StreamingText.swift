@@ -55,12 +55,13 @@ struct StreamingText: View {
             let nextIndex = fullDialog.index(fullDialog.startIndex, offsetBy: index)
             currentText += String(fullDialog[nextIndex])
             index += 1
-            guard index < fullDialog.count - 1 else {
+            guard index < fullDialog.count else {
                 guard let dialogCompleted = streamingCompleted else {
                     timer.invalidate()
                     return
                 }
                 dialogCompleted()
+                timer.invalidate()
                 return
             }
         }

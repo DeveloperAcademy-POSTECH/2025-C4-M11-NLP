@@ -63,18 +63,20 @@ struct GameButton: View {
             buttonTapAction()
         }) {
             /** 버튼의 시각적 UI입니다. */
-            Rectangle()
-                .stroke(.white, lineWidth: 5) /** 흰색 테두리 */
-                .background(.black) /** 검은색 배경 */
-                .frame(
-                    width: buttonWidth,
-                    height: buttonHeight
-                )
-                .overlay(
-                    Text(buttonText)
-                        .font(NLPFont.gameButton)
-                        .foregroundStyle(.white) /** 흰색 텍스트 */
-                )
+            VStack(spacing: 2) {
+                Text("> \(buttonText)")
+                    .font(NLPFont.gameButton)
+                    .foregroundStyle(.white)
+                    .padding(.bottom, 2)
+                    .background(
+                        VStack {
+                            Spacer()
+                            Rectangle()
+                                .fill(.white)
+                                .frame(height: 1)
+                        }
+                    )
+            }
         }
         .buttonStyle(.plain) /** 기본 버튼 스타일 제거 */
     }
