@@ -37,16 +37,19 @@ struct MonologueView<T: MonologuePhase>: View {
                     }
                 }
                 else {
-                    VStack(spacing: 5) {
-                        ForEach(actions[phase] ?? [], id: \.self) { action in
-                            GameButton(buttonText: action.monologue) {
-                                action.action()
-                                phase = phase.nextPhase ?? .lastPhase
+                    HStack {
+                        VStack(spacing: 5) {
+                            ForEach(actions[phase] ?? [], id: \.self) { action in
+                                GameButton(buttonText: action.monologue) {
+                                    action.action()
+                                    phase = phase.nextPhase ?? .lastPhase
+                                }
                             }
                         }
+                        Spacer()
                     }
                 }
-                Spacer().frame(height: 15)
+                Spacer().frame(height: 35)
             }
             .padding(.all, 15)
             .background(
