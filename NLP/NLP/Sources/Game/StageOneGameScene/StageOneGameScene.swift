@@ -55,6 +55,7 @@ class StageOneGameScene: GameScene {
         viewModel?.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
+                // 왜 이렇게 isDialogPresented 로 분기를 하는가. 를 생각해보자.
                 if state.isDialogPresented {
                     self?.dialogPresentStart()
                 } else {
@@ -64,20 +65,6 @@ class StageOneGameScene: GameScene {
                     self?.computerInteractionStart()
                 } else {
                     self?.computerInteractionEnd()
-                }
-                if state.isFoundFlashlight {
-                    self?.flashlightInteractionStart()
-                }
-                if state.hasFlashlight {
-                    self?.flashlightInteractionEnd()
-                }
-                if state.isFlashlightOn {
-                    self?.showFlashlight()
-                } else {
-                    self?.showNoFlashlight()
-                }
-                if state.isMovingToCentralControlRoom {
-                    self?.moveToCenteralControlRoom()
                 }
             }
             .store(in: &cancellables)
@@ -111,9 +98,9 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         } else if let _ = nodeB as? PlayerSprite, let _ = nodeA as? ChapOneComputerSprite {
             viewModel?.state.isChatting = true
         } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? FlashlightSprite {
-            viewModel?.action(.findFlashlight)
+            viewModel?.action(.showFlashlightFoundPresented)
         } else if let _ = nodeA as? FlashlightSprite, let _ = nodeB as? PlayerSprite {
-            viewModel?.action(.findFlashlight)
+            viewModel?.action(.showFlashlightFoundPresented)
         }
     }
     
@@ -129,11 +116,15 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         setNodeVisibility(joyStick.joystickKnob, visibility: true)
     }
     
-    func moveToCenteralControlRoom() {
+    func moveToCenteralControlRoom(completion: @escaping () -> Void) {
         // 위치 미정
         let moveAction = SKAction.move(to: ConstantPositions.centeralControlRoomDoorPoisition, duration: 3.0)
         if let player = player {
-            player.run(moveAction)
+            player.run(moveAction) {
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }
         }
     }
     
@@ -182,20 +173,43 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         flashlight.removeFromParent()
     }
     
-    func showFlashlight() {
-        guard let turnOnFlashlight, let noLight else { return }
-//        guard let noLight else { return }
-        print("show flashlight")
-        turnOnFlashlight.alpha = 1
-        noLight.alpha = 0
-        setNodeVisibility(noLight, visibility: false)
+    func changeLightMode(lightMode: LightMode) {
+        guard let noLight, let turnOnFlashlight else { return }
+        switch lightMode {
+        case .noLight:
+//            setNodeVisibility(noLight, visibility: true)
+//            setNodeVisibility(turnOnFlashlight, visibility: false)
+            noLight.alpha = 1
+            turnOnFlashlight.alpha = 0
+        case .turnOnFlashlight:
+//            setNodeVisibility(noLight, visibility: false)
+//            setNodeVisibility(turnOnFlashlight, visibility: true)
+            noLight.alpha = 0
+            turnOnFlashlight.alpha = 1
+        case .lightOn:
+//            setNodeVisibility(noLight, visibility: false)
+//            setNodeVisibility(turnOnFlashlight, visibility: false)
+            noLight.alpha = 0
+            turnOnFlashlight.alpha = 0
+        }
     }
     
-    func showNoFlashlight() {
-        guard let turnOnFlashlight, let noLight else { return }
-//        guard let noLight else { return }
-        turnOnFlashlight.alpha = 0
-        noLight.alpha = 1
+//    func showFlashlight() {
+//        guard let turnOnFlashlight, let noLight else { return }
+//        turnOnFlashlight.alpha = 1
+//        noLight.alpha = 0
+//        setNodeVisibility(noLight, visibility: false)
+//    }
+//    
+//    func showNoFlashlight() {
+//        guard let turnOnFlashlight, let noLight else { return }
+//        turnOnFlashlight.alpha = 0
+//        noLight.alpha = 1
+//    }
+    
+    func hideFlashlight() {
+        guard let flashlight else { return }
+        flashlight.removeFromParent()
     }
 
     func applySoftPush(from player: PlayerSprite, to box: BoxSprite) {

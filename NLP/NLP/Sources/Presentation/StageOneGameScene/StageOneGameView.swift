@@ -18,12 +18,8 @@ struct StageOneGameView: View {
         self.dialogManager = dialogManager
     }
     
-    var scene: SKScene {
-        let scene = StageOneGameScene(fileNamed: "StageOneGameScene")!
-        scene.viewModel = viewModel
-        scene.scaleMode = .aspectFill
-        return scene
-    }
+    @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
+
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -43,20 +39,18 @@ struct StageOneGameView: View {
                     secondButtonAction: {
                         switch viewModel.state.stageOnePhase {
                         case .stageArrived:
-                            viewModel.action(.toggleDialogPresentation)
+                            viewModel.action(.hideDialog)
                         case .goToCenteralControlRoom:
-                            viewModel.action(.toggleDialogPresentation)
-                            viewModel.state.isMovingToCentralControlRoom = true
-                            viewModel.state.isMovingToCentralControlRoom = false
-                            viewModel.action(.toggleDialogPresentation)
-                            viewModel.state.stageOnePhase = .goToCenteralControlRoom.nextPhase!
+                            viewModel.action(.hideDialog)
+                            scene.moveToCenteralControlRoom() {
+                                viewModel.state.stageOnePhase = .lockedDoor
+                                viewModel.action(.showDialog)
+                            }
                         case .lockedDoor:
-                            viewModel.action(.toggleDialogPresentation)
-                            // TODO: 비밀번호 입력 창
-                            viewModel.action(.toggleDialogPresentation)
-                            viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
+                            viewModel.action(.hideDialog)
+                            // TODO: 비밀번호 입력 창 오픈
                         case .startFinding:
-                            viewModel.action(.toggleDialogPresentation)
+                            viewModel.action(.hideDialog)
                         default:
                             break
                         }
@@ -73,19 +67,29 @@ struct StageOneGameView: View {
             Rectangle()
                 .frame(width: 200, height: 200)
                 .background(Color.blue)
-                .opacity(viewModel.state.isFoundFlashlight ? 1 : 0)
-                .animation(.spring(duration: 0.5), value: viewModel.state.isFoundFlashlight)
+                .opacity(viewModel.state.isFlashlightFoundPresented ? 1 : 0)
+                .animation(.spring(duration: 0.5), value: viewModel.state.isFlashlightFoundPresented)
                 .onTapGesture {
-                    viewModel.state.isFoundFlashlight = false
-                    viewModel.state.hasFlashlight = true
-                    viewModel.state.isFlashlightOn = true
+                    scene.hideFlashlight()
+                    viewModel.action(.hideFlashlightFoundPresented)
+                    scene.changeLightMode(lightMode: .turnOnFlashlight)
                     viewModel.state.stageOnePhase = .findFlashlight
-                    viewModel.action(.toggleDialogPresentation)
+                    viewModel.action(.showDialog)
                 }
         }
         .onAppear {
+            
+            initializeScene()
+            
+            
+            scene.changeLightMode(lightMode: .noLight)
             dialogManager.initConversation(dialogPartner: .computer)
         }
+    }
+    
+    private func initializeScene() {
+        scene.viewModel = viewModel
+        scene.scaleMode = .aspectFill
     }
 }
 

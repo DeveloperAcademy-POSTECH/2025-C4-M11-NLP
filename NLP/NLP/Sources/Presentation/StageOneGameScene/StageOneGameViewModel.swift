@@ -10,21 +10,19 @@ import SwiftUI
 @MainActor
 class StageOneGameViewModel: ViewModelable {
     struct State {
-        var isPaused: Bool = false
         var isChatting: Bool = false
         var isDialogPresented: Bool = true
         var stageOnePhase: StageOneMonologuePhase = .stageArrived
-        var isFoundFlashlight: Bool = false
-        var hasFlashlight: Bool = false
-        var isFlashlightOn: Bool = false
-        var isMovingToCentralControlRoom: Bool = false
+        var isFlashlightFoundPresented: Bool = false
+        var isArrivedAtCentralControlRoomDoor: Bool = false
     }
     
     enum Action {
-        case toggleDialogPresentation
-        case findFlashlight
-        case toggleFlashlight
-        case moveToCenteralControlRoom
+        case showDialog
+        case hideDialog
+        case showFlashlightFoundPresented
+        case hideFlashlightFoundPresented
+        case arrivedAtCentralControlRoomDoor
     }
     
     @ObservedObject var coordinator: Coordinator
@@ -37,14 +35,16 @@ class StageOneGameViewModel: ViewModelable {
     
     func action(_ action: Action) {
         switch action {
-        case .toggleDialogPresentation:
-            state.isDialogPresented.toggle()
-        case .findFlashlight:
-            state.isFoundFlashlight = true
-        case .toggleFlashlight:
-            state.isFlashlightOn.toggle()
-        case .moveToCenteralControlRoom:
-            state.isMovingToCentralControlRoom = true
+        case .showDialog:
+            state.isDialogPresented = true
+        case .hideDialog:
+            state.isDialogPresented = false
+        case .showFlashlightFoundPresented:
+            state.isFlashlightFoundPresented = true
+        case .hideFlashlightFoundPresented:
+            state.isFlashlightFoundPresented = false
+        case .arrivedAtCentralControlRoomDoor:
+            state.isArrivedAtCentralControlRoomDoor = true
         }
     }
 }
