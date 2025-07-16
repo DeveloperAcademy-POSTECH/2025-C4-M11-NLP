@@ -61,6 +61,7 @@ struct StreamingText: View {
                     return
                 }
                 dialogCompleted()
+                timer.invalidate()
                 return
             }
         }

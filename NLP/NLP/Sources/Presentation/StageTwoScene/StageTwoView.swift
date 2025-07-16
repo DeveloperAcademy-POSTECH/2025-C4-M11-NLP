@@ -91,6 +91,9 @@ struct StageTwoView: View {
                 )
             }
         }
+        .onAppear {
+            dialogManager.initConversation(dialogPartner: .robot)
+        }
     }
 }
 
