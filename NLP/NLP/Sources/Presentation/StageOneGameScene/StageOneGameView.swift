@@ -18,12 +18,8 @@ struct StageOneGameView: View {
         self.dialogManager = dialogManager
     }
     
-    var scene: SKScene {
-        let scene = StageOneGameScene(fileNamed: "StageOneGameScene")!
-        scene.viewModel = viewModel
-        scene.scaleMode = .aspectFill
-        return scene
-    }
+    @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
+
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -33,7 +29,7 @@ struct StageOneGameView: View {
             if viewModel.state.isDialogPresented {
                 MonologueView(
                     actions: configureMonologueActions(),
-                    phase: $viewModel.state.stageOnePhase,
+                    phase: $viewModel.state.stageOnePhase
                 )
             }
             
@@ -49,28 +45,38 @@ struct StageOneGameView: View {
             Rectangle()
                 .frame(width: 200, height: 200)
                 .background(Color.blue)
-                .opacity(viewModel.state.isFoundFlashlight ? 1 : 0)
-                .animation(.spring(duration: 0.5), value: viewModel.state.isFoundFlashlight)
+                .opacity(viewModel.state.isFlashlightFoundPresented ? 1 : 0)
+                .animation(.spring(duration: 0.5), value: viewModel.state.isFlashlightFoundPresented)
                 .onTapGesture {
-                    viewModel.state.isFoundFlashlight = false
-                    viewModel.state.hasFlashlight = true
-                    viewModel.state.isFlashlightOn = true
+                    scene.hideFlashlight()
+                    viewModel.action(.hideFlashlightFoundPresented)
+                    scene.changeLightMode(lightMode: .turnOnFlashlight)
                     viewModel.state.stageOnePhase = .findFlashlight
-                    viewModel.action(.toggleDialogPresentation)
+                    viewModel.action(.showDialog)
                 }
         }
         .onAppear {
+            
+            initializeScene()
+            
+            
+            scene.changeLightMode(lightMode: .noLight)
             dialogManager.initConversation(dialogPartner: .computer)
         }
     }
     
+    private func initializeScene() {
+        scene.viewModel = viewModel
+        scene.scaleMode = .aspectFill
+    }
+  
     private func configureMonologueActions() -> [StageOneMonologuePhase: [MonologueAction]] {
         return [
             .stageArrived: [
                 MonologueAction(
                     monologue: "돌아다니기",
                     action: {
-                        viewModel.action(.toggleDialogPresentation)
+                        viewModel.action(.hideDialog)
                     }
                 )
             ],
@@ -78,11 +84,11 @@ struct StageOneGameView: View {
                 MonologueAction(
                     monologue: "이동하기",
                     action: {
-                        viewModel.action(.toggleDialogPresentation)
-                        viewModel.state.isMovingToCentralControlRoom = true
-                        viewModel.state.isMovingToCentralControlRoom = false
-                        viewModel.action(.toggleDialogPresentation)
-                        viewModel.state.stageOnePhase = .goToCenteralControlRoom.nextPhase!
+                        viewModel.action(.hideDialog)
+                        scene.moveToCenteralControlRoom {
+                            viewModel.action(.showDialog)
+                            viewModel.state.stageOnePhase = .goToCenteralControlRoom.nextPhase!
+                        }
                     }
                 )
             ],
@@ -90,10 +96,10 @@ struct StageOneGameView: View {
                 MonologueAction(
                     monologue: "비밀번호 입력하기",
                     action: {
-                        viewModel.action(.toggleDialogPresentation)
+                        viewModel.action(.hideDialog)
                         // TODO: 비밀번호 입력 창
-                        viewModel.action(.toggleDialogPresentation)
                         viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
+                        viewModel.action(.showDialog)
                     }
                 )
             ],
@@ -101,7 +107,7 @@ struct StageOneGameView: View {
                 MonologueAction(
                     monologue: "주위 둘러보기",
                     action: {
-                        viewModel.action(.toggleDialogPresentation)
+                        viewModel.action(.hideDialog)
                     }
                 )
             ]
