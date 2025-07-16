@@ -69,7 +69,7 @@ struct StageOneGameView: View {
         scene.viewModel = viewModel
         scene.scaleMode = .aspectFill
     }
-        
+  
     private func configureMonologueActions() -> [StageOneMonologuePhase: [MonologueAction]] {
         return [
             .stageArrived: [
