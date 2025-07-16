@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RootView: View {
     @StateObject var coordinator: Coordinator = Coordinator()
+    @StateObject var dialogManager: DialogManager = DialogManager()
     
     init() {
         UINavigationBar.setAnimationsEnabled(false)
@@ -31,7 +32,10 @@ struct RootView: View {
                         StageOneIntroView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageOneScene:
-                        StageOneGameView(coordinator: coordinator)
+                        StageOneGameView(
+                            coordinator: coordinator,
+                            dialogManager: dialogManager
+                        )
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageTwoScene:
                         EmptyView()

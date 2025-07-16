@@ -81,7 +81,7 @@ struct DialogView: View {
                     )
                 Button {
                     if !dialogManager.isGenerating {
-                        dialogManager.respond(inputText, dialogPartnerType: .computer, isLogged: true)
+                        dialogManager.respond(inputText, dialogPartnerType: dialogManager.currentPartner ?? .computer, isLogged: true)
                         inputText = ""
                     }
                     

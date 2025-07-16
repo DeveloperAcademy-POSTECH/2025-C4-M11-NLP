@@ -7,8 +7,8 @@
 
 enum StageTwoMonologuePhase: MonologuePhase {
     
-    case stageArrived//  = "드디어 중앙통제실이다. 산소도 , 조명도 ....."
-    case meetBot//  = "재수없는 놈이랑 또 마주쳤군..."
+    case stageArrived
+    case meetBot
     case botUselessThought
     case tryEmotionalApproach
     case giveOrTalkChoice
@@ -36,17 +36,6 @@ enum StageTwoMonologuePhase: MonologuePhase {
             return "이거 나한테 주려고 부른건가?\n귀엽네...\n근데 이게 뭐지?"
         case .botBehaviorShiftNoticed:
             return "뭔가 표정이 바뀐 것 같기도 하고... 다시 말 걸어보면 되는건가??"
-        }
-    }
-    
-    var buttonTexts: [String] {
-        switch self {
-        case .giveOrTalkChoice:
-            return ["손전등 주기", "대화하기"]
-        case .unexpectedBotReaction, .unexpectedAffectionMoment, .botBehaviorShiftNoticed:
-            return ["다음"]
-        default:
-            return ["이전", "다음"]
         }
     }
     
@@ -89,24 +78,6 @@ enum StageTwoMonologuePhase: MonologuePhase {
             return .botBehaviorShiftNoticed
         case .botBehaviorShiftNoticed:
             return nil
-        }
-    }
-    
-    var isFirstButtonActionEnabled: Bool {
-        switch self {
-        case .giveOrTalkChoice:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    var isSecondButtonActionEnabled: Bool {
-        switch self {
-        case .meetBot, .giveOrTalkChoice:
-            return true
-        default:
-            return false
         }
     }
 }

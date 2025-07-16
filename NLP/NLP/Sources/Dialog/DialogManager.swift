@@ -14,7 +14,6 @@ class DialogManager: ObservableObject {
     @Published var isGenerating = false
     @Published var currentPartner: DialogPartnerType?
     @Published var conversationLogs: [DialogPartnerType: [Dialog]] = [:]
-    
     private var currentTask: Task<Void, Never>?
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     
@@ -36,6 +35,7 @@ class DialogManager: ObservableObject {
         
         newSession.prewarm()
         conversations[dialogPartner] = newSession
+        currentPartner = dialogPartner
         conversationLogs[dialogPartner] = []
     }
     

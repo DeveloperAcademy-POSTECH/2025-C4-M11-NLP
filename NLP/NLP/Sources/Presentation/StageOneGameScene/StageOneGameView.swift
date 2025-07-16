@@ -11,10 +11,11 @@ import SpriteKit
 
 struct StageOneGameView: View {
     @StateObject var viewModel: StageOneGameViewModel
-    @StateObject var dialogManager = DialogManager()
+    @ObservedObject var dialogManager = DialogManager()
     
-    init(coordinator: Coordinator) {
+    init(coordinator: Coordinator, dialogManager: DialogManager) {
         self._viewModel = StateObject(wrappedValue: StageOneGameViewModel(coordinator: coordinator))
+        self.dialogManager = dialogManager
     }
     
     var scene: SKScene {
@@ -91,7 +92,8 @@ struct StageOneGameView: View {
 
 
 #Preview {
+    @Previewable @StateObject var dialogManager = DialogManager()
     let coordinator = Coordinator()
     coordinator.push(.stageOneScene)
-    return StageOneGameView(coordinator: coordinator)
+    return StageOneGameView(coordinator: coordinator, dialogManager: dialogManager)
 }
