@@ -32,40 +32,8 @@ struct StageTwoView: View {
             
             if viewModel.state.isMonologuePresented {
                 MonologueView(
+                    actions: configureMonologueActions(),
                     phase: $viewModel.state.stageTwoPhase,
-                    isPresented: $viewModel.state.isMonologuePresented,
-                    firstButtonAction: {
-                        switch viewModel.state.stageTwoPhase {
-                        case .giveOrTalkChoice:
-                            print("손전등 주기 완료.") // TODO: StageTwoScene에서 로봇에게 손전등 주는 로직 구현 필요
-                            viewModel.state.stageTwoPhase = viewModel.state.stageTwoPhase.nextPhase!
-                            
-                        default:
-                            break
-                        }
-                    },
-                    secondButtonAction: {
-                        switch viewModel.state.stageTwoPhase {
-                        case .meetBot:
-                            print("로봇과 대화 시작") // TODO: 로봇과 대화를 위해 DialogView로 이동 구현 필요
-                            // 대화 완료했다 치고,
-                            viewModel.state.stageTwoPhase = viewModel.state.stageTwoPhase.nextPhase!
-                        case .giveOrTalkChoice:
-                            print("다시 대화로 돌아가기") // TODO: 로봇과 대화를 위해 DialogView로 이동 구현 필요
-                            viewModel.state.stageTwoPhase = viewModel.state.stageTwoPhase.nextPhase!
-                        case .tryEmotionalApproach:
-                            viewModel.state.stageTwoPhase = viewModel.state.stageTwoPhase.nextPhase!
-                            viewModel.state.isMonologuePresented = false
-                            viewModel.state.isDialogPresented = true
-                        case .unexpectedAffectionMoment:
-                            viewModel.state.stageTwoPhase = viewModel.state.stageTwoPhase.nextPhase!
-                            viewModel.state.isMonologuePresented = false
-                            viewModel.state.isItemCollecting = true
-                        default:
-                            viewModel.state.stageTwoPhase = viewModel.state.stageTwoPhase.nextPhase!
-                            break
-                        }
-                    }
                 )
             }
             
@@ -74,12 +42,10 @@ struct StageTwoView: View {
                     isPresented: $viewModel.state.isItemCollecting,
                     item: GameItems.pdaOfJain,
                     backButtonTapAction: {
-                        viewModel.state.isItemCollecting = false
-                        viewModel.state.isMonologuePresented = true
+                        viewModel.action(.activateMonologue)
                     },
                     nextButtonTapAction: {
-                        viewModel.state.isItemCollecting = false
-                        viewModel.state.isMonologuePresented = true
+                        viewModel.action(.activateMonologue)
                     }
                 )
             }
@@ -89,13 +55,81 @@ struct StageTwoView: View {
                     dialogManager: dialogManager,
                     isPresented: $viewModel.state.isDialogPresented
                 )
+                .onChange(of: dialogManager.conversationLogs[dialogManager.currentPartner!] ?? []) { oldValue, newValue in
+                    // MARK: 대화가 처음 6번 이상 넘어갈 경우 호출
+                    if dialogManager.currentPartner == .robot
+                        && (newValue.count == 5 || newValue.count == 10) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            viewModel.action(.activateMonologue)
+                        }
+                    }
+                }
             }
         }
         .onAppear {
             dialogManager.initConversation(dialogPartner: .robot)
         }
     }
+    
+    private func configureMonologueActions() -> [StageTwoMonologuePhase: [MonologueAction]] {
+        return [
+            .meetBot: [
+                MonologueAction(
+                    monologue: "대화하기",
+                    action: {
+                        // viewModel.action(.changeDialogPartner(.bot)) // TODO: 액션 추가
+                         viewModel.action(.activateDialog)
+                    }
+                ),
+            ],
+            .tryEmotionalApproach: [
+                MonologueAction(
+                    monologue: "대화하기",
+                    action: {
+                        viewModel.action(.activateDialog)
+                    }
+                )
+            ],
+            .unexpectedAffectionMoment: [
+                MonologueAction(
+                    monologue: "확인하기",
+                    action: {
+                        viewModel.action(.activateItemCollecting)
+                    }
+                )
+            ]
+        ]
+    }
 }
 
 
 
+//isPresented: $viewModel.state.isMonologuePresented,
+//firstButtonAction: {
+//    switch viewModel.state.stageTwoPhase {
+//    case .giveOrTalkChoice:
+//        print("손전등 주기 완료.") // TODO: StageTwoScene에서 로봇에게 손전등 주는 로직 구현 필요
+//        viewModel.action(.goToNextPhase)
+//        
+//    default:
+//        break
+//    }
+//},
+//secondButtonAction: {
+//    switch viewModel.state.stageTwoPhase {
+//    case .meetBot:
+//        viewModel.action(.activateDialog)
+//        viewModel.action(.goToNextPhase)
+//    case .giveOrTalkChoice:
+//        viewModel.action(.activateDialog)
+//    case .tryEmotionalApproach:
+//        viewModel.action(.activateDialog)
+//        viewModel.action(.goToNextPhase)
+//    case .unexpectedAffectionMoment:
+//        viewModel.action(.activateItemCollecting)
+//        viewModel.action(.goToNextPhase)
+//    default:
+//        viewModel.action(.goToNextPhase)
+//        break
+//    }
+//}

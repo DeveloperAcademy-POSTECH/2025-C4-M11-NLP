@@ -17,6 +17,10 @@ final class StageTwoViewModel: ViewModelable {
     
     enum Action {
         case robotEncountered
+        case activateDialog
+        case activateMonologue
+        case activateItemCollecting
+        case goToNextPhase
     }
     
     @Published var state: State = .init()
@@ -30,6 +34,20 @@ final class StageTwoViewModel: ViewModelable {
         switch action {
         case .robotEncountered:
             state.isMonologuePresented = true
+        case .activateDialog:
+            state.isItemCollecting = false
+            state.isMonologuePresented = false
+            state.isDialogPresented = true
+        case .activateMonologue:
+            state.isDialogPresented = false
+            state.isItemCollecting = false
+            state.isMonologuePresented = true
+        case .activateItemCollecting:
+            state.isDialogPresented = false
+            state.isMonologuePresented = false
+            state.isItemCollecting = true
+        case .goToNextPhase:
+            state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
         }
     }
 }
