@@ -41,6 +41,8 @@ struct StageOneGameView: View {
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
+            
+            
             // TODO: 손전등 발견 화면 구현
             Rectangle()
                 .frame(width: 200, height: 200)
@@ -55,13 +57,13 @@ struct StageOneGameView: View {
                     viewModel.action(.showDialog)
                 }
             
-            Rectangle()
+            Circle()
                 .frame(width: 200, height: 200)
                 .background(Color.blue)
                 .opacity(viewModel.state.isNoteFoundPresented ? 1 : 0)
                 .animation(.spring(duration: 0.5), value: viewModel.state.isNoteFoundPresented)
                 .onTapGesture {
-                    scene.hideFlashlight()
+                    scene.hideNote()
                     viewModel.action(.hideNoteFoundPresented)
                     viewModel.state.stageOnePhase = .findNote
                     viewModel.action(.showDialog)

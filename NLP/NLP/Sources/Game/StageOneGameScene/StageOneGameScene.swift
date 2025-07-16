@@ -107,6 +107,10 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.action(.showFlashlightFoundPresented)
         } else if let _ = nodeA as? FlashlightSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.showFlashlightFoundPresented)
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? NoteSprite {
+            viewModel?.action(.showNoteFoundPresented)
+        } else if let _ = nodeA as? NoteSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.action(.showNoteFoundPresented)
         }
     }
     
@@ -166,18 +170,7 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         let group = SKAction.group([moveAction, scaleAction])
         camera.run(group)
     }
-    
-    func flashlightInteractionStart() {
-        isJoystickTouchActive = false
-    }
-    
-    func flashlightInteractionEnd() {
-        guard let flashlight else { return }
-        
-        isJoystickTouchActive = true
-        
-        flashlight.removeFromParent()
-    }
+
     
     func changeLightMode(lightMode: LightMode) {
         guard let noLight, let turnOnFlashlight else { return }
@@ -200,22 +193,16 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         }
     }
     
-//    func showFlashlight() {
-//        guard let turnOnFlashlight, let noLight else { return }
-//        turnOnFlashlight.alpha = 1
-//        noLight.alpha = 0
-//        setNodeVisibility(noLight, visibility: false)
-//    }
-//    
-//    func showNoFlashlight() {
-//        guard let turnOnFlashlight, let noLight else { return }
-//        turnOnFlashlight.alpha = 0
-//        noLight.alpha = 1
-//    }
+
     
     func hideFlashlight() {
         guard let flashlight else { return }
         flashlight.removeFromParent()
+    }
+    
+    func hideNote() {
+        guard let note else { return }
+        note.removeFromParent()
     }
 
     func applySoftPush(from player: PlayerSprite, to box: BoxSprite) {
