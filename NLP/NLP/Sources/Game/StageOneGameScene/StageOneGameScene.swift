@@ -12,6 +12,7 @@ class StageOneGameScene: GameScene {
     var box: BoxSprite?
     var computer: ChapOneComputerSprite?
     var flashlight: FlashlightSprite?
+    var note: NoteSprite?
     var noLight: NoLightSprite?
     var turnOnFlashlight: TurnOnFlashlightSprite?
     weak var viewModel: StageOneGameViewModel?
@@ -37,6 +38,11 @@ class StageOneGameScene: GameScene {
             if let flashlight = child as? FlashlightSprite {
                 flashlight.configurePhysics()
                 self.flashlight = flashlight
+            }
+            
+            if let note = child as? NoteSprite {
+                note.configurePhysics()
+                self.note = note
             }
             
             if let player = child as? PlayerSprite {
