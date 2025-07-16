@@ -54,6 +54,19 @@ struct StageOneGameView: View {
                     viewModel.state.stageOnePhase = .findFlashlight
                     viewModel.action(.showDialog)
                 }
+            
+            Rectangle()
+                .frame(width: 200, height: 200)
+                .background(Color.blue)
+                .opacity(viewModel.state.isNoteFoundPresented ? 1 : 0)
+                .animation(.spring(duration: 0.5), value: viewModel.state.isNoteFoundPresented)
+                .onTapGesture {
+                    scene.hideFlashlight()
+                    viewModel.action(.hideNoteFoundPresented)
+                    viewModel.state.stageOnePhase = .findNote
+                    viewModel.action(.showDialog)
+                }
+            
         }
         .onAppear {
             

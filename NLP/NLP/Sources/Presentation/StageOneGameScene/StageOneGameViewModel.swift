@@ -14,6 +14,7 @@ class StageOneGameViewModel: ViewModelable {
         var isDialogPresented: Bool = true
         var stageOnePhase: StageOneMonologuePhase = .stageArrived
         var isFlashlightFoundPresented: Bool = false
+        var isNoteFoundPresented: Bool = false
         var isArrivedAtCentralControlRoomDoor: Bool = false
     }
     
@@ -22,6 +23,8 @@ class StageOneGameViewModel: ViewModelable {
         case hideDialog
         case showFlashlightFoundPresented
         case hideFlashlightFoundPresented
+        case showNoteFoundPresented
+        case hideNoteFoundPresented
         case arrivedAtCentralControlRoomDoor
     }
     
@@ -43,6 +46,10 @@ class StageOneGameViewModel: ViewModelable {
             state.isFlashlightFoundPresented = true
         case .hideFlashlightFoundPresented:
             state.isFlashlightFoundPresented = false
+        case .showNoteFoundPresented:
+            state.isNoteFoundPresented = true
+        case .hideNoteFoundPresented:
+            state.isNoteFoundPresented = false
         case .arrivedAtCentralControlRoomDoor:
             state.isArrivedAtCentralControlRoomDoor = true
         }
