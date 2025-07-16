@@ -17,8 +17,8 @@ final class StageTwoViewModel: ViewModelable {
     
     enum Action {
         case robotEncountered
-        case activateDialog
-        case activateMonologue
+        case activateDialog(withNextPhase: Bool)
+        case activateMonologue(withNextPhase: Bool)
         case activateItemCollecting
         case goToNextPhase
     }
@@ -34,14 +34,20 @@ final class StageTwoViewModel: ViewModelable {
         switch action {
         case .robotEncountered:
             state.isMonologuePresented = true
-        case .activateDialog:
+        case .activateDialog(let withNextPhase):
             state.isItemCollecting = false
             state.isMonologuePresented = false
             state.isDialogPresented = true
-        case .activateMonologue:
+            if withNextPhase {
+                state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
+            }
+        case .activateMonologue(let withNextPhase):
             state.isDialogPresented = false
             state.isItemCollecting = false
             state.isMonologuePresented = true
+            if withNextPhase {
+                state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
+            }
         case .activateItemCollecting:
             state.isDialogPresented = false
             state.isMonologuePresented = false

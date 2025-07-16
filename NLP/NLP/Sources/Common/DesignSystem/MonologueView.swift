@@ -42,7 +42,6 @@ struct MonologueView<T: MonologuePhase>: View {
                             ForEach(actions[phase] ?? [], id: \.self) { action in
                                 GameButton(buttonText: action.monologue) {
                                     action.action()
-                                    phase = phase.nextPhase ?? .lastPhase
                                 }
                             }
                         }

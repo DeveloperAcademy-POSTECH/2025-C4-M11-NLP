@@ -42,10 +42,10 @@ struct StageTwoView: View {
                     isPresented: $viewModel.state.isItemCollecting,
                     item: GameItems.pdaOfJain,
                     backButtonTapAction: {
-                        viewModel.action(.activateMonologue)
+                        viewModel.action(.activateMonologue(withNextPhase: true))
                     },
                     nextButtonTapAction: {
-                        viewModel.action(.activateMonologue)
+                        viewModel.action(.activateMonologue(withNextPhase: true))
                     }
                 )
             }
@@ -60,7 +60,7 @@ struct StageTwoView: View {
                     if dialogManager.currentPartner == .robot
                         && (newValue.count == 5 || newValue.count == 10) {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            viewModel.action(.activateMonologue)
+                            viewModel.action(.activateMonologue(withNextPhase: true))
                         }
                     }
                 }
@@ -78,7 +78,7 @@ struct StageTwoView: View {
                     monologue: "대화하기",
                     action: {
                         // viewModel.action(.changeDialogPartner(.bot)) // TODO: 액션 추가
-                         viewModel.action(.activateDialog)
+                         viewModel.action(.activateDialog(withNextPhase: true))
                     }
                 ),
             ],
@@ -86,7 +86,21 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "대화하기",
                     action: {
-                        viewModel.action(.activateDialog)
+                        viewModel.action(.activateDialog(withNextPhase: true))
+                    }
+                )
+            ],
+            .giveOrTalkChoice: [
+                MonologueAction(
+                    monologue: "손전등 주기",
+                    action: {
+                        viewModel.action(.goToNextPhase)
+                    }
+                ),
+                MonologueAction(
+                    monologue: "대화하기",
+                    action: {
+                        viewModel.action(.activateDialog(withNextPhase: false))
                     }
                 )
             ],
