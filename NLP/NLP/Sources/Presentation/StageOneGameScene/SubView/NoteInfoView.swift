@@ -18,7 +18,7 @@ var body: some View {
         Rectangle()
             .fill(.black.opacity(0.9))
             .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.3)
-            .border(Color.yellow, width: 7)
+            .border(Color.green, width: 7)
             .overlay(
                 Image("Note")
                     .resizable()
@@ -27,9 +27,13 @@ var body: some View {
         Spacer()
         Text("핀의 코딩 수첩\n")
             .font(NLPFont.gameItemName)
+            .foregroundStyle(Color.white)
+
         
         Text("장비들을 관리하기 위한 \n명령어들이 담겨있는 코딩 수첨.\n\n잘 활용하면 오래된 컴퓨터에\n접근이 가능해진다.")
             .font(NLPFont.gameItemDescription)
+            .foregroundStyle(Color.white)
+
         Spacer()
 
         }
@@ -37,7 +41,7 @@ var body: some View {
 }
 
 
-//
-//#Preview{
-//    noteInfo(isPresented: .constant(true))
-//}
+
+#Preview{
+    NoteInfoView()
+}
