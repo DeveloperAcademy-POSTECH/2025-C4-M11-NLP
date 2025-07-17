@@ -43,27 +43,61 @@ struct StageOneGameView: View {
             
             
             
-            // TODO: 손전등 발견 화면 구현
-            LightInfo()
-                .opacity(viewModel.state.isFlashlightFoundPresented ? 1 : 0)
-                .animation(.spring(duration: 0.5), value: viewModel.state.isFlashlightFoundPresented)
-                .onTapGesture {
-                    scene.hideFlashlight()
-                    viewModel.action(.hideFlashlightFoundPresented)
-                    scene.changeLightMode(lightMode: .turnOnFlashlight)
-                    viewModel.state.stageOnePhase = .findFlashlight
-                    viewModel.action(.showDialog)
-                }
+            if viewModel.state.isNoteFoundPresented {
+                ItemCollectionView(
+                    isPresented: $viewModel.state.isNoteFoundPresented,
+                    item: GameItems.note,  // ⭐ 직접 참조
+                    backButtonTapAction: {
+                        viewModel.action(.hideNoteFoundPresented)
+                    },
+                    nextButtonTapAction: {
+                        viewModel.action(.showDialog)
+                    
+                    }
+                )
+            }
             
-            NoteInfoView()
-                .opacity(viewModel.state.isNoteFoundPresented ? 1 : 0)
-                .animation(.spring(duration: 0.5), value: viewModel.state.isNoteFoundPresented)
-                .onTapGesture {
-                    scene.hideNote()
-                    viewModel.action(.hideNoteFoundPresented)
-                    viewModel.state.stageOnePhase = .findNote
-                    viewModel.action(.showDialog)
-                }
+            if viewModel.state.isFlashlightFoundPresented {
+                ItemCollectionView(
+                    isPresented: $viewModel.state.isFlashlightFoundPresented,
+                    item: GameItems.flashLight,  // ⭐ 직접 참조
+                    backButtonTapAction: {
+                        viewModel.action(.hideFlashlightFoundPresented)
+                    },
+                    nextButtonTapAction: {
+                        viewModel.action(.showDialog)
+                    
+                    }
+                )
+            }
+            
+            
+            
+            
+            
+            
+            
+//            // TODO: 손전등 발견 화면 구현
+//            LightInfo()
+//                .opacity(viewModel.state.isFlashlightFoundPresented ? 1 : 0)
+//                .animation(.spring(duration: 0.5), value: viewModel.state.isFlashlightFoundPresented)
+//                .onTapGesture {
+//                    scene.hideFlashlight()
+//                    viewModel.action(.hideFlashlightFoundPresented)
+//                    scene.changeLightMode(lightMode: .turnOnFlashlight)
+//                    viewModel.state.stageOnePhase = .findFlashlight
+//                    viewModel.action(.showDialog)
+//                }
+//            
+//            NoteInfoView()
+//                .opacity(viewModel.state.isNoteFoundPresented ? 1 : 0)
+//                .animation(.spring(duration: 0.5), value: viewModel.state.isNoteFoundPresented)
+//                .onTapGesture {
+//                    scene.hideNote()
+//                    viewModel.action(.hideNoteFoundPresented)
+//                    viewModel.state.stageOnePhase = .findNote
+//                    viewModel.action(.showDialog)
+//                }
             
         }
         .onAppear {
@@ -125,12 +159,12 @@ struct StageOneGameView: View {
         ]
     }
 }
-
-
-
-#Preview {
-    @Previewable @StateObject var dialogManager = DialogManager()
-    let coordinator = Coordinator()
-    coordinator.push(.stageOneScene)
-    return StageOneGameView(coordinator: coordinator, dialogManager: dialogManager)
-}
+//
+//
+//
+//#Preview {
+//    @Previewable @StateObject var dialogManager = DialogManager()
+//    let coordinator = Coordinator()
+//    coordinator.push(.stageOneScene)
+//    return StageOneGameView(coordinator: coordinator, dialogManager: dialogManager)
+//}
