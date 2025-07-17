@@ -35,7 +35,7 @@ struct StreamingText: View {
     
     var body: some View {
         Text(String(currentText + "_"))
-            .font(NLPFont.chapterDescription)
+            .font(NLPFont.body)
             .onAppear {
                 startTimer()
             }
