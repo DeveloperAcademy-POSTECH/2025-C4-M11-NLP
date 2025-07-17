@@ -18,12 +18,7 @@ struct StageTwoView: View {
         self.dialogManager = dialogManager
     }
     
-    var scene: SKScene {
-        let scene = StageTwoScene(fileNamed: "StageTwoScene")!
-        scene.viewModel = viewModel
-        scene.scaleMode = .aspectFill
-        return scene
-    }
+    @State var scene: StageTwoGameScene = StageTwoGameScene(fileNamed: "StageTwoGameScene")!
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -42,10 +37,10 @@ struct StageTwoView: View {
                     isPresented: $viewModel.state.isItemCollecting,
                     item: GameItems.pdaOfJain,
                     backButtonTapAction: {
-                        viewModel.action(.activateMonologue)
+                        viewModel.action(.activateMonologue(withNextPhase: true))
                     },
                     nextButtonTapAction: {
-                        viewModel.action(.activateMonologue)
+                        viewModel.action(.activateMonologue(withNextPhase: true))
                     }
                 )
             }
@@ -60,15 +55,22 @@ struct StageTwoView: View {
                     if dialogManager.currentPartner == .robot
                         && (newValue.count == 5 || newValue.count == 10) {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            viewModel.action(.activateMonologue)
+                            viewModel.action(.activateMonologue(withNextPhase: true))
                         }
                     }
                 }
             }
         }
+        .allowsHitTesting(!viewModel.state.isTouchDisabled)
         .onAppear {
+            initScene()
             dialogManager.initConversation(dialogPartner: .robot)
         }
+    }
+    
+    private func initScene() {
+        scene.viewModel = viewModel
+        scene.scaleMode = .aspectFill
     }
     
     private func configureMonologueActions() -> [StageTwoMonologuePhase: [MonologueAction]] {
@@ -78,7 +80,7 @@ struct StageTwoView: View {
                     monologue: "대화하기",
                     action: {
                         // viewModel.action(.changeDialogPartner(.bot)) // TODO: 액션 추가
-                         viewModel.action(.activateDialog)
+                         viewModel.action(.activateDialog(withNextPhase: true))
                     }
                 ),
             ],
@@ -86,7 +88,35 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "대화하기",
                     action: {
-                        viewModel.action(.activateDialog)
+                        viewModel.action(.activateDialog(withNextPhase: true))
+                    }
+                )
+            ],
+            .giveOrTalkChoice: [
+                MonologueAction(
+                    monologue: "손전등 주기",
+                    action: {
+                        viewModel.action(.goToNextPhase)
+                    }
+                ),
+                MonologueAction(
+                    monologue: "대화하기",
+                    action: {
+                        viewModel.action(.activateDialog(withNextPhase: false))
+                    }
+                )
+            ],
+            .unexpectedBotReaction: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        Task {
+                            viewModel.action(.deactivateMonologue)
+                            viewModel.action(.disableTouch)
+                            await scene.robotBringPda()
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                            viewModel.action(.activateTouch)
+                        }
                     }
                 )
             ],
@@ -94,7 +124,19 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "확인하기",
                     action: {
-                        viewModel.action(.activateItemCollecting)
+                        Task {
+                            await scene.setPdaTransparent()
+                            await scene.setRobotHappy()
+                            viewModel.action(.activateItemCollecting)
+                        }
+                    }
+                )
+            ],
+            .botBehaviorShiftNoticed: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        
                     }
                 )
             ]
