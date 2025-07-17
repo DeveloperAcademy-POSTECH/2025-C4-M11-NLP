@@ -20,7 +20,6 @@ struct StageOneGameView: View {
     
     @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
 
-    
     var body: some View {
         ZStack(alignment: .bottom) {
             SpriteView(scene: scene)
@@ -101,11 +100,7 @@ struct StageOneGameView: View {
             
         }
         .onAppear {
-            
             initializeScene()
-            
-            
-            scene.changeLightMode(lightMode: .noLight)
             dialogManager.initConversation(dialogPartner: .computer)
         }
     }
