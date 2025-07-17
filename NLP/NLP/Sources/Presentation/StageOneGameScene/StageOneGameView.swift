@@ -56,8 +56,6 @@ struct StageOneGameView: View {
                 }
             
             NoteInfoView()
-                .frame(width: 200, height: 200)
-                .background(Color.blue)
                 .opacity(viewModel.state.isNoteFoundPresented ? 1 : 0)
                 .animation(.spring(duration: 0.5), value: viewModel.state.isNoteFoundPresented)
                 .onTapGesture {
