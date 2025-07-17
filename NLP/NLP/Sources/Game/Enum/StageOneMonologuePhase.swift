@@ -14,6 +14,10 @@ enum StageOneMonologuePhase: MonologuePhase {
     case wrongPassword
     case decreaseOxygen
     case startFinding
+    case findNote
+    case firstDialog
+    case afterFirstDialog
+    
     
     // TODO: 비밀번호로 문 여는 것까지 구현 시 수정
     static let lastPhase: Self = .startFinding
@@ -34,7 +38,14 @@ enum StageOneMonologuePhase: MonologuePhase {
             return "크헉... 숨은 또 왜...\n산소가 거의 남지 않았구나.\n\n어떻게든 비밀번호를 찾아야 산소 발생기를 켤 수 있어..."
         case .startFinding:
             return "그래, 근처에 단서가 될만한 무언가가 있을거야.\n\n일단 주위를 둘러보자."
+        case .findNote:
+            return "앗? 뭔가 여기 있는데?. \n\n 수첩인가? 이거 핀이 쓰던 것 같은데... 열어보자."
+        case .firstDialog:
+            return "핀이 쓰던 컴퓨터다! 조종실에서 종종 만지는 걸 봤어. \n\n 여기에 뭔가 힌트가 있지 않을까?"
+        case .afterFirstDialog:
+            return "이 컴퓨터는 도대체 어떻게 쓰는거야... 아무것도 못 알아듣네. ㅠ \n\n 주변을 좀 더 찾아보자."
         }
+        
     }
     
     var buttonTexts: [String] {
@@ -43,7 +54,7 @@ enum StageOneMonologuePhase: MonologuePhase {
             return ["이동하기"]
         case .goToCenteralControlRoom:
             return ["이전", "이동하기"]
-        case .stageArrived, .findFlashlight, .lockedDoor, .wrongPassword, .decreaseOxygen:
+        case .stageArrived, .findFlashlight, .lockedDoor, .wrongPassword, .decreaseOxygen, .findNote, .firstDialog, .afterFirstDialog:
             return ["다음"]
         default:
             return ["이전", "다음"]
@@ -66,41 +77,53 @@ enum StageOneMonologuePhase: MonologuePhase {
             return .wrongPassword
         case .startFinding:
             return .decreaseOxygen
-        }
-    }
-    
-    var nextPhase: Self? {
-        switch self {
-        case .stageArrived:
-            return .findFlashlight
-        case .findFlashlight:
-            return .goToCenteralControlRoom
-        case .goToCenteralControlRoom:
-            return .lockedDoor
-        case .lockedDoor:
-            return .wrongPassword
-        case .wrongPassword:
-            return .decreaseOxygen
-        case .decreaseOxygen:
+        case .findNote:
+            return .afterFirstDialog
+        case .firstDialog:
             return .startFinding
-        case .startFinding:
-            return nil
+        case .afterFirstDialog:
+            return .firstDialog
         }
     }
-    
-    var isFirstButtonActionEnabled: Bool {
-        switch self {
-        default:
-            return false
+        var nextPhase: Self? {
+            switch self {
+            case .stageArrived:
+                return .findFlashlight
+            case .findFlashlight:
+                return .goToCenteralControlRoom
+            case .goToCenteralControlRoom:
+                return .lockedDoor
+            case .lockedDoor:
+                return .wrongPassword
+            case .wrongPassword:
+                return .decreaseOxygen
+            case .decreaseOxygen:
+                return .startFinding
+            case .startFinding:
+                return .firstDialog
+            case .firstDialog:
+                return .afterFirstDialog
+            case .afterFirstDialog:
+                return .findNote
+            case .findNote:
+                return nil
+            }
+        }
+        
+        var isFirstButtonActionEnabled: Bool {
+            switch self {
+            default:
+                return false
+            }
+        }
+        
+        var isSecondButtonActionEnabled: Bool {
+            switch self {
+            case .stageArrived, .goToCenteralControlRoom, .lockedDoor, .startFinding:
+                return true
+            default:
+                return false
+            }
         }
     }
-    
-    var isSecondButtonActionEnabled: Bool {
-        switch self {
-        case .stageArrived, .goToCenteralControlRoom, .lockedDoor, .startFinding:
-            return true
-        default:
-            return false
-        }
-    }
-}
+

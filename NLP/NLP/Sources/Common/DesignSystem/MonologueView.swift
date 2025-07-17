@@ -17,7 +17,7 @@ struct MonologueView<T: MonologuePhase>: View {
             VStack {
                 HStack {
                     StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03)
-                        .font(NLPFont.chapterDescription)
+                        .font(NLPFont.body)
                         .foregroundStyle(.white)
                     Spacer()
                 }
@@ -31,7 +31,7 @@ struct MonologueView<T: MonologuePhase>: View {
                             phase = phase.nextPhase ?? .lastPhase
                         }) {
                             Text("다음 >")
-                                .font(NLPFont.chapterTitle)
+                                .font(NLPFont.body)
                                 .foregroundStyle(.white)
                         }
                     }
