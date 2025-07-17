@@ -65,7 +65,7 @@ struct GameButton: View {
             /** 버튼의 시각적 UI입니다. */
             VStack(spacing: 2) {
                 Text("> \(buttonText)")
-                    .font(NLPFont.gameButton)
+                    .font(NLPFont.body)
                     .foregroundStyle(.white)
                     .padding(.bottom, 2)
                     .background(
