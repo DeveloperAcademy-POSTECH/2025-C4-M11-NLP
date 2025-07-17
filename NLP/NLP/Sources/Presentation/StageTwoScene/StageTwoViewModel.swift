@@ -27,6 +27,7 @@ final class StageTwoViewModel: ViewModelable {
         case goToNextPhase
         
         case disableTouch
+        case activateTouch
     }
     
     @Published var state: State = .init()
@@ -68,6 +69,8 @@ final class StageTwoViewModel: ViewModelable {
             state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
         case .disableTouch:
             state.isTouchDisabled = true
+        case .activateTouch:
+            state.isTouchDisabled = false
         }
     }
 }

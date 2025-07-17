@@ -18,7 +18,7 @@ struct StageTwoView: View {
         self.dialogManager = dialogManager
     }
     
-    @State var scene: StageTwoScene = StageTwoScene(fileNamed: "StageTwoScene")!
+    @State var scene: StageTwoGameScene = StageTwoGameScene(fileNamed: "StageTwoGameScene")!
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -115,6 +115,7 @@ struct StageTwoView: View {
                             viewModel.action(.disableTouch)
                             await scene.robotBringPda()
                             viewModel.action(.activateMonologue(withNextPhase: true))
+                            viewModel.action(.activateTouch)
                         }
                     }
                 )
@@ -128,6 +129,14 @@ struct StageTwoView: View {
                             await scene.setRobotHappy()
                             viewModel.action(.activateItemCollecting)
                         }
+                    }
+                )
+            ],
+            .botBehaviorShiftNoticed: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        
                     }
                 )
             ]
