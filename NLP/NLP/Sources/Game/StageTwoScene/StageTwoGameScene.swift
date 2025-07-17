@@ -7,7 +7,7 @@
 
 import SpriteKit
 
-class StageTwoScene: GameScene {
+class StageTwoGameScene: GameScene {
     var robot: RobotSprite?
     var originalRobotPosition: CGPoint?
     var pda: PDASprite?
@@ -30,7 +30,7 @@ class StageTwoScene: GameScene {
     }
 }
 
-extension StageTwoScene {
+extension StageTwoGameScene {
     func robotBringPda() async {
         guard let pda = pda, let robot = robot, let player = player, let originalRobotPosition = originalRobotPosition else { return }
         /// 로봇이 pda를 가지러 이동
@@ -44,10 +44,13 @@ extension StageTwoScene {
     }
     
     func setPdaTransparent() async {
-        guard let pda = pda else { return }
+        guard let pda = pda, let player = player else { return }
         
-        var transparent = SKAction.fadeAlpha(to: 0.0, duration: 2)
-        await pda.run(transparent)
+        let move = SKAction.move(to: player.position, duration: 1)
+        let transparent = SKAction.fadeAlpha(to: 0.0, duration: 1)
+        let group = SKAction.group([move, transparent])
+        
+        await pda.run(group)
     }
     
     func setRobotHappy() async {
@@ -56,7 +59,7 @@ extension StageTwoScene {
     }
 }
 
-extension StageTwoScene: SKPhysicsContactDelegate {
+extension StageTwoGameScene: SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         let nodeA = contact.bodyA.node
         let nodeB = contact.bodyB.node
