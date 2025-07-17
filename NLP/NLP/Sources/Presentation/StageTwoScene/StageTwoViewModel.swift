@@ -13,14 +13,20 @@ final class StageTwoViewModel: ViewModelable {
         var isItemCollecting: Bool = false
         var isDialogPresented: Bool = false
         var stageTwoPhase: StageTwoMonologuePhase = .stageArrived
+        
+        var isTouchDisabled: Bool = false
     }
     
     enum Action {
         case robotEncountered
         case activateDialog(withNextPhase: Bool)
         case activateMonologue(withNextPhase: Bool)
+        case deactivateDialog
+        case deactivateMonologue
         case activateItemCollecting
         case goToNextPhase
+        
+        case disableTouch
     }
     
     @Published var state: State = .init()
@@ -48,12 +54,20 @@ final class StageTwoViewModel: ViewModelable {
             if withNextPhase {
                 state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
             }
+        case .deactivateDialog:
+            state.isDialogPresented = false
+            
+        case .deactivateMonologue:
+            state.isMonologuePresented = false
+            
         case .activateItemCollecting:
             state.isDialogPresented = false
             state.isMonologuePresented = false
             state.isItemCollecting = true
         case .goToNextPhase:
             state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
+        case .disableTouch:
+            state.isTouchDisabled = true
         }
     }
 }

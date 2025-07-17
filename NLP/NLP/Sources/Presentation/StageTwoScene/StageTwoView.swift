@@ -18,12 +18,7 @@ struct StageTwoView: View {
         self.dialogManager = dialogManager
     }
     
-    var scene: SKScene {
-        let scene = StageTwoScene(fileNamed: "StageTwoScene")!
-        scene.viewModel = viewModel
-        scene.scaleMode = .aspectFill
-        return scene
-    }
+    @State var scene: StageTwoScene = StageTwoScene(fileNamed: "StageTwoScene")!
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -66,9 +61,16 @@ struct StageTwoView: View {
                 }
             }
         }
+        .allowsHitTesting(!viewModel.state.isTouchDisabled)
         .onAppear {
+            initScene()
             dialogManager.initConversation(dialogPartner: .robot)
         }
+    }
+    
+    private func initScene() {
+        scene.viewModel = viewModel
+        scene.scaleMode = .aspectFill
     }
     
     private func configureMonologueActions() -> [StageTwoMonologuePhase: [MonologueAction]] {
@@ -104,11 +106,28 @@ struct StageTwoView: View {
                     }
                 )
             ],
+            .unexpectedBotReaction: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        Task {
+                            viewModel.action(.deactivateMonologue)
+                            viewModel.action(.disableTouch)
+                            await scene.robotBringPda()
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
             .unexpectedAffectionMoment: [
                 MonologueAction(
                     monologue: "확인하기",
                     action: {
-                        viewModel.action(.activateItemCollecting)
+                        Task {
+                            await scene.setPdaTransparent()
+                            await scene.setRobotHappy()
+                            viewModel.action(.activateItemCollecting)
+                        }
                     }
                 )
             ]
