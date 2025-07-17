@@ -26,12 +26,12 @@ var body: some View {
             )
         Spacer()
         Text("핀의 코딩 수첩\n")
-            .font(NLPFont.gameItemName)
+            .font(NLPFont.body)
             .foregroundStyle(Color.white)
 
         
         Text("장비들을 관리하기 위한 \n명령어들이 담겨있는 코딩 수첨.\n\n잘 활용하면 오래된 컴퓨터에\n접근이 가능해진다.")
-            .font(NLPFont.gameItemDescription)
+            .font(NLPFont.body)
             .foregroundStyle(Color.white)
 
         Spacer()
