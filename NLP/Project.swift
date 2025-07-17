@@ -22,13 +22,9 @@ let project = Project(
                         "UIInterfaceOrientationPortrait",
                     ],
                     "UIAppFonts": [
-                        "DOSGothic.ttf",
-                        "DOSIyagiBoldface.ttf",
-                        "DOSMyungjo.ttf",
-                        "DOSPilgi.ttf",
-                        "DOSSaemmul.ttf",
-                        "MiraeroNormal.ttf",
-                        "Sam3KRFont.ttf"
+                        "Galmuri9.ttf",
+                        "Galmuri11.ttf",
+                        "Galmuri11-Bold.ttf",
                     ]
                 ]
             ),
