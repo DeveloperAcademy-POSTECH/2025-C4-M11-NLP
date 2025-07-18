@@ -14,49 +14,49 @@ struct MonologueView<T: MonologuePhase>: View {
         VStack {
             Rectangle()
                 .fill(.black.opacity(0.1))
-            VStack {
-                HStack {
+            
+                VStack(alignment: .leading) {
                     StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03)
-                        .font(NLPFont.chapterDescription)
+                        .font(NLPFont.body)
                         .foregroundStyle(.white)
                     Spacer()
-                }
-                
-                Spacer()
-                
-                if actions[phase] == nil {
+                    
                     HStack {
                         Spacer()
-                        Button(action: {
-                            phase = phase.nextPhase ?? .lastPhase
-                        }) {
-                            Text("다음 >")
-                                .font(NLPFont.chapterTitle)
-                                .foregroundStyle(.white)
-                        }
-                    }
-                }
-                else {
-                    HStack {
-                        VStack(spacing: 5) {
-                            ForEach(actions[phase] ?? [], id: \.self) { action in
-                                GameButton(buttonText: action.monologue) {
-                                    action.action()
-                                }
+                        if actions[phase] == nil {
+                            Button(action: {
+                                phase = phase.nextPhase ?? .lastPhase
+                            }) {
+                                Text("다음 >")
+                                    .font(NLPFont.body)
+                                    .foregroundStyle(.white)
                             }
                         }
-                        Spacer()
+                        // 조건 분기: 선택지 없을 때
+                        else{
+                            // 조건 분기: 선택지 있을 때
+                            VStack(alignment: .trailing,spacing: 26){
+                                // 선택지 버튼 반복
+                                ForEach(actions[phase] ?? [], id: \.self) { action in
+                                    GameButton(buttonText: action.monologue) {
+                                        action.action()
+                                    }
+                                }
+                                
+                            }
+                        }
                     }
                 }
-                Spacer().frame(height: 35)
-            }
+                .padding(.bottom,45)
+
             .padding(.all, 15)
             .background(
                 Rectangle()
                     .fill(.gray.opacity(0.5))
             )
-            .frame(width: ConstantScreenSize.screenWidth, height: 280)
+            .frame(width: ConstantScreenSize.screenWidth, height: ConstantScreenSize.screenHeight*0.35)
         }
         .ignoresSafeArea()
     }
 }
+

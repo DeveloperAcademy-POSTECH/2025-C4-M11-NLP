@@ -46,11 +46,11 @@ struct DialogView: View {
                                 ForEach(dialogManager.conversationLogs[partner] ?? [], id: \.self) { dialog in
                                     if (dialog.sender == .user){
                                         Text(dialog.content)
-                                            .font(NLPFont.chapterDescription)
+                                            .font(NLPFont.body)
                                             .foregroundStyle(.white)
                                     } else {
                                         StreamingText(fullDialog:dialog.content, streamingSpeed: 0.05)
-                                            .font(NLPFont.chapterDescription)
+                                            .font(NLPFont.body)
                                             .foregroundStyle(.white)
                                     }
                                 }
@@ -71,7 +71,7 @@ struct DialogView: View {
             
             HStack {
                 TextField("", text: $inputText)
-                    .font(NLPFont.chapterDescription)
+                    .font(NLPFont.body)
                     .padding(.horizontal, 12)
                     .frame(height: 50)
                     .background(Color.black)

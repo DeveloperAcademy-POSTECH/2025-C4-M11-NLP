@@ -41,12 +41,12 @@ struct ItemCollectionView: View {
                 .padding(.bottom, 30)
             
             Text(item.itemName)
-                .font(NLPFont.gameItemName)
+                .font(NLPFont.body)
                 .foregroundStyle(.white)
                 .padding(.bottom, 30)
             
             Text(item.itemDescription)
-                .font(NLPFont.gameItemDescription)
+                .font(NLPFont.body)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.leading)
                 .padding(.horizontal, 30)

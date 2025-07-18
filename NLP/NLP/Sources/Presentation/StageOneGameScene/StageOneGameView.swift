@@ -20,7 +20,6 @@ struct StageOneGameView: View {
     
     @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
 
-    
     var body: some View {
         ZStack(alignment: .bottom) {
             SpriteView(scene: scene)
@@ -41,26 +40,56 @@ struct StageOneGameView: View {
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
-            // TODO: 손전등 발견 화면 구현
-            Rectangle()
-                .frame(width: 200, height: 200)
-                .background(Color.blue)
-                .opacity(viewModel.state.isFlashlightFoundPresented ? 1 : 0)
-                .animation(.spring(duration: 0.5), value: viewModel.state.isFlashlightFoundPresented)
-                .onTapGesture {
-                    scene.hideFlashlight()
-                    viewModel.action(.hideFlashlightFoundPresented)
-                    scene.changeLightMode(lightMode: .turnOnFlashlight)
-                    viewModel.state.stageOnePhase = .findFlashlight
-                    viewModel.action(.showDialog)
-                }
+            if viewModel.state.isPasswordViewPresented {
+                PasswordView(
+                    backButtonTapAction: {
+                        viewModel.action(.hidePasswordView)
+                    },
+                    successAction: {
+                        viewModel.action(.hidePasswordView)
+                        // TODO: Go To Stage 2
+                    },
+                    failureAction: {
+                        viewModel.action(.hidePasswordView)
+                        viewModel.state.stageOnePhase = .wrongPassword
+                        viewModel.action(.showDialog)
+                    }
+                )
+            }
+            
+            if viewModel.state.isNoteFoundPresented {
+                ItemCollectionView(
+                    isPresented: $viewModel.state.isNoteFoundPresented,
+                    item: GameItems.note,  // ⭐ 직접 참조
+                    backButtonTapAction: {
+                        viewModel.action(.hideNoteFoundPresented)
+                    },
+                    nextButtonTapAction: {
+                        viewModel.action(.hideNoteFoundPresented)
+                        viewModel.action(.showDialog)
+                    }
+                )
+            }
+            
+            if viewModel.state.isFlashlightFoundPresented {
+                ItemCollectionView(
+                    isPresented: $viewModel.state.isFlashlightFoundPresented,
+                    item: GameItems.flashLight,  // ⭐ 직접 참조
+                    backButtonTapAction: {
+                        viewModel.action(.hideFlashlightFoundPresented)
+                    },
+                    nextButtonTapAction: {
+                        scene.hideFlashlight()
+                        viewModel.action(.hideFlashlightFoundPresented)
+                        scene.changeLightMode(lightMode: .turnOnFlashlight)
+                        viewModel.state.stageOnePhase = .findFlashlight
+                        viewModel.action(.showDialog)
+                    }
+                )
+            }
         }
         .onAppear {
-            
             initializeScene()
-            
-            
-            scene.changeLightMode(lightMode: .noLight)
             dialogManager.initConversation(dialogPartner: .computer)
         }
     }
@@ -97,9 +126,9 @@ struct StageOneGameView: View {
                     monologue: "비밀번호 입력하기",
                     action: {
                         viewModel.action(.hideDialog)
-                        // TODO: 비밀번호 입력 창
-                        viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
-                        viewModel.action(.showDialog)
+                        viewModel.action(.showPasswordView)
+//                        viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
+//                        viewModel.action(.showDialog)
                     }
                 )
             ],
@@ -114,12 +143,12 @@ struct StageOneGameView: View {
         ]
     }
 }
-
-
-
-#Preview {
-    @Previewable @StateObject var dialogManager = DialogManager()
-    let coordinator = Coordinator()
-    coordinator.push(.stageOneScene)
-    return StageOneGameView(coordinator: coordinator, dialogManager: dialogManager)
-}
+//
+//
+//
+//#Preview {
+//    @Previewable @StateObject var dialogManager = DialogManager()
+//    let coordinator = Coordinator()
+//    coordinator.push(.stageOneScene)
+//    return StageOneGameView(coordinator: coordinator, dialogManager: dialogManager)
+//}

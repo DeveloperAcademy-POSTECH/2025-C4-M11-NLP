@@ -12,6 +12,8 @@ class StageOneGameScene: GameScene {
     var box: BoxSprite?
     var computer: ChapOneComputerSprite?
     var flashlight: FlashlightSprite?
+    var note: NoteSprite?
+    var doorLock: DoorLockSprite?
     var noLight: NoLightSprite?
     var turnOnFlashlight: TurnOnFlashlightSprite?
     weak var viewModel: StageOneGameViewModel?
@@ -39,14 +41,26 @@ class StageOneGameScene: GameScene {
                 self.flashlight = flashlight
             }
             
+            if let note = child as? NoteSprite {
+                note.configurePhysics()
+                self.note = note
+            }
+            
+            if let doorLock = child as? DoorLockSprite {
+                doorLock.configurePhysics()
+                self.doorLock = doorLock
+            }
+            
             if let player = child as? PlayerSprite {
                 for child in player.children {
                     if let noLight = child as? NoLightSprite {
                         self.noLight = noLight
+                        self.noLight?.alpha = 1
                     }
                     
                     if let turnOnFlashlight = child as? TurnOnFlashlightSprite {
                         self.turnOnFlashlight = turnOnFlashlight
+                        self.turnOnFlashlight?.alpha = 0
                     }
                 }
             }
@@ -101,6 +115,14 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.action(.showFlashlightFoundPresented)
         } else if let _ = nodeA as? FlashlightSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.showFlashlightFoundPresented)
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? NoteSprite {
+            viewModel?.action(.showNoteFoundPresented)
+        } else if let _ = nodeA as? NoteSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.action(.showNoteFoundPresented)
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? DoorLockSprite {
+            viewModel?.action(.showPasswordView)
+        } else if let _ = nodeA as? DoorLockSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.action(.showPasswordView)
         }
     }
     
@@ -160,56 +182,33 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         let group = SKAction.group([moveAction, scaleAction])
         camera.run(group)
     }
-    
-    func flashlightInteractionStart() {
-        isJoystickTouchActive = false
-    }
-    
-    func flashlightInteractionEnd() {
-        guard let flashlight else { return }
-        
-        isJoystickTouchActive = true
-        
-        flashlight.removeFromParent()
-    }
+
     
     func changeLightMode(lightMode: LightMode) {
         guard let noLight, let turnOnFlashlight else { return }
         switch lightMode {
         case .noLight:
-//            setNodeVisibility(noLight, visibility: true)
-//            setNodeVisibility(turnOnFlashlight, visibility: false)
             noLight.alpha = 1
             turnOnFlashlight.alpha = 0
         case .turnOnFlashlight:
-//            setNodeVisibility(noLight, visibility: false)
-//            setNodeVisibility(turnOnFlashlight, visibility: true)
             noLight.alpha = 0
             turnOnFlashlight.alpha = 1
         case .lightOn:
-//            setNodeVisibility(noLight, visibility: false)
-//            setNodeVisibility(turnOnFlashlight, visibility: false)
             noLight.alpha = 0
             turnOnFlashlight.alpha = 0
         }
     }
     
-//    func showFlashlight() {
-//        guard let turnOnFlashlight, let noLight else { return }
-//        turnOnFlashlight.alpha = 1
-//        noLight.alpha = 0
-//        setNodeVisibility(noLight, visibility: false)
-//    }
-//    
-//    func showNoFlashlight() {
-//        guard let turnOnFlashlight, let noLight else { return }
-//        turnOnFlashlight.alpha = 0
-//        noLight.alpha = 1
-//    }
+
     
     func hideFlashlight() {
         guard let flashlight else { return }
         flashlight.removeFromParent()
+    }
+    
+    func hideNote() {
+        guard let note else { return }
+        note.removeFromParent()
     }
 
     func applySoftPush(from player: PlayerSprite, to box: BoxSprite) {
