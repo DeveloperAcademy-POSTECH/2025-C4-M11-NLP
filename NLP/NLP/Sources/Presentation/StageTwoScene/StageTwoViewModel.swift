@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+@MainActor
 final class StageTwoViewModel: ViewModelable {
     struct State {
+        var isTransitioning: Bool = true
         var isMonologuePresented: Bool = false
         var isItemCollecting: Bool = false
         var isDialogPresented: Bool = false
@@ -18,6 +20,7 @@ final class StageTwoViewModel: ViewModelable {
     }
     
     enum Action {
+        case transitionComplete
         case robotEncountered
         case activateDialog(withNextPhase: Bool)
         case activateMonologue(withNextPhase: Bool)
@@ -39,6 +42,11 @@ final class StageTwoViewModel: ViewModelable {
     
     func action(_ action: Action) {
         switch action {
+        case .transitionComplete:
+            withAnimation(.linear(duration: 1)) {
+                state.isTransitioning = false
+            }
+            
         case .robotEncountered:
             state.isMonologuePresented = true
         case .activateDialog(let withNextPhase):

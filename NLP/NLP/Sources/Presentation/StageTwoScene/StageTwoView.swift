@@ -61,10 +61,16 @@ struct StageTwoView: View {
                 }
             }
         }
+        .overlay(
+            Color.black
+                .opacity(viewModel.state.isTransitioning ? 1 : 0)
+        )
         .allowsHitTesting(!viewModel.state.isTouchDisabled)
         .onAppear {
             initScene()
             dialogManager.initConversation(dialogPartner: .robot)
+            
+            viewModel.action(.transitionComplete)
         }
     }
     

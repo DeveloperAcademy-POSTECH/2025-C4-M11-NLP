@@ -38,7 +38,10 @@ struct RootView: View {
                         )
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageTwoScene:
-                        EmptyView()
+                        StageTwoView(
+                            coordinator: coordinator,
+                            dialogManager: dialogManager
+                        )
                             .toolbar(.hidden, for: .navigationBar)
                     }
                 }
