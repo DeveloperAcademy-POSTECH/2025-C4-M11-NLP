@@ -14,7 +14,9 @@ struct PasswordView: View {
     @State private var isDoorOpened = false
     
     @State private var buttonTappedTrigger: Bool = false
-    @State private var passwordIncorrectTrigger: Double = 0
+    @State private var passwordIncorrectCount: Int = 0
+    
+    @Binding var result: ConstantPasswordResult?
     
     private let correctPassword: String = "0720"
     
@@ -54,7 +56,7 @@ struct PasswordView: View {
             }
         }
         .sensoryFeedback(.impact(weight: .light, intensity: 0.2), trigger: buttonTappedTrigger)
-        .sensoryFeedback(.impact(weight: .medium, intensity: 1.0), trigger: passwordIncorrectTrigger)
+        .sensoryFeedback(.impact(weight: .medium, intensity: 1.0), trigger: passwordIncorrectCount)
     }
     
     private func handleTap(for label: String) {
@@ -74,9 +76,13 @@ struct PasswordView: View {
             if inputText == correctPassword {
                 print("성공!")
                 isDoorOpened = true
+                result = .success
             } else {
                 print("실패")
                 handleFailure()
+                if passwordIncorrectCount >= 3 {
+                    result = .failure
+                }
             }
         default:
             if inputText.count >= 4 { return }
@@ -85,8 +91,8 @@ struct PasswordView: View {
     }
     
     private func handleFailure() {
-        
         self.isPasswordIncorrect = true
+        self.passwordIncorrectCount += 1
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.isPasswordIncorrect = false
@@ -96,5 +102,6 @@ struct PasswordView: View {
 }
 
 #Preview {
-    PasswordView()
+    @Previewable @State var result: ConstantPasswordResult?
+    PasswordView(result: $result)
 }

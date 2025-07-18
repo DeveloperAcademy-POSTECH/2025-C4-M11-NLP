@@ -56,8 +56,6 @@ enum StageOneMonologuePhase: MonologuePhase {
             return ["이전", "이동하기"]
         case .stageArrived, .findFlashlight, .lockedDoor, .wrongPassword, .decreaseOxygen, .findNote, .firstDialog, .afterFirstDialog:
             return ["다음"]
-        default:
-            return ["이전", "다음"]
         }
     }
     
@@ -85,45 +83,46 @@ enum StageOneMonologuePhase: MonologuePhase {
             return .firstDialog
         }
     }
-        var nextPhase: Self? {
-            switch self {
-            case .stageArrived:
-                return .findFlashlight
-            case .findFlashlight:
-                return .goToCenteralControlRoom
-            case .goToCenteralControlRoom:
-                return .lockedDoor
-            case .lockedDoor:
-                return .wrongPassword
-            case .wrongPassword:
-                return .decreaseOxygen
-            case .decreaseOxygen:
-                return .startFinding
-            case .startFinding:
-                return .firstDialog
-            case .firstDialog:
-                return .afterFirstDialog
-            case .afterFirstDialog:
-                return .findNote
-            case .findNote:
-                return nil
-            }
-        }
-        
-        var isFirstButtonActionEnabled: Bool {
-            switch self {
-            default:
-                return false
-            }
-        }
-        
-        var isSecondButtonActionEnabled: Bool {
-            switch self {
-            case .stageArrived, .goToCenteralControlRoom, .lockedDoor, .startFinding:
-                return true
-            default:
-                return false
-            }
+    
+    var nextPhase: Self? {
+        switch self {
+        case .stageArrived:
+            return .findFlashlight
+        case .findFlashlight:
+            return .goToCenteralControlRoom
+        case .goToCenteralControlRoom:
+            return .lockedDoor
+        case .lockedDoor:
+            return .wrongPassword
+        case .wrongPassword:
+            return .decreaseOxygen
+        case .decreaseOxygen:
+            return .startFinding
+        case .startFinding:
+            return .firstDialog
+        case .firstDialog:
+            return .afterFirstDialog
+        case .afterFirstDialog:
+            return .findNote
+        case .findNote:
+            return nil
         }
     }
+    
+    var isFirstButtonActionEnabled: Bool {
+        switch self {
+        default:
+            return false
+        }
+    }
+    
+    var isSecondButtonActionEnabled: Bool {
+        switch self {
+        case .stageArrived, .goToCenteralControlRoom, .lockedDoor, .startFinding:
+            return true
+        default:
+            return false
+        }
+    }
+}
 

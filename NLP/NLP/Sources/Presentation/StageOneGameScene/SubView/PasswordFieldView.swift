@@ -78,13 +78,13 @@ struct PasswordFieldView: View {
         var pwText = text
         if pwText == "door opened" {
             return Text(pwText)
-                .font(NLPFont.gameItemName)
+                .font(NLPFont.body)
                 .padding()
         }
         
         pwText += String(repeating: "*", count: 4 - text.count)
         return Text(pwText)
-            .font(NLPFont.gameItemName)
+            .font(NLPFont.body)
             .kerning(12)
             .padding()
     }
