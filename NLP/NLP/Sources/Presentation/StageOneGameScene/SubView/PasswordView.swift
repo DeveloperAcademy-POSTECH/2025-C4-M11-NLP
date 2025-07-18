@@ -127,7 +127,6 @@ struct PasswordView: View {
 }
 
 #Preview {
-    @Previewable @State var result: ConstantPasswordResult?
     PasswordView(
         backButtonTapAction: { print("back button tapped") },
         successAction: { print("success") },
