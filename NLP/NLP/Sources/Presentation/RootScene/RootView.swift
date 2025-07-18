@@ -43,6 +43,11 @@ struct RootView: View {
                             dialogManager: dialogManager
                         )
                             .toolbar(.hidden, for: .navigationBar)
+                    case .middleStoryScene(let storiesType):
+                        MiddleStoryView(
+                            coordinator: coordinator,
+                            storiesType: storiesType
+                        )
                     }
                 }
         }
