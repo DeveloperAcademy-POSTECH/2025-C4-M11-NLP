@@ -16,7 +16,9 @@ struct PasswordView: View {
     @State private var buttonTappedTrigger: Bool = false
     @State private var passwordIncorrectCount: Int = 0
     
-    @Binding var result: ConstantPasswordResult?
+    let backButtonTapAction: (() -> Void)?
+    let successAction: (() -> Void)?
+    let failureAction: (() -> Void)?
     
     private let correctPassword: String = "0720"
     
@@ -76,13 +78,11 @@ struct PasswordView: View {
             if inputText == correctPassword {
                 print("성공!")
                 isDoorOpened = true
-                result = .success
+                successAction?()
             } else {
                 print("실패")
                 handleFailure()
-                if passwordIncorrectCount >= 3 {
-                    result = .failure
-                }
+                failureAction?()
             }
         default:
             if inputText.count >= 4 { return }
@@ -103,5 +103,9 @@ struct PasswordView: View {
 
 #Preview {
     @Previewable @State var result: ConstantPasswordResult?
-    PasswordView(result: $result)
+    PasswordView(
+        backButtonTapAction: { print("back button tapped") },
+        successAction: { print("success") },
+        failureAction: { print("failure") }
+    )
 }
