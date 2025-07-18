@@ -16,7 +16,9 @@ struct PasswordView: View {
     @State private var buttonTappedTrigger: Bool = false
     @State private var passwordIncorrectCount: Int = 0
     
-    @Binding var result: ConstantPasswordResult?
+    let backButtonTapAction: (() -> Void)?
+    let successAction: (() -> Void)?
+    let failureAction: (() -> Void)?
     
     private let correctPassword: String = "0720"
     
@@ -40,7 +42,7 @@ struct PasswordView: View {
                 Spacer()
                 PasswordFieldView(inputText: isDoorOpened ? "door opened" : inputText, isPasswordIncorrect: isPasswordIncorrect)
                     .padding(.horizontal, 22)
-                
+                Spacer()
                 LazyVGrid(columns: columns, spacing: 6) {
                     ForEach(keypadLabels, id: \.self) { label in
                         let isPressed = self.pressedButtonLabel == label
@@ -52,8 +54,31 @@ struct PasswordView: View {
                     }
                 }
                 .padding(.horizontal, 46)
-                .padding(.vertical, 32)
+                HStack {
+                    Button(action: {
+                        backButtonTapAction?()
+                    }) {
+                        Text("< 이전")
+                            .font(NLPFont.body)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.vertical, 16)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(15)
+                Spacer().frame(height: 35)
             }
+//            Button(action: {
+//                backButtonTapAction?()
+//            }) {
+//                // TODO: 추후 뒤로가기 버튼 이미지 변경 예정
+//                Image("note")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .frame(width: 60)
+//            }
+//            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+//            .padding(.top, 42)
         }
         .sensoryFeedback(.impact(weight: .light, intensity: 0.2), trigger: buttonTappedTrigger)
         .sensoryFeedback(.impact(weight: .medium, intensity: 1.0), trigger: passwordIncorrectCount)
@@ -76,12 +101,12 @@ struct PasswordView: View {
             if inputText == correctPassword {
                 print("성공!")
                 isDoorOpened = true
-                result = .success
+                successAction?()
             } else {
                 print("실패")
                 handleFailure()
                 if passwordIncorrectCount >= 3 {
-                    result = .failure
+                    failureAction?()
                 }
             }
         default:
@@ -102,6 +127,9 @@ struct PasswordView: View {
 }
 
 #Preview {
-    @Previewable @State var result: ConstantPasswordResult?
-    PasswordView(result: $result)
+    PasswordView(
+        backButtonTapAction: { print("back button tapped") },
+        successAction: { print("success") },
+        failureAction: { print("failure") }
+    )
 }

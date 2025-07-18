@@ -17,7 +17,6 @@ class StageOneGameViewModel: ViewModelable {
         var isPasswordViewPresented: Bool = false
         var isNoteFoundPresented: Bool = false
         var isArrivedAtCentralControlRoomDoor: Bool = false
-        var passwordResult: ConstantPasswordResult? = nil
     }
     
     enum Action {

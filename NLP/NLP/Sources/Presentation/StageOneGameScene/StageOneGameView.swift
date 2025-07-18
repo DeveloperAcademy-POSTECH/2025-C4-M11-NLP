@@ -41,22 +41,20 @@ struct StageOneGameView: View {
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
             if viewModel.state.isPasswordViewPresented {
-                PasswordView(result: $viewModel.state.passwordResult)
-                    .onChange(of: viewModel.state.passwordResult) {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                            switch viewModel.state.passwordResult {
-                            case .success:
-                                viewModel.action(.hidePasswordView)
-                                // TODO: Go To Stage 2
-                            case .failure:
-                                viewModel.action(.hidePasswordView)
-                                viewModel.state.stageOnePhase = .wrongPassword
-                                viewModel.action(.showDialog)
-                            case .none:
-                                return
-                            }
-                        })
+                PasswordView(
+                    backButtonTapAction: {
+                        viewModel.action(.hidePasswordView)
+                    },
+                    successAction: {
+                        viewModel.action(.hidePasswordView)
+                        // TODO: Go To Stage 2
+                    },
+                    failureAction: {
+                        viewModel.action(.hidePasswordView)
+                        viewModel.state.stageOnePhase = .wrongPassword
+                        viewModel.action(.showDialog)
                     }
+                )
             }
             
             if viewModel.state.isNoteFoundPresented {
