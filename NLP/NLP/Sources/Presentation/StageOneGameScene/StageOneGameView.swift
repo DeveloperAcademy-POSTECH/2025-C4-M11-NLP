@@ -40,7 +40,24 @@ struct StageOneGameView: View {
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
-            
+            if viewModel.state.isPasswordViewPresented {
+                PasswordView(result: $viewModel.state.passwordResult)
+                    .onChange(of: viewModel.state.passwordResult) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            switch viewModel.state.passwordResult {
+                            case .success:
+                                viewModel.action(.hidePasswordView)
+                                // TODO: Go To Stage 2
+                            case .failure:
+                                viewModel.action(.hidePasswordView)
+                                viewModel.state.stageOnePhase = .wrongPassword
+                                viewModel.action(.showDialog)
+                            case .none:
+                                return
+                            }
+                        })
+                    }
+            }
             
             if viewModel.state.isNoteFoundPresented {
                 ItemCollectionView(
@@ -50,8 +67,8 @@ struct StageOneGameView: View {
                         viewModel.action(.hideNoteFoundPresented)
                     },
                     nextButtonTapAction: {
+                        viewModel.action(.hideNoteFoundPresented)
                         viewModel.action(.showDialog)
-                    
                     }
                 )
             }
@@ -64,40 +81,14 @@ struct StageOneGameView: View {
                         viewModel.action(.hideFlashlightFoundPresented)
                     },
                     nextButtonTapAction: {
+                        scene.hideFlashlight()
+                        viewModel.action(.hideFlashlightFoundPresented)
+                        scene.changeLightMode(lightMode: .turnOnFlashlight)
+                        viewModel.state.stageOnePhase = .findFlashlight
                         viewModel.action(.showDialog)
-                    
                     }
                 )
             }
-            
-            
-            
-            
-            
-            
-            
-//            // TODO: 손전등 발견 화면 구현
-//            LightInfo()
-//                .opacity(viewModel.state.isFlashlightFoundPresented ? 1 : 0)
-//                .animation(.spring(duration: 0.5), value: viewModel.state.isFlashlightFoundPresented)
-//                .onTapGesture {
-//                    scene.hideFlashlight()
-//                    viewModel.action(.hideFlashlightFoundPresented)
-//                    scene.changeLightMode(lightMode: .turnOnFlashlight)
-//                    viewModel.state.stageOnePhase = .findFlashlight
-//                    viewModel.action(.showDialog)
-//                }
-//            
-//            NoteInfoView()
-//                .opacity(viewModel.state.isNoteFoundPresented ? 1 : 0)
-//                .animation(.spring(duration: 0.5), value: viewModel.state.isNoteFoundPresented)
-//                .onTapGesture {
-//                    scene.hideNote()
-//                    viewModel.action(.hideNoteFoundPresented)
-//                    viewModel.state.stageOnePhase = .findNote
-//                    viewModel.action(.showDialog)
-//                }
-            
         }
         .onAppear {
             initializeScene()
@@ -137,9 +128,9 @@ struct StageOneGameView: View {
                     monologue: "비밀번호 입력하기",
                     action: {
                         viewModel.action(.hideDialog)
-                        // TODO: 비밀번호 입력 창
-                        viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
-                        viewModel.action(.showDialog)
+                        viewModel.action(.showPasswordView)
+//                        viewModel.state.stageOnePhase = .lockedDoor.nextPhase!
+//                        viewModel.action(.showDialog)
                     }
                 )
             ],

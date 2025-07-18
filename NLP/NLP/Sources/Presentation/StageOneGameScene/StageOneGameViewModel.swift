@@ -14,8 +14,10 @@ class StageOneGameViewModel: ViewModelable {
         var isDialogPresented: Bool = true
         var stageOnePhase: StageOneMonologuePhase = .stageArrived
         var isFlashlightFoundPresented: Bool = false
+        var isPasswordViewPresented: Bool = false
         var isNoteFoundPresented: Bool = false
         var isArrivedAtCentralControlRoomDoor: Bool = false
+        var passwordResult: ConstantPasswordResult? = nil
     }
     
     enum Action {
@@ -23,6 +25,8 @@ class StageOneGameViewModel: ViewModelable {
         case hideDialog
         case showFlashlightFoundPresented
         case hideFlashlightFoundPresented
+        case showPasswordView
+        case hidePasswordView
         case showNoteFoundPresented
         case hideNoteFoundPresented
         case arrivedAtCentralControlRoomDoor
@@ -46,6 +50,10 @@ class StageOneGameViewModel: ViewModelable {
             state.isFlashlightFoundPresented = true
         case .hideFlashlightFoundPresented:
             state.isFlashlightFoundPresented = false
+        case .showPasswordView:
+            state.isPasswordViewPresented = true
+        case .hidePasswordView:
+            state.isPasswordViewPresented = false
         case .showNoteFoundPresented:
             state.isNoteFoundPresented = true
         case .hideNoteFoundPresented:
