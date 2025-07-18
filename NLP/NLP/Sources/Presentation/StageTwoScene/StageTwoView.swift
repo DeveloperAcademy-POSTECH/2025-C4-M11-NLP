@@ -55,7 +55,7 @@ struct StageTwoView: View {
                     if dialogManager.currentPartner == .robot
                         && (newValue.count == 5 || newValue.count == 10) {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            viewModel.action(.activateMonologue(withNextPhase: true))
+                            viewModel.action(.activateMonologue(withNextPhase: false))
                         }
                     }
                 }
@@ -136,6 +136,32 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
+                        // MARK: instruction 바꿔주고,
+                        dialogManager.changeSession(
+                            dialogPartner: .robot,
+                            instruction: ConstantInstructions.sadRecognizationInstruction,
+                            tools: [
+                                // MARK: 슬픈 메세지로 분석되면 다음 하드코딩된 메세지 출력하는 tool
+                                RecognizeSadTool(recogizedAction: {
+                                    // 슬픈메세지로 분석되면 이제 기쁜 메세지로 분석될 때 특정 액션을 호출하도록 수정 (changeSession)
+                                    dialogManager.changeSession(
+                                        dialogPartner: .robot,
+                                        instruction: ConstantInstructions.happyRecognizationInstruction,
+                                        tools: [
+                                            // MARK: 기쁜 메세지로 분석되면 다음 하드코딩된 메세지 출력하는 tool
+                                            RecognizeHappyTool(recogizedAction: {
+                                                print("기쁜 메세지로 인식 완료")
+                                                // "문제해결 모드로 전환되었습니다." 메세지가 로봇 대상의 dialog 에 추가되어야 함.
+                                            })
+                                        ]
+                                    )
+                                })
+                            ]
+                        )
+                        viewModel.action(.activateDialog(withNextPhase: false))
+                        
+//                        dialogManager.changeInstruction(dialogPartner: .robot, ConstantGameDialogs.)
+//                        dialogManager.initConversation(dialogPartner: .robot)
                         
                     }
                 )

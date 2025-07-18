@@ -31,4 +31,14 @@ struct ConstantInstructions {
 
         이 역할을 유지하며 모든 대화를 진행하세요.
     """
+    
+    static let sadRecognizationInstruction: String =
+    """
+        무조건 사용자의 슬픈 듯한 텍스트 입력이 들어오길 기대하고, 유도하는 멘트를 해줘야 해.
+    """
+    
+    static let happyRecognizationInstruction: String =
+    """
+        무조건 사용자의 행복한 듯한 텍스트 입력이 들어오길 기대하고, 유도하는 멘트를 해줘야 해.
+    """
 }

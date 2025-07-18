@@ -86,14 +86,27 @@ struct DialogView: View {
                     }
                     
                 } label: {
-                    Image(systemName: "arrowshape.up.fill")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 50, height: 50)
-                        .background(Color.black)
-                        .overlay(
-                            Rectangle().stroke(Color.white, lineWidth: 3)
-                        )
+                    if dialogManager.isGenerating {
+                        Image("wait")
+                            .resizable()
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.black)
+                            .overlay(
+                                Rectangle().stroke(Color.white, lineWidth: 3)
+                            )
+                    }
+                    else {
+                        Image(systemName: "arrowshape.up.fill")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.black)
+                            .overlay(
+                                Rectangle().stroke(Color.white, lineWidth: 3)
+                            )
+                    }
                 }
             }
                 .frame(width: ConstantScreenSize.screenWidth * 0.9, height: 50)

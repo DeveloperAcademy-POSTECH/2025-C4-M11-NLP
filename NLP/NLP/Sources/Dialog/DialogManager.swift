@@ -23,9 +23,9 @@ class DialogManager: ObservableObject {
             tools: [
                 UnlockTool(rightPasswordAction: { [weak self] in
                     // MARK: computer instruction 변경(암호를 맞춘 후, 컴퓨터가 어떠한 응답을 내뱉어줄지에 대한 instruction으로) 및 세션 초기화
-                    self?.initializeSession(
-                        dialogPartner: .computer,
-                        instructions: ConstantInstructions.computerOnboarding,
+                    self?.changeSession(
+                        dialogPartner: dialogPartner,
+                        instruction: dialogPartner.instructions,
                         tools: [] // TODO: 미결정
                     )
                 })
@@ -39,25 +39,28 @@ class DialogManager: ObservableObject {
         conversationLogs[dialogPartner] = []
     }
     
-    private func initializeSession(
+    func initializeDialogLog(dialogPartner: DialogPartnerType) {
+        conversationLogs[dialogPartner] = []
+    }
+    
+    func changeSession(
         dialogPartner: DialogPartnerType,
-        instructions: String,
+        instruction: String,
         tools: [any Tool]
     ) {
         let newSession: LanguageModelSession = LanguageModelSession(
             model: .default,
-            tools: [
-                UnlockTool(rightPasswordAction: { [weak self] in
-                // MARK: computer instruction 변경(기획에 따라 추가 예정) 및 세션 초기화
-                self?.initializeSession(
-                    dialogPartner: .computer,
-                    instructions: "", tools: [] // TODO: 미결정
-                )
-            })],
-            instructions: instructions
+            tools: tools,
+            instructions: instruction
         )
         newSession.prewarm()
+        
         conversations[dialogPartner] = newSession
+        currentPartner = dialogPartner
+        
+        if conversationLogs[dialogPartner] == nil {
+            conversationLogs[dialogPartner] = []
+        }
     }
     
     func respond(
@@ -65,6 +68,7 @@ class DialogManager: ObservableObject {
         dialogPartnerType: DialogPartnerType,
         isLogged: Bool
     ) {
+        isGenerating = true
         if isLogged {
             conversationLogs[dialogPartnerType]?.append(Dialog(
                     content: userInput,
