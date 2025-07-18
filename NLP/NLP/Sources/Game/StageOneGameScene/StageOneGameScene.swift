@@ -13,6 +13,7 @@ class StageOneGameScene: GameScene {
     var computer: ChapOneComputerSprite?
     var flashlight: FlashlightSprite?
     var note: NoteSprite?
+    var doorLock: DoorLockSprite?
     var noLight: NoLightSprite?
     var turnOnFlashlight: TurnOnFlashlightSprite?
     weak var viewModel: StageOneGameViewModel?
@@ -43,6 +44,11 @@ class StageOneGameScene: GameScene {
             if let note = child as? NoteSprite {
                 note.configurePhysics()
                 self.note = note
+            }
+            
+            if let doorLock = child as? DoorLockSprite {
+                doorLock.configurePhysics()
+                self.doorLock = doorLock
             }
             
             if let player = child as? PlayerSprite {
@@ -113,6 +119,10 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.action(.showNoteFoundPresented)
         } else if let _ = nodeA as? NoteSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.showNoteFoundPresented)
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? DoorLockSprite {
+            viewModel?.action(.showPasswordView)
+        } else if let _ = nodeA as? DoorLockSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.action(.showPasswordView)
         }
     }
     
