@@ -50,7 +50,7 @@ extension JoyStick {
     }
     
     // MARK: - 조이스틱 제거
-    private func removeJoystick() {
+    func removeJoystick() {
         joystickBase?.removeFromParent()
         joystickKnob?.removeFromParent()
         joystickBase = nil

@@ -88,11 +88,13 @@ class StageOneGameScene: GameScene {
         guard let camera = self.camera else { return }
         guard let touchLocation = touches.first?.location(in: camera) else { return }
 
-        if self.joyStick.isJoyStickAvailableLocation(touchLocation) {
+        // 조이스틱이 이미 존재하는 경우에만 조이스틱 영역 체크
+        if self.joyStick.joystickBase != nil && self.joyStick.isJoyStickAvailableLocation(touchLocation) {
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         } else {
             if let gs = viewModel?.state, gs.isChatting { return }
+            // 조이스틱이 없거나 조이스틱 영역이 아닌 경우 새로운 조이스틱 생성
             self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
@@ -128,14 +130,20 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
     
     func dialogPresentStart() {
         isJoystickTouchActive = false
-        setNodeVisibility(joyStick.joystickBase, visibility: false)
-        setNodeVisibility(joyStick.joystickKnob, visibility: false)
+        // 조이스틱이 존재하는 경우에만 숨김
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: false)
+            setNodeVisibility(joyStick.joystickKnob, visibility: false)
+        }
     }
     
     func dialogPresentEnd() {
         isJoystickTouchActive = true
-        setNodeVisibility(joyStick.joystickBase, visibility: true)
-        setNodeVisibility(joyStick.joystickKnob, visibility: true)
+        // 조이스틱이 존재하는 경우에만 표시
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: true)
+            setNodeVisibility(joyStick.joystickKnob, visibility: true)
+        }
     }
     
     func moveToCenteralControlRoom(completion: @escaping () -> Void) {
@@ -157,9 +165,11 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         
         // 채팅시 플레이어와 조이스틱 가리기
         setNodeVisibility(player, visibility: false)
-        setNodeVisibility(joyStick.joystickBase, visibility: false)
-        setNodeVisibility(joyStick.joystickKnob, visibility: false)
-
+        // 조이스틱이 존재하는 경우에만 숨김
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: false)
+            setNodeVisibility(joyStick.joystickKnob, visibility: false)
+        }
 
         // 카메라 애니메이션 이동 + 확대
         let targetPosition = CGPoint(x: computer.position.x, y: computer.position.y-30)
@@ -173,8 +183,11 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         guard let player, let camera else { return }
 
         setNodeVisibility(player, visibility: true)
-        setNodeVisibility(joyStick.joystickBase, visibility: true)
-        setNodeVisibility(joyStick.joystickKnob, visibility: true)
+        // 조이스틱이 존재하는 경우에만 표시
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: true)
+            setNodeVisibility(joyStick.joystickKnob, visibility: true)
+        }
 
         // 카메라 애니메이션 복귀
         let moveAction = SKAction.move(to: player.position, duration: 0.5)
