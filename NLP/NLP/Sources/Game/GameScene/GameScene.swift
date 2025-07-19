@@ -24,10 +24,12 @@ class GameScene: SKScene {
         guard let camera = self.camera else { return }
         guard let touchLocation = touches.first?.location(in: camera) else { return }
 
-        if self.joyStick.isJoyStickAvailableLocation(touchLocation) {
+        // 조이스틱이 이미 존재하는 경우에만 조이스틱 영역 체크
+        if self.joyStick.joystickBase != nil && self.joyStick.isJoyStickAvailableLocation(touchLocation) {
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         } else {
+            // 조이스틱이 없거나 조이스틱 영역이 아닌 경우 새로운 조이스틱 생성
             self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
@@ -45,20 +47,16 @@ class GameScene: SKScene {
         self.joyStick.resetJoystick()
         isJoystickTouchActive = false
         
-        // 동적 조이스틱이었다면 기본 위치로 복원
-        if self.joyStick.isInDynamicMode() {
-            self.joyStick.restoreDefaultJoystick(camera: self.camera!)
-        }
+        // 터치가 끝나면 조이스틱 제거
+        self.joyStick.removeJoystick()
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.joyStick.resetJoystick()
         isJoystickTouchActive = false
         
-        // 동적 조이스틱이었다면 기본 위치로 복원
-        if self.joyStick.isInDynamicMode() {
-            self.joyStick.restoreDefaultJoystick(camera: self.camera!)
-        }
+        // 터치가 취소되면 조이스틱 제거
+        self.joyStick.removeJoystick()
     }
     
     // SpriteKit 내부에서 물리 엔진 충돌/힘 등을 계산할 때 호출 (플레이어의 움직임이 있을 때 등.. 카메라의 움직임을 위해 사용하면 좋음.)
@@ -101,14 +99,7 @@ class GameScene: SKScene {
                 }
             } else if let cam = child as? SKCameraNode {
                 scene?.camera = cam
-                // MARK: 카메라의 좌표를 기준으로.
-                self.joyStick.setupJoystick(
-                    camera: cam,
-                    position: CGPoint(
-                        x: self.size.width/2 - 230,
-                        y: -self.size.height/2 + 200
-                    )
-                )
+                // MARK: 기본 조이스틱 설정 제거 - 터치할 때만 생성됨
             }
         }
     }
