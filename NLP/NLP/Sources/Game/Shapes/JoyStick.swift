@@ -18,7 +18,9 @@ class JoyStick {
 
 extension JoyStick {
     func resetJoystick() {
-        self.joystickKnob.run(SKAction.move(to: self.joystickBase.position, duration: 0.1))
+        // joystickKnob이 nil인 경우 안전하게 처리
+        guard let knob = self.joystickKnob else { return }
+        knob.run(SKAction.move(to: self.joystickBase.position, duration: 0.1))
         self.joystickVector = .zero
         self.isTracking = false
     }
@@ -80,36 +82,40 @@ extension JoyStick {
     }
     
     func isJoyStickAvailableLocation(_ touchLocation: CGPoint) -> Bool {
-        return self.joystickBase.contains(touchLocation)
+        guard let base = self.joystickBase else { return false }
+        return base.contains(touchLocation)
     }
     
     func startMove(_ touchLocation: CGPoint) {
+        // 조이스틱이 존재하지 않는 경우 처리하지 않음
+        guard let knob = self.joystickKnob, let base = self.joystickBase else { return }
+        
         self.isTracking = true
-        self.joystickKnob.position = self.joystickBase.position // 초기화
-        let dx = touchLocation.x - self.joystickBase.position.x
-        let dy = touchLocation.y - self.joystickBase.position.y
+        knob.position = base.position // 초기화
+        let dx = touchLocation.x - base.position.x
+        let dy = touchLocation.y - base.position.y
         let distance = sqrt(dx * dx + dy * dy)
         let maxDistance: CGFloat = 80
 
         if distance <= maxDistance {
-            self.joystickKnob.position = CGPoint(
-                x: self.joystickBase.position.x + dx,
-                y: self.joystickBase.position.y + dy
+            knob.position = CGPoint(
+                x: base.position.x + dx,
+                y: base.position.y + dy
             )
         } else {
             let angle = atan2(dy, dx)
             let x = cos(angle) * maxDistance
             let y = sin(angle) * maxDistance
-            self.joystickKnob.position = CGPoint(
-                x: self.joystickBase.position.x + x,
-                y: self.joystickBase.position.y + y
+            knob.position = CGPoint(
+                x: base.position.x + x,
+                y: base.position.y + y
             )
         }
 
         // 정규화된 벡터 계산
         let vector = CGVector(
-            dx: self.joystickKnob.position.x - self.joystickBase.position.x,
-            dy: self.joystickKnob.position.y - self.joystickBase.position.y
+            dx: knob.position.x - base.position.x,
+            dy: knob.position.y - base.position.y
         )
         
         let magnitude = sqrt(vector.dx * vector.dx + vector.dy * vector.dy)
