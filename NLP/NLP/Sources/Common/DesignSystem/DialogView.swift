@@ -20,7 +20,7 @@ struct DialogView: View {
 
     
     var body: some View {
-        BackgroundView(isPresented: $isPresented)
+        DialogBackgroundView(isPresented: $isPresented)
             .overlay(
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
@@ -57,86 +57,6 @@ struct DialogView: View {
                     height: ConstantScreenSize.screenHeight * 0.36
                 )
             )
-    }
-}
-
-
-struct BackgroundView: View {
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-                  
-        Rectangle()
-            .opacity(0.1)
-            .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.45)
-            .border(Color.yellow, width: 1)
-            .overlay {
-                GeometryReader { geometry in
-                    ZStack {
-                        Button {
-                            isPresented = false
-                        } label: {
-                            Image("x-symbol")
-                                .resizable()
-                                .frame(width: 24, height:24)
-                                .position(x: geometry.size.width - 27, y: 27)
-                        }
-                
-                        Image("dialogView-LT")
-                            .resizable()
-                            .frame(width: 20, height:20)
-                            .position(x: 7, y: 7)
-                        
-                        Image("dialogView-RT")
-                            .resizable()
-                            .frame(width: 20, height:20)
-                            .position(x: geometry.size.width - 7, y: 7)
-                        
-                        Image("dialogView-LD")
-                            .resizable()
-                            .frame(width: 20, height:20)
-                            .position(x: 7, y: geometry.size.height - 7)
-                        
-                        Image("dialogView-RD")
-                            .resizable()
-                            .frame(width: 20, height:20)
-                            .position(x: geometry.size.width - 7, y: geometry.size.height - 7)
-                    }
-                }
-            }
-    }
-}
-
-struct UserDialogInputField: View {
-    @Binding var inputText: String
-    @Binding var showCursor: Bool
-    @FocusState var isFocused: Bool
-    let submitAction: () -> Void
-    
-    var body: some View {
-        ZStack(alignment: .leading) {
-            if inputText.isEmpty && !isFocused {
-                HStack(spacing: 0) {
-                    // 깜빡이는 커서
-                    if showCursor {
-                        Text("_") // 또는 "|"
-                            .foregroundColor(.gray)
-                            .font(NLPFont.body)
-                    }
-                }
-            }
-            TextField("", text: $inputText, axis: .vertical)
-                .font(NLPFont.body)
-                .foregroundStyle(.white)
-                .focused($isFocused)
-                .submitLabel(.send)
-                .onSubmit {
-                    if !inputText.isEmpty {
-                        submitAction()
-                    }
-                }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
