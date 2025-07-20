@@ -57,18 +57,13 @@ struct DialogView: View {
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading) // 추가 보장
-                        
-
                     }
                         .frame(
-                                width: ConstantScreenSize.screenWidth * 0.8,
-                                height: ConstantScreenSize.screenHeight * 0.25
-                            )
-
+                            width: ConstantScreenSize.screenWidth * 0.8,
+                            height: ConstantScreenSize.screenHeight * 0.25
+                        )
                 )
-            
-            
-            
+
             HStack {
                 TextField("", text: $inputText)
                     .font(NLPFont.body)
