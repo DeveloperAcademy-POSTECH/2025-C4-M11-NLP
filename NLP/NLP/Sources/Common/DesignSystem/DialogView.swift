@@ -7,10 +7,12 @@
 
 import SwiftUI
 
+// DialogItem enum 삭제 (중복 선언 제거)
 struct DialogView: View {
     @ObservedObject var dialogManager: DialogManager
     @Binding var isPresented: Bool
     @State var inputText: String = ""
+    @FocusState private var isFocused: Bool
 
     
     
@@ -20,42 +22,53 @@ struct DialogView: View {
             
             BackgroundView(isPresented: $isPresented)
                 .overlay(
-                    ScrollView{
-                        VStack(alignment: .leading, spacing: 5){
-                            if let partner = dialogManager.currentPartner {
-                                ForEach(dialogManager.conversationLogs[partner] ?? [], id: \.self) { dialog in
-                                    if (dialog.sender == .user){
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(Array(dialogManager.logsAndInputs.enumerated()), id: \.offset) { index, item in
+                                switch item {
+                                case .message(let dialog):
+                                    if dialog.sender == .user {
                                         Text(dialog.content)
                                             .font(NLPFont.body)
                                             .foregroundStyle(.white)
                                     } else {
-                                        StreamingText(fullDialog:dialog.content, streamingSpeed: 0.05)
+                                        StreamingText(fullDialog: dialog.content, streamingSpeed: 0.05)
                                             .font(NLPFont.body)
                                             .foregroundStyle(.white)
+                                    }
+                                case .input:
+                                    if !dialogManager.isGenerating {
+                                        ZStack(alignment: .leading) {
+                                            if inputText.isEmpty && !isFocused {
+                                                Text("입력해주세요")
+                                                    .foregroundColor(.gray)
+                                                    .font(NLPFont.body)
+                                                    .padding(.leading, 4)
+                                            }
+                                            TextField("", text: $inputText)
+                                                .font(NLPFont.body)
+                                                .foregroundStyle(.white)
+                                                .focused($isFocused)
+                                                .submitLabel(.send)
+                                                .onSubmit {
+                                                    if !inputText.isEmpty {
+                                                        dialogManager.respond(inputText, dialogPartnerType: dialogManager.currentPartner ?? .computer, isLogged: true)
+                                                        inputText = ""
+                                                    }
+                                                }
+                                        }
                                     }
                                 }
                             }
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading) // 추가 보장
-                        
-                        TextField("내용을 입력", text: $inputText)
-                            .font(NLPFont.body)
-                            .foregroundStyle(.red)
-                            .textFieldStyle(.plain) // 깔끔한 스타일 (원하면 수정)
-                            .submitLabel(.done)      // 키보드의 return 키에 "Done" 표시 (필요시 다른 옵션도 가능)
-                            .onSubmit {
-                                dialogManager.respond(inputText, dialogPartnerType: dialogManager.currentPartner ?? .computer, isLogged: true)
-                                inputText = ""       // 입력 후 초기화
-                            }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .frame(
                         width: ConstantScreenSize.screenWidth * 0.82,
-                        height: ConstantScreenSize.screenHeight * 0.4
+                        height: ConstantScreenSize.screenHeight * 0.36
                     )
-                    .border(Color.green)
-
+                    .border(.gray)
                 )
-           
 
             
 
@@ -100,7 +113,7 @@ struct BackgroundView: View {
                   
         Rectangle()
             .opacity(0.1)
-            .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.5)
+            .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.45)
             .border(Color.yellow, width: 1)
             .overlay {
                 GeometryReader { geometry in
