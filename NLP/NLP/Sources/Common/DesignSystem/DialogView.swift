@@ -13,13 +13,14 @@ struct DialogView: View {
     @Binding var isPresented: Bool
     @State var inputText: String = ""
     @FocusState private var isFocused: Bool
+    @State var showCursor: Bool = true
 
-    
+    // 타이머로 커서 깜빡임 제어
+    let cursorTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+
     
     var body: some View {
         VStack {
-            Spacer().frame(height: 50)
-            
             BackgroundView(isPresented: $isPresented)
                 .overlay(
                     ScrollView {
@@ -40,12 +41,19 @@ struct DialogView: View {
                                     if !dialogManager.isGenerating {
                                         ZStack(alignment: .leading) {
                                             if inputText.isEmpty && !isFocused {
-                                                Text("입력해주세요")
-                                                    .foregroundColor(.gray)
-                                                    .font(NLPFont.body)
-                                                    .padding(.leading, 4)
+                                                HStack(spacing: 0) {
+                                                    // 깜빡이는 커서
+                                                    if showCursor {
+                                                        Text("_") // 또는 "|"
+                                                            .foregroundColor(.gray)
+                                                            .font(NLPFont.body)
+                                                    }
+                                                }
+                                                .onReceive(cursorTimer) { _ in
+                                                    showCursor.toggle()
+                                                }
                                             }
-                                            TextField("", text: $inputText)
+                                            TextField("", text: $inputText, axis: .vertical)
                                                 .font(NLPFont.body)
                                                 .foregroundStyle(.white)
                                                 .focused($isFocused)
@@ -67,40 +75,7 @@ struct DialogView: View {
                         width: ConstantScreenSize.screenWidth * 0.82,
                         height: ConstantScreenSize.screenHeight * 0.36
                     )
-                    .border(.gray)
                 )
-
-            
-
-//            HStack {
-//                TextField("", text: $inputText)
-//                    .font(NLPFont.body)
-//                    .padding(.horizontal, 12)
-//                    .frame(height: 50)
-//                    .background(Color.black)
-//                    .foregroundStyle(.white)
-//                    .overlay(
-//                        Rectangle().stroke(Color.white, lineWidth: 3)
-//                    )
-//                Button {
-//                    if !dialogManager.isGenerating {
-//                        dialogManager.respond(inputText, dialogPartnerType: dialogManager.currentPartner ?? .computer, isLogged: true)
-//                        inputText = ""
-//                    }
-//                    
-//                } label: {
-//                    Image(systemName: "arrowshape.up.fill")
-//                        .font(.system(size: 24, weight: .bold))
-//                        .foregroundStyle(.white)
-//                        .frame(width: 50, height: 50)
-//                        .background(Color.black)
-//                        .overlay(
-//                            Rectangle().stroke(Color.white, lineWidth: 3)
-//                        )
-//                }
-//            }
-//                .frame(width: ConstantScreenSize.screenWidth * 0.9, height: 50)
-//                .padding(.bottom, 110) //
         }
     }
 }
