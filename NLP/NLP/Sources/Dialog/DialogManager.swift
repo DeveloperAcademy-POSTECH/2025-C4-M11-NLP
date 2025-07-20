@@ -9,19 +9,11 @@ import Combine
 import FoundationModels
 import SwiftUI
 
-// DialogItem enum 추가
-enum DialogItem: Hashable {
-    case message(Dialog)
-    case input
-}
-
 @MainActor
 class DialogManager: ObservableObject {
     @Published var isGenerating = false
     @Published var currentPartner: DialogPartnerType?
     @Published var conversationLogs: [DialogPartnerType: [Dialog]] = [:]
-    // 번갈아 렌더링용 logsAndInputs 추가
-    @Published var logsAndInputs: [DialogItem] = [.input]
     private var currentTask: Task<Void, Never>?
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     
@@ -73,38 +65,31 @@ class DialogManager: ObservableObject {
         dialogPartnerType: DialogPartnerType,
         isLogged: Bool
     ) {
-        // logsAndInputs에서 마지막 input 제거
-        if let last = logsAndInputs.last, last == .input {
-            logsAndInputs.removeLast()
-        }
-        // 유저 메시지 추가
+        currentPartner = dialogPartnerType
+        
+        /// 유저 메시지 추가
         let userDialog = Dialog(content: userInput, sender: .user)
-        logsAndInputs.append(.message(userDialog))
         if isLogged {
             conversationLogs[dialogPartnerType]?.append(userDialog)
         }
-        currentPartner = dialogPartnerType
 
         currentTask = Task {
             do {
                 let session = conversations[dialogPartnerType]
+                
                 guard let session = session else {
-                    // 실패 시에도 입력창 추가
-                    logsAndInputs.append(.input)
                     return
                 }
+                
                 let response = try await session.respond(to: userInput)
                 let partnerDialog = Dialog(content: response.content, sender: .partner)
-                logsAndInputs.append(.message(partnerDialog))
+                
                 if isLogged {
                     conversationLogs[dialogPartnerType]?.append(partnerDialog)
                 }
-                // 입력창 다시 추가
-                logsAndInputs.append(.input)
+                
                 isGenerating = false
             } catch {
-                // 실패 시에도 입력창 추가
-                logsAndInputs.append(.input)
                 isGenerating = false
             }
         }
