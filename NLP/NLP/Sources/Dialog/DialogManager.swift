@@ -14,7 +14,10 @@ class DialogManager: ObservableObject {
     @Published var isGenerating = false
     @Published var currentPartner: DialogPartnerType?
     @Published var conversationLogs: [DialogPartnerType: [Dialog]] = [:]
+    var toolCalled: Bool = false
     private var currentTask: Task<Void, Never>?
+    private var currentToolTask: Task<Void, Never>?
+    private var conversationsWithTool: [DialogPartnerType: LanguageModelSession] = [:]
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     
     func initConversation(
@@ -38,11 +41,17 @@ class DialogManager: ObservableObject {
     ) {
         let newSession: LanguageModelSession = LanguageModelSession(
             model: .default,
-            tools: tools,
             instructions: instructions
         )
+        
+        let newToolSession: LanguageModelSession = LanguageModelSession(
+            model: .default,
+            tools: tools,
+        )
         newSession.prewarm()
+        newToolSession.prewarm()
         conversations[dialogPartner] = newSession
+        conversationsWithTool[dialogPartner] = newToolSession
     }
     
     func resetDialogLog(dialogPartner: DialogPartnerType? = nil) {
@@ -75,17 +84,34 @@ class DialogManager: ObservableObject {
                     return
                 }
                 
+                let toolSession = conversationsWithTool[dialogPartnerType]
+                
+                guard let toolSession = toolSession else {
+                    return
+                }
+
+                let _ = try await toolSession.respond(to: "(반드시, 언어 응답보다 Tool Calling을 우선적으로 사용하세요.)" + userInput)
+                
+                if toolCalled {
+                    toolCalled = false
+                    return
+                }
+                
                 let response = try await session.respond(to: userInput)
+                
                 let partnerDialog = Dialog(content: response.content, sender: .partner)
                 
                 if isLogged {
                     conversationLogs[dialogPartnerType]?.append(partnerDialog)
                 }
-                
                 isGenerating = false
             } catch {
                 isGenerating = false
             }
         }
+    }
+    
+    func addLogs(dialogPartner: DialogPartnerType, dialog: String, sender: DialogSender, fromToolCalling: Bool = false) {
+        conversationLogs[dialogPartner]?.append(Dialog(content: dialog, sender: sender, fromToolCalling: fromToolCalling))
     }
 }

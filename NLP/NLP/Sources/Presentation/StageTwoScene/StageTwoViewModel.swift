@@ -14,7 +14,7 @@ final class StageTwoViewModel: ViewModelable {
         var isMonologuePresented: Bool = false
         var isItemCollecting: Bool = false
         var isDialogPresented: Bool = false
-        var stageTwoPhase: StageTwoMonologuePhase = .stageArrived
+        var stageTwoPhase: StageTwoMonologuePhase = .botBehaviorShiftNoticed
         
         var isTouchDisabled: Bool = false
     }

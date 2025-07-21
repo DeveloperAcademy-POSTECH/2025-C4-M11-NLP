@@ -33,7 +33,7 @@ struct DialogView: View {
                                 } else {
                                     StreamingText(fullDialog: log.content, streamingSpeed: 0.03)
                                         .font(NLPFont.body)
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(log.fromToolCalling ? .green : .white)
                                 }
                             }
                         }
