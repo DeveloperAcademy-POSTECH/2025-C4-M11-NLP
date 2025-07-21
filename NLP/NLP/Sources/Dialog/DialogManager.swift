@@ -17,29 +17,21 @@ class DialogManager: ObservableObject {
     private var currentTask: Task<Void, Never>?
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     
-    func initConversation(dialogPartner: DialogPartnerType) {
-        let newSession: LanguageModelSession = LanguageModelSession(
-            model: .default,
-            tools: [
-                UnlockTool(rightPasswordAction: { [weak self] in
-                    // MARK: computer instruction 변경(암호를 맞춘 후, 컴퓨터가 어떠한 응답을 내뱉어줄지에 대한 instruction으로) 및 세션 초기화
-                    self?.initializeSession(
-                        dialogPartner: .computer,
-                        instructions: ConstantInstructions.computerOnboarding,
-                        tools: [] // TODO: 미결정
-                    )
-                })
-            ],
-            instructions: dialogPartner.instructions
+    func initConversation(
+        dialogPartner: DialogPartnerType,
+        instructions: String,
+        tools: [any Tool]
+    ) {
+        initializeSession(
+            dialogPartner: dialogPartner,
+            instructions: instructions,
+            tools: tools
         )
-        
-        newSession.prewarm()
-        conversations[dialogPartner] = newSession
         currentPartner = dialogPartner
         conversationLogs[dialogPartner] = []
     }
     
-    private func initializeSession(
+    func initializeSession(
         dialogPartner: DialogPartnerType,
         instructions: String,
         tools: [any Tool]
@@ -50,14 +42,23 @@ class DialogManager: ObservableObject {
                 UnlockTool(rightPasswordAction: { [weak self] in
                 // MARK: computer instruction 변경(기획에 따라 추가 예정) 및 세션 초기화
                 self?.initializeSession(
-                    dialogPartner: .computer,
-                    instructions: "", tools: [] // TODO: 미결정
+                    dialogPartner: dialogPartner,
+                    instructions: instructions, tools: tools // TODO: 미결정
                 )
             })],
             instructions: instructions
         )
         newSession.prewarm()
         conversations[dialogPartner] = newSession
+    }
+    
+    func resetDialogLog(dialogPartner: DialogPartnerType? = nil) {
+        if let dialogPartner = dialogPartner {
+            conversationLogs[dialogPartner] = []
+            return
+        }
+        guard let currentPartner = currentPartner else { return }
+        conversationLogs[currentPartner] = []
     }
     
     func respond(

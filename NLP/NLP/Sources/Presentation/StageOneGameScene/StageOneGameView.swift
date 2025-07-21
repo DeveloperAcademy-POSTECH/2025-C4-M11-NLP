@@ -90,7 +90,20 @@ struct StageOneGameView: View {
         }
         .onAppear {
             initializeScene()
-            dialogManager.initConversation(dialogPartner: .computer)
+            dialogManager.initConversation(
+                dialogPartner: .computer,
+                instructions: DialogPartnerType.computer.instructions,
+                tools: [
+                    UnlockTool(rightPasswordAction: {
+                        // MARK: computer instruction 변경(암호를 맞춘 후, 컴퓨터가 어떠한 응답을 내뱉어줄지에 대한 instruction으로) 및 세션 초기화
+                        dialogManager.initializeSession(
+                            dialogPartner: .computer,
+                            instructions: ConstantInstructions.computerOnboarding,
+                            tools: [] // TODO: 미결정
+                        )
+                    })
+                ]
+            )
         }
     }
     
@@ -143,12 +156,3 @@ struct StageOneGameView: View {
         ]
     }
 }
-//
-//
-//
-//#Preview {
-//    @Previewable @StateObject var dialogManager = DialogManager()
-//    let coordinator = Coordinator()
-//    coordinator.push(.stageOneScene)
-//    return StageOneGameView(coordinator: coordinator, dialogManager: dialogManager)
-//}
