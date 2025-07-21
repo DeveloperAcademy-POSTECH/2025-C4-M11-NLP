@@ -20,7 +20,7 @@ var body: some View {
             .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.3)
             .border(Color.green, width: 7)
             .overlay(
-                Image("Note")
+                Image("note")
                     .resizable()
                     .scaledToFit( )
             )
