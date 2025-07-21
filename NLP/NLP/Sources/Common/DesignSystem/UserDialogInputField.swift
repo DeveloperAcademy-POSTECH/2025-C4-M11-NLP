@@ -25,17 +25,32 @@ struct UserDialogInputField: View {
                     }
                 }
             }
+//            TextEditor(text: $inputText)
+//                .background(.black)
+            
             TextField("", text: $inputText, axis: .vertical)
                 .font(NLPFont.body)
                 .foregroundStyle(.white)
                 .focused($isFocused)
-                .submitLabel(.send)
-                .onSubmit {
-                    if !inputText.isEmpty {
-                        submitAction()
+                .onChange(of: inputText) { _, newValue in
+                    if newValue.last == "\n" {
+                        inputText = String(newValue.dropLast())
+                        if !inputText.isEmpty {
+                            submitAction()
+                            isFocused = false
+                        }
                     }
                 }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
+
+#Preview {
+    @Previewable @State var inputText: String = ""
+    @Previewable @State var showCursor: Bool = false
+    UserDialogInputField(inputText: $inputText, showCursor: $showCursor, submitAction: {
+        
+    })
+    .background(.black)
 }
