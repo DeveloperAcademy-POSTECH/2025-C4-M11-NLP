@@ -52,6 +52,15 @@ class DialogManager: ObservableObject {
         conversations[dialogPartner] = newSession
     }
     
+    func resetDialogLog(dialogPartner: DialogPartnerType? = nil) {
+        if let dialogPartner = dialogPartner {
+            conversationLogs[dialogPartner] = []
+            return
+        }
+        guard let currentPartner = currentPartner else { return }
+        conversationLogs[currentPartner] = []
+    }
+    
     func respond(
         _ userInput: String,
         dialogPartnerType: DialogPartnerType,
