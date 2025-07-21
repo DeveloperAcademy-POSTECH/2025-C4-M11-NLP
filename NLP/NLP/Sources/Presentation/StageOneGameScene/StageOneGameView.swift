@@ -47,7 +47,7 @@ struct StageOneGameView: View {
                     },
                     successAction: {
                         viewModel.action(.hidePasswordView)
-                        // TODO: Go To Stage 2
+                        viewModel.coordinator.push(.middleStoryScene(.stageOneTwo))
                     },
                     failureAction: {
                         viewModel.action(.hidePasswordView)
