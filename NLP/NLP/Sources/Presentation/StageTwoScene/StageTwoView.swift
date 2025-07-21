@@ -45,7 +45,7 @@ struct StageTwoView: View {
                 )
             }
             
-            DialogView(
+            DialogChatView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isDialogPresented
             )
