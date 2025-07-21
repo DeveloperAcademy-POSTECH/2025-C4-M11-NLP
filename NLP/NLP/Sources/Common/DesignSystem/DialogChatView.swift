@@ -29,15 +29,7 @@ struct DialogChatView: View {
                 .frame(maxWidth: ConstantScreenSize.screenWidth * 0.9, maxHeight: ConstantScreenSize.screenHeight * 0.8)
                 .overlay(
                     GeometryReader { geometry in
-                        ZStack {
-                            Button {
-                                isPresented = false
-                            } label: {
-                                Image("x-symbol")
-                                    .resizable()
-                                    .frame(width: 24, height:24)
-                                    .position(x: geometry.size.width - 27, y: 27)
-                            }
+                        ZStack(alignment: .topTrailing) {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 16) {
                                     if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
@@ -107,6 +99,8 @@ struct DialogChatView: View {
                                 }
                             }
                             .defaultScrollAnchor(.bottom)
+                            XButton(isPresented: $isPresented)
+                                .padding([.top, .trailing], 16)
                         }
                     }
                 )
