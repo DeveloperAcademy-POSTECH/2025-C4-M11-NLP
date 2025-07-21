@@ -68,7 +68,11 @@ struct StageTwoView: View {
         .allowsHitTesting(!viewModel.state.isTouchDisabled)
         .onAppear {
             initScene()
-            dialogManager.initConversation(dialogPartner: .robot)
+            dialogManager.initConversation(
+                dialogPartner: .robot,
+                instructions: "",
+                tools: []
+            )
             
             viewModel.action(.transitionComplete)
         }
