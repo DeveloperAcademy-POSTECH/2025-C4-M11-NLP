@@ -18,8 +18,9 @@ struct DialogBackgroundView: View {
             .border(Color.yellow, width: 1)
             .overlay {
                 GeometryReader { geometry in
-                    ZStack {
+                    ZStack(alignment: .topTrailing) {
                         XButton(isPresented: $isPresented)
+                            .padding([.top, .trailing], 16)
                         Image("dialogView-LT")
                             .resizable()
                             .frame(width: 20, height:20)

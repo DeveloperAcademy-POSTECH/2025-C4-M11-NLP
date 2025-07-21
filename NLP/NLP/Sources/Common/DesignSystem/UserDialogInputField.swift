@@ -20,7 +20,7 @@ struct UserDialogInputField: View {
                     // 깜빡이는 커서
                     if showCursor {
                         Text("_") // 또는 "|"
-                            .foregroundColor(.gray)
+                            .foregroundColor(.green)
                             .font(NLPFont.body)
                     }
                 }
