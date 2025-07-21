@@ -18,14 +18,14 @@ struct DialogBackgroundView: View {
             .border(Color.yellow, width: 1)
             .overlay {
                 GeometryReader { geometry in
-                    ZStack {
+                    ZStack(alignment: .topTrailing) {
                         Button {
                             isPresented = false
                         } label: {
                             Image("x-symbol")
                                 .resizable()
                                 .frame(width: 24, height:24)
-                                .position(x: geometry.size.width - 27, y: 27)
+                                .padding([.top, .trailing], 27)
                         }
                 
                         Image("dialogView-LT")
