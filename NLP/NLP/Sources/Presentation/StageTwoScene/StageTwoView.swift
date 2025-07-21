@@ -45,18 +45,17 @@ struct StageTwoView: View {
                 )
             }
             
-            if viewModel.state.isDialogPresented {
-                DialogView(
-                    dialogManager: dialogManager,
-                    isPresented: $viewModel.state.isDialogPresented
-                )
-                .onChange(of: dialogManager.conversationLogs[dialogManager.currentPartner!] ?? []) { oldValue, newValue in
-                    // MARK: 대화가 처음 6번 이상 넘어갈 경우 호출
-                    if dialogManager.currentPartner == .robot
-                        && (newValue.count == 5 || newValue.count == 10) {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            viewModel.action(.activateMonologue(withNextPhase: true))
-                        }
+            DialogView(
+                dialogManager: dialogManager,
+                isPresented: $viewModel.state.isDialogPresented
+            )
+            .opacity(viewModel.state.isDialogPresented ? 1 : 0)
+            .onChange(of: dialogManager.conversationLogs[.robot] ?? []) { oldValue, newValue in
+                // MARK: 대화가 처음 6번 이상 넘어갈 경우 호출
+                if dialogManager.currentPartner == .robot
+                    && (newValue.count == 5 || newValue.count == 10) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        viewModel.action(.activateMonologue(withNextPhase: true))
                     }
                 }
             }
@@ -90,7 +89,7 @@ struct StageTwoView: View {
                     monologue: "대화하기",
                     action: {
                         // viewModel.action(.changeDialogPartner(.bot)) // TODO: 액션 추가
-                         viewModel.action(.activateDialog(withNextPhase: true))
+                         viewModel.action(.activateDialog(withNextPhase: false))
                     }
                 ),
             ],
@@ -98,7 +97,8 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "대화하기",
                     action: {
-                        viewModel.action(.activateDialog(withNextPhase: true))
+                        dialogManager.resetDialogLog()
+                        viewModel.action(.activateDialog(withNextPhase: false))
                     }
                 )
             ],
