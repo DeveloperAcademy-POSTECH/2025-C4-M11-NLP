@@ -26,8 +26,15 @@ struct DialogView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
                             ForEach(conversationLogs, id: \.self) { log in
-                                StreamingText(fullDialog: log.content, streamingSpeed: 0.05)
-                                    .foregroundStyle(.white)
+                                if log.sender == .user {
+                                    Text(log.content)
+                                        .font(NLPFont.body)
+                                        .foregroundStyle(.white)
+                                } else {
+                                    StreamingText(fullDialog: log.content, streamingSpeed: 0.03)
+                                        .font(NLPFont.body)
+                                        .foregroundStyle(.white)
+                                }
                             }
                         }
                         
