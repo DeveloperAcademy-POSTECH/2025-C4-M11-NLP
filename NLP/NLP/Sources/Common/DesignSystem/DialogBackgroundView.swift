@@ -21,6 +21,7 @@ struct DialogBackgroundView: View {
                     ZStack(alignment: .topTrailing) {
                         XButton(isPresented: $isPresented)
                             .padding([.top, .trailing], 16)
+
                         Image("dialogView-LT")
                             .resizable()
                             .frame(width: 20, height:20)
