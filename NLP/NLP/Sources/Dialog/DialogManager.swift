@@ -38,14 +38,7 @@ class DialogManager: ObservableObject {
     ) {
         let newSession: LanguageModelSession = LanguageModelSession(
             model: .default,
-            tools: [
-                UnlockTool(rightPasswordAction: { [weak self] in
-                // MARK: computer instruction 변경(기획에 따라 추가 예정) 및 세션 초기화
-                self?.initializeSession(
-                    dialogPartner: dialogPartner,
-                    instructions: instructions, tools: tools // TODO: 미결정
-                )
-            })],
+            tools: tools,
             instructions: instructions
         )
         newSession.prewarm()
