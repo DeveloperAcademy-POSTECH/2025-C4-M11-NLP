@@ -19,15 +19,9 @@ struct DialogBackgroundView: View {
             .overlay {
                 GeometryReader { geometry in
                     ZStack(alignment: .topTrailing) {
-                        Button {
-                            isPresented = false
-                        } label: {
-                            Image("x-symbol")
-                                .resizable()
-                                .frame(width: 24, height:24)
-                                .padding([.top, .trailing], 27)
-                        }
-                
+                        XButton(isPresented: $isPresented)
+                            .padding([.top, .trailing], 16)
+
                         Image("dialogView-LT")
                             .resizable()
                             .frame(width: 20, height:20)
