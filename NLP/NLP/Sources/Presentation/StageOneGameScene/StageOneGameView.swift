@@ -88,6 +88,16 @@ struct StageOneGameView: View {
                     showXButton: false
                 )
             }
+            
+            if viewModel.state.stageOnePhase == .decreaseOxygen {
+                VStack {
+                    OxygenGaugeView(initialOxygen: 30, coordinator: viewModel.coordinator)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.top, 32)
+            }
+
         }
         .onAppear {
             initializeScene()
