@@ -91,7 +91,7 @@ struct StageOneGameView: View {
             
             if viewModel.state.stageOnePhase == .decreaseOxygen {
                 VStack {
-                    OxygenGaugeView(initialOxygen:2){
+                    OxygenGaugeView(initialOxygen: 30) {
                         withAnimation(.linear(duration: 1)) {
                             viewModel.state.isTransitioning = true
                         }
@@ -109,6 +109,21 @@ struct StageOneGameView: View {
                 .animation(.linear(duration: 1), value: viewModel.state.isTransitioning)
                 .ignoresSafeArea()
         )
+        .onChange(of: viewModel.state.isTransitioning) { newValue in
+            if newValue == true {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    viewModel.state.isTransitioning = false
+                }
+            }
+            if newValue == false {
+                // 1. paths를 비운다
+                viewModel.coordinator.paths = []
+                // 2. 아주 짧은 딜레이 후 다시 push
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    viewModel.coordinator.paths = [.stageOneScene]
+                }
+            }
+        }
         .onAppear {
             initializeScene()
             dialogManager.initConversation(
