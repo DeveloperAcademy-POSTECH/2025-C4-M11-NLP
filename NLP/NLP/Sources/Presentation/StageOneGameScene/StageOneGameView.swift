@@ -84,7 +84,8 @@ struct StageOneGameView: View {
                         scene.changeLightMode(lightMode: .turnOnFlashlight)
                         viewModel.state.stageOnePhase = .findFlashlight
                         viewModel.action(.showDialog)
-                    }
+                    },
+                    showXButton: false
                 )
             }
         }
