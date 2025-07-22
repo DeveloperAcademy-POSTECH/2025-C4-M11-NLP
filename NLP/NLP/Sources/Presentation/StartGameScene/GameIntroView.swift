@@ -10,6 +10,7 @@ import SwiftUI
 struct GameIntroView: View {
     @ObservedObject var coordinator: Coordinator
     @State private var pageIndex: Int = 0
+    @State private var isStreamingCompleted: Bool = false
     
     // 이미지가 필요한 페이지는 imageName, 아닌 곳은 nil
     private let stories: [(image: String?, title: String, description: String)] = [
@@ -59,20 +60,31 @@ struct GameIntroView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 24)
 
-                // 본문
-                Text(stories[pageIndex].description)
-                    .font(.custom("Galmuri11", size: 18))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.leading)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
+                // 본문 (StreamingText)
+                StreamingText(
+                    fullDialog: stories[pageIndex].description,
+                    streamingSpeed: 0.03,
+                    streamingCompleted: { isStreamingCompleted = true }
+                )
+                .font(.custom("Galmuri11", size: 18))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.leading)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
+                .onAppear {
+                    isStreamingCompleted = false
+                }
+                .id(pageIndex) // 페이지 바뀔 때마다 리셋
 
                 Spacer()
 
                 // 네비게이션 버튼
                 HStack {
                     Button(action: {
-                        if pageIndex > 0 { pageIndex -= 1 }
+                        if pageIndex > 0 {
+                            pageIndex -= 1
+                            isStreamingCompleted = false
+                        }
                     }) {
                         HStack {
                             Image(systemName: "chevron.left")
@@ -81,12 +93,13 @@ struct GameIntroView: View {
                         .foregroundColor(pageIndex == 0 ? .gray : .white)
                         .font(.custom("Galmuri11-Bold", size: 20))
                     }
-                    .disabled(pageIndex == 0)
+                    .disabled(pageIndex == 0 || !isStreamingCompleted)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     Button(action: {
                         if pageIndex < stories.count - 1 {
                             pageIndex += 1
+                            isStreamingCompleted = false
                         } else {
                             coordinator.push(.stageOneIntroScene)
                         }
@@ -98,6 +111,7 @@ struct GameIntroView: View {
                         .foregroundColor(.white)
                         .font(.custom("Galmuri11-Bold", size: 20))
                     }
+                    .disabled(!isStreamingCompleted)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 .padding(.horizontal, 32)
