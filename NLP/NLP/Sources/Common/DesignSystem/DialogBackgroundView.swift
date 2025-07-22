@@ -13,9 +13,9 @@ struct DialogBackgroundView: View {
     var body: some View {
                   
         Rectangle()
-            .opacity(0.1)
-            .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.45)
-            .border(Color.yellow, width: 1)
+            .fill(Color.black.opacity(0.5)) // 더 투명하게
+            .frame(width: ConstantScreenSize.screenWidth * 0.9, height: ConstantScreenSize.screenHeight * 0.4)
+            .border(Color.green, width: 2)
             .overlay {
                 GeometryReader { geometry in
                     ZStack(alignment: .topTrailing) {

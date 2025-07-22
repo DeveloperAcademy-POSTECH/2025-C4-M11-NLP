@@ -19,6 +19,8 @@ struct StageOneGameView: View {
     }
     
     @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
+    @State private var isDoorOpened: Bool = false
+    @State private var isOxygenDecreasingStarted: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -53,7 +55,8 @@ struct StageOneGameView: View {
                         viewModel.action(.hidePasswordView)
                         viewModel.state.stageOnePhase = .wrongPassword
                         viewModel.action(.showDialog)
-                    }
+                    },
+                    isDoorOpened: $isDoorOpened
                 )
             }
             
@@ -88,6 +91,46 @@ struct StageOneGameView: View {
                     showXButton: false
                 )
             }
+            
+            if isOxygenDecreasingStarted && !isDoorOpened {
+                VStack {
+                    OxygenGaugeView(initialOxygen: 30) {
+                        withAnimation(.linear(duration: 1)) {
+                            viewModel.state.isTransitioning = true
+                        }
+                    }
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.top, 32)
+            }
+
+        }
+        .overlay(
+            Color.black
+                .opacity(viewModel.state.isTransitioning ? 1 : 0)
+                .animation(.linear(duration: 1), value: viewModel.state.isTransitioning)
+                .ignoresSafeArea()
+        )
+        .onChange(of: viewModel.state.isTransitioning) { newValue in
+            if newValue == true {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    viewModel.state.isTransitioning = false
+                }
+            }
+            if newValue == false {
+                // 1. paths를 비운다
+                viewModel.coordinator.paths = []
+                // 2. 아주 짧은 딜레이 후 다시 push
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    viewModel.coordinator.paths = [.stageOneScene]
+                }
+            }
+        }
+        .onChange(of: viewModel.state.stageOnePhase) { newPhase in
+            if newPhase == .decreaseOxygen {
+                isOxygenDecreasingStarted = true
+            }
         }
         .onAppear {
             initializeScene()
@@ -96,11 +139,10 @@ struct StageOneGameView: View {
                 instructions: DialogPartnerType.computer.instructions,
                 tools: [
                     UnlockTool(rightPasswordAction: {
-                        // MARK: computer instruction 변경(암호를 맞춘 후, 컴퓨터가 어떠한 응답을 내뱉어줄지에 대한 instruction으로) 및 세션 초기화
                         dialogManager.initializeSession(
                             dialogPartner: .computer,
                             instructions: ConstantInstructions.computerOnboarding,
-                            tools: [] // TODO: 미결정
+                            tools: []
                         )
                     })
                 ]

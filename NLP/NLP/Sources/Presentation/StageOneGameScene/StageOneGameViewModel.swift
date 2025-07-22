@@ -17,6 +17,7 @@ class StageOneGameViewModel: ViewModelable {
         var isPasswordViewPresented: Bool = false
         var isNoteFoundPresented: Bool = false
         var isArrivedAtCentralControlRoomDoor: Bool = false
+        var isTransitioning: Bool = false // 암전 효과용 상태 추가
     }
     
     enum Action {
@@ -61,4 +62,6 @@ class StageOneGameViewModel: ViewModelable {
             state.isArrivedAtCentralControlRoomDoor = true
         }
     }
+
+
 }

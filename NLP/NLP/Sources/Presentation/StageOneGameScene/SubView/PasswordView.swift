@@ -11,15 +11,14 @@ struct PasswordView: View {
     @State private var inputText = ""
     @State private var pressedButtonLabel: String? = nil
     @State private var isPasswordIncorrect = false
-    @State private var isDoorOpened = false
-    
     @State private var buttonTappedTrigger: Bool = false
     @State private var passwordIncorrectCount: Int = 0
-    
+
     let backButtonTapAction: (() -> Void)?
     let successAction: (() -> Void)?
     let failureAction: (() -> Void)?
-    
+    @Binding var isDoorOpened: Bool
+
     private let correctPassword: String = "0720"
     
     let keypadLabels = [
@@ -125,11 +124,11 @@ struct PasswordView: View {
         }
     }
 }
-
-#Preview {
-    PasswordView(
-        backButtonTapAction: { print("back button tapped") },
-        successAction: { print("success") },
-        failureAction: { print("failure") }
-    )
-}
+//
+//#Preview {
+//    PasswordView(
+//        backButtonTapAction: { print("back button tapped") },
+//        successAction: { print("success") },
+//        failureAction: { print("failure") }
+//    )
+//}
