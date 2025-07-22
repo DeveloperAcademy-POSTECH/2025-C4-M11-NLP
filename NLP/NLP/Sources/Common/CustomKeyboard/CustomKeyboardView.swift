@@ -163,13 +163,15 @@ public struct CustomKeyboardView: View {
                 commitBuffer()
                 insert(" ")
                 return
-            } else if key == "Enter" {
+            } else if key == "Enter" || key == " ↵ " {
                 commitBuffer()
                 onCommit?()
                 return
             } else {
                 commitBuffer()
-                insert(key)
+                if key != " ↵ " && key != "Enter" {
+                    insert(key)
+                }
                 return
             }
             // 입력창 업데이트
@@ -184,10 +186,12 @@ public struct CustomKeyboardView: View {
                 onBackspace()
             } else if key == "Space" {
                 insert(" ")
-            } else if key == "Enter" {
+            } else if key == "Enter" || key == " ↵ " {
                 onCommit?()
             } else {
-                insert(key)
+                if key != " ↵ " && key != "Enter" {
+                    insert(key)
+                }
             }
         }
     }
