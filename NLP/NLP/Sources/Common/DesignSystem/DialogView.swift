@@ -40,8 +40,8 @@ struct DialogView: View {
                                 }
                             }
                         }
-                        .padding(.top, 12)
-                        .padding(.horizontal, 8)
+                        .padding(.top, 16)
+                        .padding(.horizontal, 16)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 )

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+import UIKit
 
 import Combine
 
@@ -81,6 +82,19 @@ public struct CustomKeyboardView: View {
                                     isPressingBackspace = false
                                 }
                             }, perform: {})
+                        } else if key == "#?" || key == "ABC" {
+                            Button(action: { toggleSymbolMode() }) {
+                                Text(key)
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(inputMode == .symbol ? .green : .white)
+                                    .frame(height: 45)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.clear)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.green, lineWidth: 2)
+                                    )
+                            }
                         } else {
                             Button(action: {
                                 onKeyPress(key)
@@ -100,7 +114,7 @@ public struct CustomKeyboardView: View {
                     }
                 }
             }
-            // 하단: 한/영, 스페이스(길게), 엔터, 특수문자 전환
+            // 하단: 한/영, 스페이스(길게), 엔터만 배치
             HStack(spacing: 8) {
                 Button(action: { toggleInputMode() }) {
                     Text(inputMode == .korean ? "한/영" : "영/한")
@@ -127,15 +141,6 @@ public struct CustomKeyboardView: View {
                         .background(Color.clear)
                         .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                 }
-                // 특수문자 전환 버튼
-                Button(action: { toggleSymbolMode() }) {
-                    Text(inputMode == .symbol ? "ABC" : "#?")
-                        .font(.custom("Galmuri11-Bold", size: 18))
-                        .foregroundColor(inputMode == .symbol ? .green : .white)
-                        .frame(width: 60, height: 45)
-                        .background(Color.clear)
-                        .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
-                }
             }
             .frame(height: 45)
         }
@@ -148,25 +153,28 @@ public struct CustomKeyboardView: View {
             let isShifted = self.isShifted
             let row1 = isShifted ? ["ㅃ","ㅉ","ㄸ","ㄲ","ㅆ","ㅛ","ㅕ","ㅑ","ㅒ","ㅖ"] : ["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"]
             let row2 = ["ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ","←"]
-            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ"," ↵ "]
+            // 3번째 줄: ⇧, ㅋ, ㅌ, ㅊ, ㅍ, ㅠ, ㅜ, ㅡ, #?
+            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ", (inputMode == .symbol ? "ABC" : "#?")]
             return [row1, row2, row3]
         case .english:
             let row1 = isShifted ? ["Q","W","E","R","T","Y","U","I","O","P"] : ["q","w","e","r","t","y","u","i","o","p"]
             let row2 = isShifted ? ["A","S","D","F","G","H","J","K","L","←"] : ["a","s","d","f","g","h","j","k","l","←"]
-            // 3번째 줄: ⇧, z, x, c, v, b, n, m, ↵
-            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M"," ↵ "] : ["⇧","z","x","c","v","b","n","m"," ↵ "])
+            // 3번째 줄: ⇧, z, x, c, v, b, n, m, #?
+            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M", (inputMode == .symbol ? "ABC" : "#?")] : ["⇧","z","x","c","v","b","n","m", (inputMode == .symbol ? "ABC" : "#?")])
             return [row1, row2, row3]
         case .number:
             return [
                 ["1","2","3","4","5","6","7","8","9","0"],
                 ["-","/",":",";","(",")","$","&","@","\""],
-                [".",",","?","!","'"," ↵ ","←"]
+                // 3번째 줄: ., ,, ?, !, ', #?, ← (백스페이스를 가장 오른쪽)
+                [".",",","?","!","'", (inputMode == .symbol ? "ABC" : "#?"), "←"]
             ]
         case .symbol:
             return [
                 ["[","]","{","}","#","%","^","*","+","="],
                 ["_","\\","|","~","<",">","€","£","¥","•"],
-                [".",",","?","!","'"," ↵ ","←"]
+                // 3번째 줄: ., ,, ?, !, ', #?, ← (백스페이스를 가장 오른쪽)
+                [".",",","?","!","'", (inputMode == .symbol ? "ABC" : "#?"), "←"]
             ]
         }
     }
@@ -202,6 +210,7 @@ public struct CustomKeyboardView: View {
     }
 
     private func onKeyPress(_ key: String) {
+        triggerHaptic()
         if inputMode == .korean {
             if key == "⇧" {
                 toggleShift()
@@ -256,6 +265,7 @@ public struct CustomKeyboardView: View {
     }
 
     private func onBackspace() {
+        triggerHaptic()
         if !jamoBuffer.isEmpty {
             jamoBuffer.removeLast()
             updateInput()
@@ -296,5 +306,10 @@ public struct CustomKeyboardView: View {
     private func isHangulJamo(_ key: String) -> Bool {
         let jamoSet = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ"
         return jamoSet.contains(key)
+    }
+
+    private func triggerHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
     }
 } 
