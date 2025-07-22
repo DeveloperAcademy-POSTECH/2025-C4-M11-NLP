@@ -9,11 +9,11 @@ import SwiftUI
 
 struct OxygenGaugeView: View {
     @State private var oxygen: Int
-    var coordinator: Coordinator
+    var onOxygenDepleted: () -> Void
 
-    init(initialOxygen: Int, coordinator: Coordinator) {
-        self._oxygen = State(initialValue: initialOxygen)
-        self.coordinator = coordinator
+    init(initialOxygen: Int, onOxygenDepleted: @escaping () -> Void) {
+            self._oxygen = State(initialValue: initialOxygen)
+            self.onOxygenDepleted = onOxygenDepleted
     }
 
     var body: some View {
@@ -41,6 +41,7 @@ struct OxygenGaugeView: View {
                     oxygen -= 1
                 } else {
                     timer.invalidate()
+                    onOxygenDepleted()
                 }
             }
         }

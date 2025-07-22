@@ -91,7 +91,7 @@ struct StageOneGameView: View {
             
             if viewModel.state.stageOnePhase == .decreaseOxygen {
                 VStack {
-                    OxygenGaugeView(initialOxygen: 2) {
+                    OxygenGaugeView(initialOxygen:2){
                         withAnimation(.linear(duration: 1)) {
                             viewModel.state.isTransitioning = true
                         }
