@@ -40,7 +40,7 @@ class StartGameViewModel: ViewModelable {
         case .goStage2:
             coordinator.push(.stageTwoScene)
         case .goStage3:
-            coordinator.push(.middleStoryScene(.stageOneTwo))
+            coordinator.push(.stageThreeScene)
         }
     }
 }

@@ -24,4 +24,9 @@ struct GameItems {
         itemImageName: "Flashlight"
     )
     
+    static let killerRobot = GameItem(
+        itemName: "적국 사살용 로봇",
+        itemDescription: "핀을 기절하게 할 만큼 위험성이 크나, JTO에 의해 제압되었다. 후에 활용될 가치가 높다.",
+        itemImageName: "killerRobot"
+    )
 }
