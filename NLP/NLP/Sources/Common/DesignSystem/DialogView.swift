@@ -20,49 +20,46 @@ struct DialogView: View {
 
     
     var body: some View {
-        DialogBackgroundView(isPresented: $isPresented)
-            .overlay(
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
-                        if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
-                            ForEach(conversationLogs, id: \.self) { log in
-                                if log.sender == .user {
-                                    Text(log.content)
-                                        .font(NLPFont.body)
-                                        .foregroundStyle(.white)
-                                } else {
-                                    StreamingText(fullDialog: log.content, streamingSpeed: 0.03)
-                                        .font(NLPFont.body)
-                                        .foregroundStyle(.white)
+        ZStack(alignment: .bottom) {
+            // 대화창(배경 + 로그)
+            DialogBackgroundView(isPresented: $isPresented)
+                .overlay(
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 10) {
+                            if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
+                                ForEach(conversationLogs, id: \.self) { log in
+                                    if log.sender == .user {
+                                        Text(log.content)
+                                            .font(NLPFont.body)
+                                            .foregroundStyle(.white)
+                                    } else {
+                                        StreamingText(fullDialog: log.content, streamingSpeed: 0.03)
+                                            .font(NLPFont.body)
+                                            .foregroundStyle(.white)
+                                    }
                                 }
                             }
                         }
-                        
-                        UserDialogInputField(
-                            inputText: $inputText,
-                            showCursor: $showCursor,
-                            isFocused: _isFocused,
-                            submitAction: {
-                                dialogManager.respond(
-                                    inputText,
-                                    dialogPartnerType: dialogManager.currentPartner ?? .computer,
-                                    isLogged: true
-                                )
-                                inputText = ""
-                            }
-                        )
-                        
-                        
                     }
-                    .onReceive(cursorTimer) { _ in
-                        showCursor.toggle()
-                    }
-                }
-                .frame(
-                    width: ConstantScreenSize.screenWidth * 0.82,
-                    height: ConstantScreenSize.screenHeight * 0.36
                 )
-            )
+                .padding(.bottom, 320) // 입력창+키보드 높이만큼 충분히 크게 패딩
+            // 하단 고정: 입력창 + 커스텀 키보드 (한 번만)
+            VStack(spacing: 0) {
+                CustomKeyboardView(text: $inputText, onCommit: {
+                    dialogManager.respond(
+                        inputText,
+                        dialogPartnerType: dialogManager.currentPartner ?? .computer,
+                        isLogged: true
+                    )
+                    inputText = ""
+                })
+            }
+        }
+        .onChange(of: isPresented) { newValue in
+            if !newValue {
+                isFocused = false // X 버튼 등으로 닫힐 때 키보드 내리기
+            }
+        }
     }
 }
 

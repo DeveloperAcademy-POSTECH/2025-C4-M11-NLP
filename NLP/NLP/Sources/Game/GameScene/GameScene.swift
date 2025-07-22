@@ -46,7 +46,7 @@ class GameScene: SKScene {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         // 조이스틱이 존재하는 경우에만 reset 호출
         if self.joyStick.joystickKnob != nil {
-            self.joyStick.resetJoystick()
+        self.joyStick.resetJoystick()
         }
         isJoystickTouchActive = false
         
@@ -57,7 +57,7 @@ class GameScene: SKScene {
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         // 조이스틱이 존재하는 경우에만 reset 호출
         if self.joyStick.joystickKnob != nil {
-            self.joyStick.resetJoystick()
+        self.joyStick.resetJoystick()
         }
         isJoystickTouchActive = false
         
