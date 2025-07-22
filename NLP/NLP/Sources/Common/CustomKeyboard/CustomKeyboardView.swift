@@ -7,6 +7,9 @@
 
 import SwiftUI
 import Foundation
+import UIKit
+
+import Combine
 
 public struct CustomKeyboardView: View {
     @Binding var text: String
@@ -14,6 +17,8 @@ public struct CustomKeyboardView: View {
     @State private var inputMode: InputMode = .korean
     @State private var jamoBuffer: [String] = [] // 한글 자모 버퍼
     @State private var isShifted: Bool = false // Shift 상태
+    @State private var backspaceTimer: Timer? = nil
+    @State private var isPressingBackspace: Bool = false
 
     public enum InputMode { case korean, english, number, symbol }
 
@@ -39,24 +44,77 @@ public struct CustomKeyboardView: View {
             ForEach(keyRows, id: \ .self) { row in
                 HStack(spacing: 6) {
                     ForEach(row, id: \ .self) { key in
-                        Button(action: {
-                            onKeyPress(key)
-                        }) {
-                            Text(displayKey(key))
-                                .font(.custom("Galmuri11-Bold", size: 18))
-                                .foregroundColor(.white)
-                                .frame(height: 45)
-                                .frame(maxWidth: .infinity)
-                                .background(Color.clear)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.green, lineWidth: 2)
-                                )
+                        if key == "←" {
+                            Button(action: {
+                                onBackspace()
+                            }) {
+                                Text(displayKey(key))
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                    .frame(height: 45)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.clear)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.green, lineWidth: 2)
+                                    )
+                            }
+                            .simultaneousGesture(
+                                LongPressGesture(minimumDuration: 0.4)
+                                    .onEnded { _ in
+                                        isPressingBackspace = true
+                                        startBackspaceTimer()
+                                    }
+                            )
+                            .onChange(of: isPressingBackspace) { isPressing in
+                                if !isPressing {
+                                    stopBackspaceTimer()
+                                }
+                            }
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onEnded { _ in
+                                        isPressingBackspace = false
+                                    }
+                            )
+                            .onLongPressGesture(minimumDuration: 0, pressing: { pressing in
+                                if !pressing {
+                                    isPressingBackspace = false
+                                }
+                            }, perform: {})
+                        } else if key == "#?" || key == "ABC" {
+                            Button(action: { toggleSymbolMode() }) {
+                                Text(key)
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(inputMode == .symbol ? .green : .white)
+                                    .frame(height: 45)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.clear)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.green, lineWidth: 2)
+                                    )
+                            }
+                        } else {
+                            Button(action: {
+                                onKeyPress(key)
+                            }) {
+                                Text(displayKey(key))
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                    .frame(height: 45)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.clear)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.green, lineWidth: 2)
+                                    )
+                            }
                         }
                     }
                 }
             }
-            // 하단: 한/영, 스페이스(길게), 특수문자 전환
+            // 하단: 한/영, 스페이스(길게), 엔터만 배치
             HStack(spacing: 8) {
                 Button(action: { toggleInputMode() }) {
                     Text(inputMode == .korean ? "한/영" : "영/한")
@@ -74,11 +132,11 @@ public struct CustomKeyboardView: View {
                         .background(Color.clear)
                         .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                 }
-                // 특수문자 전환 버튼
-                Button(action: { toggleSymbolMode() }) {
-                    Text(inputMode == .symbol ? "ABC" : "#?")
+                // 엔터 버튼
+                Button(action: { onKeyPress(" ↵ ") }) {
+                    Text("↵")
                         .font(.custom("Galmuri11-Bold", size: 18))
-                        .foregroundColor(inputMode == .symbol ? .green : .white)
+                        .foregroundColor(.white)
                         .frame(width: 60, height: 45)
                         .background(Color.clear)
                         .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
@@ -95,25 +153,28 @@ public struct CustomKeyboardView: View {
             let isShifted = self.isShifted
             let row1 = isShifted ? ["ㅃ","ㅉ","ㄸ","ㄲ","ㅆ","ㅛ","ㅕ","ㅑ","ㅒ","ㅖ"] : ["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"]
             let row2 = ["ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ","←"]
-            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ"," ↵ "]
+            // 3번째 줄: ⇧, ㅋ, ㅌ, ㅊ, ㅍ, ㅠ, ㅜ, ㅡ, #?
+            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ", (inputMode == .symbol ? "ABC" : "#?")]
             return [row1, row2, row3]
         case .english:
             let row1 = isShifted ? ["Q","W","E","R","T","Y","U","I","O","P"] : ["q","w","e","r","t","y","u","i","o","p"]
             let row2 = isShifted ? ["A","S","D","F","G","H","J","K","L","←"] : ["a","s","d","f","g","h","j","k","l","←"]
-            // 3번째 줄: ⇧, z, x, c, v, b, n, m, ↵
-            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M"," ↵ "] : ["⇧","z","x","c","v","b","n","m"," ↵ "])
+            // 3번째 줄: ⇧, z, x, c, v, b, n, m, #?
+            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M", (inputMode == .symbol ? "ABC" : "#?")] : ["⇧","z","x","c","v","b","n","m", (inputMode == .symbol ? "ABC" : "#?")])
             return [row1, row2, row3]
         case .number:
             return [
                 ["1","2","3","4","5","6","7","8","9","0"],
-                ["-","/",":",";","(",")","$","&","@","\""],
-                [".",",","?","!","'"," ↵ ","←"]
+                ["-","/",":",";","(",")","$","&","@","\"","←"],
+                // 3번째 줄: ., ,, ?, !, ', #?
+                [".",",","?","!","'", (inputMode == .symbol ? "ABC" : "#?")]
             ]
         case .symbol:
             return [
                 ["[","]","{","}","#","%","^","*","+","="],
-                ["_","\\","|","~","<",">","€","£","¥","•"],
-                [".",",","?","!","'"," ↵ ","←"]
+                ["_","\\","|","~","<",">","€","£","¥","•","←"],
+                // 3번째 줄: ., ,, ?, !, ', #?
+                [".",",","?","!","'", (inputMode == .symbol ? "ABC" : "#?")]
             ]
         }
     }
@@ -149,6 +210,7 @@ public struct CustomKeyboardView: View {
     }
 
     private func onKeyPress(_ key: String) {
+        triggerHaptic()
         if inputMode == .korean {
             if key == "⇧" {
                 toggleShift()
@@ -163,13 +225,15 @@ public struct CustomKeyboardView: View {
                 commitBuffer()
                 insert(" ")
                 return
-            } else if key == "Enter" {
+            } else if key == "Enter" || key == " ↵ " {
                 commitBuffer()
                 onCommit?()
                 return
             } else {
                 commitBuffer()
-                insert(key)
+                if key != " ↵ " && key != "Enter" {
+                    insert(key)
+                }
                 return
             }
             // 입력창 업데이트
@@ -184,10 +248,12 @@ public struct CustomKeyboardView: View {
                 onBackspace()
             } else if key == "Space" {
                 insert(" ")
-            } else if key == "Enter" {
+            } else if key == "Enter" || key == " ↵ " {
                 onCommit?()
             } else {
-                insert(key)
+                if key != " ↵ " && key != "Enter" {
+                    insert(key)
+                }
             }
         }
     }
@@ -199,6 +265,7 @@ public struct CustomKeyboardView: View {
     }
 
     private func onBackspace() {
+        triggerHaptic()
         if !jamoBuffer.isEmpty {
             jamoBuffer.removeLast()
             updateInput()
@@ -224,8 +291,25 @@ public struct CustomKeyboardView: View {
         }
     }
 
+    private func startBackspaceTimer() {
+        backspaceTimer?.invalidate()
+        backspaceTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { _ in
+            onBackspace()
+        }
+    }
+
+    private func stopBackspaceTimer() {
+        backspaceTimer?.invalidate()
+        backspaceTimer = nil
+    }
+
     private func isHangulJamo(_ key: String) -> Bool {
         let jamoSet = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ"
         return jamoSet.contains(key)
+    }
+
+    private func triggerHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
     }
 } 

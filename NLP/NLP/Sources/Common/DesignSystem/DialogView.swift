@@ -40,6 +40,9 @@ struct DialogView: View {
                                 }
                             }
                         }
+                        .padding(.top, 16)
+                        .padding(.horizontal, 16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 )
                 .padding(.bottom, 320) // 입력창+키보드 높이만큼 충분히 크게 패딩
@@ -54,6 +57,17 @@ struct DialogView: View {
                     inputText = ""
                 })
             }
+            // XButton을 최상단에 오버레이로 배치
+            VStack {
+                HStack {
+                    Spacer()
+                    XButton(isPresented: $isPresented)
+                        .padding([.top, .trailing], 16)
+                }
+                Spacer()
+            }
+            .allowsHitTesting(true)
+            .zIndex(1)
         }
         .onChange(of: isPresented) { newValue in
             if !newValue {
@@ -70,5 +84,3 @@ struct DialogView: View {
         isPresented: .constant(true)
     )
 }
-
-
