@@ -47,6 +47,53 @@ struct StartGameView: View {
                         )
                 }
                 .padding(.horizontal, 80)
+                .padding(.bottom, 16)
+                // 테스트용 Stage 이동 버튼들 (가로 배치)
+                HStack(spacing: 16) {
+                    Button(action: {
+                        viewModel.action(.goStage1)
+                    }) {
+                        Text("Stage 1")
+                            .font(.custom("Galmuri11-Bold", size: 24))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                Rectangle()
+                                    .stroke(Color.white, lineWidth: 4)
+                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                            )
+                    }
+                    Button(action: {
+                        viewModel.action(.goStage2)
+                    }) {
+                        Text("Stage 2")
+                            .font(.custom("Galmuri11-Bold", size: 24))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                Rectangle()
+                                    .stroke(Color.white, lineWidth: 4)
+                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                            )
+                    }
+                    Button(action: {
+                        viewModel.action(.goStage3)
+                    }) {
+                        Text("Stage 3")
+                            .font(.custom("Galmuri11-Bold", size: 24))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                Rectangle()
+                                    .stroke(Color.white, lineWidth: 4)
+                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                            )
+                    }
+                }
+                .padding(.horizontal, 40)
                 .padding(.bottom, 60)
             }
         }
