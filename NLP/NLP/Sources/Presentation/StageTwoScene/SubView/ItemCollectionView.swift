@@ -13,6 +13,7 @@ struct ItemCollectionView: View {
     
     let backButtonTapAction: (() -> Void)?
     let nextButtonTapAction: (() -> Void)?
+    var showXButton: Bool = true
     
     var body: some View {
         VStack(spacing: 0) {
@@ -27,7 +28,7 @@ struct ItemCollectionView: View {
                 Spacer()
             }
             Spacer()
-            ItemBackGround(isPresented: $isPresented)
+            ItemBackGround(isPresented: $isPresented, showXButton: showXButton)
                 .overlay(
                     Image(item.itemImageName)
                         .resizable()
@@ -85,6 +86,7 @@ struct GameItem {
         nextButtonTapAction: {
             // 다음 버튼 탭 액션 (프리뷰에서 확인용)
             print("Next button tapped!")
-        }
+        },
+        showXButton: true
     )
 }

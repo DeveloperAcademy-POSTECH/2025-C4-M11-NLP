@@ -26,7 +26,7 @@ struct RootView: View {
                         StartGameView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
                     case .gameIntroScene:
-                        EmptyView()
+                        GameIntroView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageOneIntroScene:
                         StageOneIntroView(coordinator: coordinator)
