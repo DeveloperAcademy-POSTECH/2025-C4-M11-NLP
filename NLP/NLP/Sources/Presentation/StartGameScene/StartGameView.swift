@@ -33,7 +33,7 @@ struct StartGameView: View {
                 Spacer()
                 // 시작 버튼
                 Button(action: {
-                    viewModel.action(.textTapped)
+                    viewModel.action(.startButtonTapped)
                 }) {
                     Text("Start")
                         .font(.custom("Galmuri11-Bold", size: 24))

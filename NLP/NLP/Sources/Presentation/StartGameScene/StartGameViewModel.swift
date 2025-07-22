@@ -15,6 +15,7 @@ class StartGameViewModel: ViewModelable {
     
     enum Action {
         case textTapped
+        case startButtonTapped
     }
     
     @ObservedObject var coordinator: Coordinator
@@ -29,6 +30,8 @@ class StartGameViewModel: ViewModelable {
         switch action {
         case .textTapped:
             coordinator.push(.stageOneScene)
+        case .startButtonTapped:
+            coordinator.push(.gameIntroScene)
         }
     }
 }
