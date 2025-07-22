@@ -40,6 +40,9 @@ struct DialogView: View {
                                 }
                             }
                         }
+                        .padding(.top, 12)
+                        .padding(.horizontal, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 )
                 .padding(.bottom, 320) // 입력창+키보드 높이만큼 충분히 크게 패딩
