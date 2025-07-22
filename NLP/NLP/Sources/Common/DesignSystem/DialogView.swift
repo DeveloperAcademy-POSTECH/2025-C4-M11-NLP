@@ -63,6 +63,11 @@ struct DialogView: View {
                     height: ConstantScreenSize.screenHeight * 0.36
                 )
             )
+            .onChange(of: isPresented) { newValue in
+                if !newValue {
+                    isFocused = false // X 버튼 등으로 닫힐 때 키보드 내리기
+                }
+            }
     }
 }
 
