@@ -174,7 +174,7 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         // 카메라 애니메이션 이동 + 확대
         let targetPosition = CGPoint(x: computer.position.x, y: computer.position.y-30)
         let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
-        let scaleAction = SKAction.scale(to: 0.17, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 0.3, duration: 0.5)
         let group = SKAction.group([moveAction, scaleAction])
         camera.run(group)
     }
