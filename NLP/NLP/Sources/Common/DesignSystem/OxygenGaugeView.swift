@@ -9,11 +9,11 @@ import SwiftUI
 
 struct OxygenGaugeView: View {
     @State private var oxygen: Int
-    var onOxygenDepleted: () -> Void
+    var coordinator: Coordinator
 
-    init(initialOxygen: Int, onOxygenDepleted: @escaping () -> Void) {
+    init(initialOxygen: Int, coordinator: Coordinator) {
         self._oxygen = State(initialValue: initialOxygen)
-        self.onOxygenDepleted = onOxygenDepleted
+        self.coordinator = coordinator
     }
 
     var body: some View {
@@ -41,7 +41,6 @@ struct OxygenGaugeView: View {
                     oxygen -= 1
                 } else {
                     timer.invalidate()
-                    onOxygenDepleted()
                 }
             }
         }
@@ -51,10 +50,6 @@ struct OxygenGaugeView: View {
 #Preview {
     ZStack {
         Color.gray.ignoresSafeArea()
-        OxygenGaugeView(initialOxygen: 30) {
-            withAnimation(.linear(duration: 1)) {
-                viewModel.state.isTransitioning = true
-            }
-        }
+        OxygenGaugeView(initialOxygen: 30, coordinator: Coordinator())
     }
 }
