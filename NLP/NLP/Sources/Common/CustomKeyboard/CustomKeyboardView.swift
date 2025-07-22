@@ -29,7 +29,7 @@ public struct CustomKeyboardView: View {
                 Text(text + HangulComposer.compose(jamoBuffer))
                     .font(.custom("Galmuri11-Bold", size: 20))
                     .foregroundColor(.white)
-                    .padding(.vertical, 14)
+                    .padding(.vertical, 18)
                     .padding(.horizontal, 12)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.black)
@@ -45,7 +45,7 @@ public struct CustomKeyboardView: View {
                             Text(displayKey(key))
                                 .font(.custom("Galmuri11-Bold", size: 18))
                                 .foregroundColor(.white)
-                                .frame(height: 38)
+                                .frame(height: 45)
                                 .frame(maxWidth: .infinity)
                                 .background(Color.clear)
                                 .overlay(
@@ -56,13 +56,13 @@ public struct CustomKeyboardView: View {
                     }
                 }
             }
-            // 하단: 한/영, 스페이스(길게), Shift
+            // 하단: 한/영, 스페이스(길게), 특수문자 전환
             HStack(spacing: 8) {
                 Button(action: { toggleInputMode() }) {
                     Text(inputMode == .korean ? "한/영" : "영/한")
-                        .font(.custom("Galmuri11-Bold", size: 18))
+                        .font(.custom("Galmuri11", size: 18))
                         .foregroundColor(.white)
-                        .frame(width: 60, height: 38)
+                        .frame(width: 60, height: 45)
                         .background(Color.clear)
                         .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                 }
@@ -70,20 +70,21 @@ public struct CustomKeyboardView: View {
                     Text("Space")
                         .font(.custom("Galmuri11-Bold", size: 18))
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, minHeight: 38)
+                        .frame(maxWidth: .infinity, minHeight: 45)
                         .background(Color.clear)
                         .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                 }
-                Button(action: { toggleShift() }) {
-                    Text("Shift")
+                // 특수문자 전환 버튼
+                Button(action: { toggleSymbolMode() }) {
+                    Text(inputMode == .symbol ? "ABC" : "#?")
                         .font(.custom("Galmuri11-Bold", size: 18))
-                        .foregroundColor(isShifted ? .green : .white)
-                        .frame(width: 60, height: 38)
+                        .foregroundColor(inputMode == .symbol ? .green : .white)
+                        .frame(width: 60, height: 45)
                         .background(Color.clear)
                         .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                 }
             }
-            .frame(height: 38)
+            .frame(height: 45)
         }
     }
 
@@ -91,27 +92,28 @@ public struct CustomKeyboardView: View {
     private var keyRows: [[String]] {
         switch inputMode {
         case .korean:
-            return [
-                ["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"],
-                ["ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ","←"],
-                ["ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ","Enter"]
-            ]
+            let isShifted = self.isShifted
+            let row1 = isShifted ? ["ㅃ","ㅉ","ㄸ","ㄲ","ㅆ","ㅛ","ㅕ","ㅑ","ㅒ","ㅖ"] : ["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"]
+            let row2 = ["ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ","←"]
+            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ"," ↵ "]
+            return [row1, row2, row3]
         case .english:
             let row1 = isShifted ? ["Q","W","E","R","T","Y","U","I","O","P"] : ["q","w","e","r","t","y","u","i","o","p"]
             let row2 = isShifted ? ["A","S","D","F","G","H","J","K","L","←"] : ["a","s","d","f","g","h","j","k","l","←"]
-            let row3 = isShifted ? ["Z","X","C","V","B","N","M","Enter"] : ["z","x","c","v","b","n","m","Enter"]
+            // 3번째 줄: ⇧, z, x, c, v, b, n, m, ↵
+            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M"," ↵ "] : ["⇧","z","x","c","v","b","n","m"," ↵ "])
             return [row1, row2, row3]
         case .number:
             return [
                 ["1","2","3","4","5","6","7","8","9","0"],
                 ["-","/",":",";","(",")","$","&","@","\""],
-                [".",",","?","!","'","Enter","←"]
+                [".",",","?","!","'"," ↵ ","←"]
             ]
         case .symbol:
             return [
                 ["[","]","{","}","#","%","^","*","+","="],
                 ["_","\\","|","~","<",">","€","£","¥","•"],
-                [".",",","?","!","'","Enter","←"]
+                [".",",","?","!","'"," ↵ ","←"]
             ]
         }
     }
@@ -132,13 +134,26 @@ public struct CustomKeyboardView: View {
     }
 
     private func toggleShift() {
-        if inputMode == .english {
+        if inputMode == .english || inputMode == .korean {
             isShifted.toggle()
         }
     }
 
+    private func toggleSymbolMode() {
+        if inputMode == .symbol {
+            inputMode = .english
+        } else {
+            inputMode = .symbol
+        }
+        isShifted = false
+    }
+
     private func onKeyPress(_ key: String) {
         if inputMode == .korean {
+            if key == "⇧" {
+                toggleShift()
+                return
+            }
             if isHangulJamo(key) {
                 jamoBuffer.append(key)
             } else if key == "←" {
@@ -161,6 +176,10 @@ public struct CustomKeyboardView: View {
             updateInput()
         } else {
             // 영문/숫자/기호 모드
+            if key == "⇧" {
+                toggleShift()
+                return
+            }
             if key == "←" {
                 onBackspace()
             } else if key == "Space" {
