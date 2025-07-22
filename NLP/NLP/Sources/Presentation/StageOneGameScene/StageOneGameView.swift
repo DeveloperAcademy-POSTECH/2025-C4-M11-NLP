@@ -91,7 +91,11 @@ struct StageOneGameView: View {
             
             if viewModel.state.stageOnePhase == .decreaseOxygen {
                 VStack {
-                    OxygenGaugeView(initialOxygen: 30, coordinator: viewModel.coordinator)
+                    OxygenGaugeView(initialOxygen: 2) {
+                        withAnimation(.linear(duration: 1)) {
+                            viewModel.state.isTransitioning = true
+                        }
+                    }
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -99,6 +103,12 @@ struct StageOneGameView: View {
             }
 
         }
+        .overlay(
+            Color.black
+                .opacity(viewModel.state.isTransitioning ? 1 : 0)
+                .animation(.linear(duration: 1), value: viewModel.state.isTransitioning)
+                .ignoresSafeArea()
+        )
         .onAppear {
             initializeScene()
             dialogManager.initConversation(

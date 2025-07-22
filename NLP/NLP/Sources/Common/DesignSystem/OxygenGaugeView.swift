@@ -47,9 +47,13 @@ struct OxygenGaugeView: View {
     }
 }
 
-#Preview {
-    ZStack {
-        Color.gray.ignoresSafeArea()
-        OxygenGaugeView(initialOxygen: 30, coordinator: Coordinator())
-    }
-}
+//#Preview {
+//    ZStack {
+//        Color.gray.ignoresSafeArea()
+//        OxygenGaugeView(initialOxygen: 30) {
+//            withAnimation(.linear(duration: 1)) {
+//                viewModel.state.isTransitioning = true
+//            }
+//        }
+//    }
+//}
