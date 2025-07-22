@@ -18,9 +18,6 @@ class StageOneGameViewModel: ViewModelable {
         var isNoteFoundPresented: Bool = false
         var isArrivedAtCentralControlRoomDoor: Bool = false
         var isTransitioning: Bool = false // 암전 효과용 상태 추가
-
-        var isOxygenWarningPresented: Bool = false // 산소 게이지 표시
-
     }
     
     enum Action {
