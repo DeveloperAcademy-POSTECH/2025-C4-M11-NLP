@@ -19,6 +19,8 @@ struct StageOneGameView: View {
     }
     
     @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
+    @State private var isDoorOpened: Bool = false
+    @State private var isOxygenDecreasingStarted: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -53,7 +55,8 @@ struct StageOneGameView: View {
                         viewModel.action(.hidePasswordView)
                         viewModel.state.stageOnePhase = .wrongPassword
                         viewModel.action(.showDialog)
-                    }
+                    },
+                    isDoorOpened: $isDoorOpened
                 )
             }
             
@@ -89,7 +92,7 @@ struct StageOneGameView: View {
                 )
             }
             
-            if viewModel.state.stageOnePhase == .decreaseOxygen {
+            if isOxygenDecreasingStarted && !isDoorOpened {
                 VStack {
                     OxygenGaugeView(initialOxygen: 30) {
                         withAnimation(.linear(duration: 1)) {
@@ -122,6 +125,11 @@ struct StageOneGameView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     viewModel.coordinator.paths = [.stageOneScene]
                 }
+            }
+        }
+        .onChange(of: viewModel.state.stageOnePhase) { newPhase in
+            if newPhase == .decreaseOxygen {
+                isOxygenDecreasingStarted = true
             }
         }
         .onAppear {
