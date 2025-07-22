@@ -19,6 +19,7 @@ class StageOneGameScene: GameScene {
     weak var viewModel: StageOneGameViewModel?
     
     private var cancellables = Set<AnyCancellable>()
+    var isAutoMoving: Bool = false // 자동 이동 중 여부
     
     override func setUpScene() {
         super.setUpScene()
@@ -85,6 +86,7 @@ class StageOneGameScene: GameScene {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if isAutoMoving { return } // 자동 이동 중엔 터치 무시
         guard let camera = self.camera else { return }
         guard let touchLocation = touches.first?.location(in: camera) else { return }
 
@@ -101,6 +103,15 @@ class StageOneGameScene: GameScene {
         }
     }
     
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if isAutoMoving { return } // 자동 이동 중엔 터치 무시
+        super.touchesMoved(touches, with: event)
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if isAutoMoving { return } // 자동 이동 중엔 터치 무시
+        super.touchesEnded(touches, with: event)
+    }
 }
 
 // MARK: 각 게임 Scene 마다 설정해줘야 함.
@@ -147,11 +158,13 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
     }
     
     func moveToCenteralControlRoom(completion: @escaping () -> Void) {
+        isAutoMoving = true // 자동 이동 시작
         // 위치 미정
         let moveAction = SKAction.move(to: ConstantPositions.centeralControlRoomDoorPoisition, duration: 3.0)
         if let player = player {
-            player.run(moveAction) {
+            player.run(moveAction) { [weak self] in
                 DispatchQueue.main.async {
+                    self?.isAutoMoving = false // 자동 이동 끝
                     completion()
                 }
             }
