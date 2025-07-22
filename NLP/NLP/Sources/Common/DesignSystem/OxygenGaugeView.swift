@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OxygenGaugeView: View {
-    let oxygen: Int // 외부에서 산소값을 받음
+    let oxygen = 30 // 외부에서 산소값을 받음
     
     var body: some View {
         let gaugeWidth = ConstantScreenSize.screenWidth * 0.78

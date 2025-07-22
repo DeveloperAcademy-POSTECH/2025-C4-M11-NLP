@@ -32,7 +32,6 @@ class StageOneGameViewModel: ViewModelable {
         case showNoteFoundPresented
         case hideNoteFoundPresented
         case arrivedAtCentralControlRoomDoor
-        case showOxygenGage
     }
     
     @ObservedObject var coordinator: Coordinator
@@ -63,13 +62,8 @@ class StageOneGameViewModel: ViewModelable {
             state.isNoteFoundPresented = false
         case .arrivedAtCentralControlRoomDoor:
             state.isArrivedAtCentralControlRoomDoor = true
-        case .showOxygenGage:
         }
     }
 
-    func setOxygenGage(_ newPhase: StageOneMonologuePhase) {// 산소 게이지 표시 여부 설정 함수
-        state.stageOnePhase = newPhase
-        state.isOxygenWarningPresented = (newPhase == .decreaseOxygen)
-    }
 
 }
