@@ -30,6 +30,20 @@ struct StageThreeView: View {
                     phase: $viewModel.state.stageThreePhase
                 )
             }
+            
+            if viewModel.state.isItemCollecting {
+                ItemCollectionView(
+                    isPresented: $viewModel.state.isItemCollecting,
+                    item: GameItems.killerRobot,
+                    backButtonTapAction: {
+                        viewModel.action(.activateMonologue(withNextPhase: true))
+                    },
+                    nextButtonTapAction: {
+                        viewModel.action(.activateMonologue(withNextPhase: true))
+                        viewModel.state.isItemCollecting = false
+                    }
+                )
+            }
         }
         .onAppear {
             initScene()
@@ -54,6 +68,60 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                    }
+                )
+            ],
+            .jtoDie3: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.activateItemCollecting)
+                    }
+                )
+            ],
+            .airFinnTalk4: [
+                MonologueAction(
+                    monologue: "이해해.. 정말 무서웠을거야.",
+                    action: {
+                        viewModel.action(.goToPhase(to: .airFinnTalk5_1))
+                    }
+                ),
+                MonologueAction(
+                    monologue: "기억이 없어도 책임은 남아.",
+                    action: {
+                        viewModel.action(.goToPhase(to: .airFinnTalk5_2))
+                    }
+                ),
+            ],
+            .airFinnTalk6: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                    }
+                )
+            ],
+            .receiveSign11: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                    }
+                )
+            ],
+            .lockedDoor8: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                    }
+                )
+            ],
+            .explosion6: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        
                     }
                 )
             ]

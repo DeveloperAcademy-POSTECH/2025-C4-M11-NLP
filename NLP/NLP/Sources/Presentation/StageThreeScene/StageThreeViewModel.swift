@@ -12,6 +12,7 @@ final class StageThreeViewModel: ViewModelable {
     struct State {
         var isTransitioning: Bool = true
         var isMonologuePresented: Bool = false
+        var isItemCollecting: Bool = false
         var isDialogPresented: Bool = false
         var stageThreePhase: StageThreeMonologuePhase = .findFinn1
         
@@ -24,7 +25,9 @@ final class StageThreeViewModel: ViewModelable {
         case activateMonologue(withNextPhase: Bool)
         case deactivateDialog
         case deactivateMonologue
+        case activateItemCollecting
         case goToNextPhase
+        case goToPhase(to: StageThreeMonologuePhase)
         
         case fadeOutAndIn(withNextPhase: Bool)
         
@@ -61,9 +64,16 @@ final class StageThreeViewModel: ViewModelable {
             state.isDialogPresented = false
         case .deactivateMonologue:
             state.isMonologuePresented = false
+        case .activateItemCollecting:
+            state.isDialogPresented = false
+            state.isMonologuePresented = false
+            state.isItemCollecting = true
         case .goToNextPhase:
             state.stageThreePhase = state.stageThreePhase.nextPhase ?? .lastPhase
-        
+        case .goToPhase(let to):
+            if state.stageThreePhase != to {
+                state.stageThreePhase = to
+            }
         case .fadeOutAndIn(let withNextPhase):
             Task {
                 await MainActor.run {
