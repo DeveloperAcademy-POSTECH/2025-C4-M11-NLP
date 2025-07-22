@@ -14,7 +14,16 @@ struct UserDialogInputField: View {
     let submitAction: () -> Void
     
     var body: some View {
-        CustomKeyboardView(text: $inputText, onCommit: submitAction)
+        HStack {
+            Text(inputText.isEmpty && showCursor ? "_" : inputText)
+                .font(.custom("Galmuri11-Bold", size: 20))
+                .foregroundColor(.white)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.black)
+        }
+        .frame(height: 44)
     }
 }
 

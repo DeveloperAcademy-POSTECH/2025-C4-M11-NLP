@@ -22,16 +22,16 @@ public struct CustomKeyboardView: View {
     public var body: some View {
         VStack(spacing: 8) {
             // 입력창
-            HStack {
-                Text(text)
-                    .font(.custom("Galmuri11-Bold", size: 20))
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 12)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.black)
-            }
-            .frame(height: 44)
+            // HStack {
+            //     Text(text)
+            //         .font(.custom("Galmuri11-Bold", size: 20))
+            //         .foregroundColor(.white)
+            //         .padding(.vertical, 10)
+            //         .padding(.horizontal, 12)
+            //         .frame(maxWidth: .infinity, alignment: .leading)
+            //         .background(Color.black)
+            // }
+            // .frame(height: 44)
             // 키보드 모드 전환
             HStack(spacing: 8) {
                 Button("한글") { inputMode = .korean }
