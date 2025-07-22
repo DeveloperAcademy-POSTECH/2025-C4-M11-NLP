@@ -1,0 +1,60 @@
+//
+//  OxygenWarningView.swift
+//  NLP
+//
+//  Created by 차원준 on 7/22/25.
+//
+
+import SwiftUI
+
+struct OxygenGaugeView: View {
+    @State private var oxygen: Int
+    var onOxygenDepleted: () -> Void
+
+    init(initialOxygen: Int, onOxygenDepleted: @escaping () -> Void) {
+            self._oxygen = State(initialValue: initialOxygen)
+            self.onOxygenDepleted = onOxygenDepleted
+    }
+
+    var body: some View {
+        let gaugeWidth = ConstantScreenSize.screenWidth * 0.78
+        let gaugeHeight = ConstantScreenSize.screenHeight * 0.03
+
+        ZStack{
+            ZStack(alignment: .leading) {
+                Image("oxygenGauge")
+                    .resizable()
+                    .frame(width: gaugeWidth, height: gaugeHeight)
+                Rectangle()
+                    .frame(width: gaugeWidth * CGFloat(oxygen) / 100, height: gaugeHeight*0.7)
+                    .foregroundColor(.green)
+                    .animation(.linear(duration: 0.3), value: oxygen)
+                    .padding(4)
+            }
+            Text("산소: \(oxygen)%")
+                .font(.custom("Galmuri9", size: gaugeHeight * 0.7))
+                .foregroundColor(.white)
+        }
+        .onAppear {
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                if oxygen > 0 {
+                    oxygen -= 1
+                } else {
+                    timer.invalidate()
+                    onOxygenDepleted()
+                }
+            }
+        }
+    }
+}
+
+//#Preview {
+//    ZStack {
+//        Color.gray.ignoresSafeArea()
+//        OxygenGaugeView(initialOxygen: 30) {
+//            withAnimation(.linear(duration: 1)) {
+//                viewModel.state.isTransitioning = true
+//            }
+//        }
+//    }
+//}
