@@ -1,3 +1,10 @@
+//
+//  CustomKey.swift
+//  NLP
+//
+//  Created by Gojaehyun on 7/22/25.
+//
+
 import SwiftUI
 
 public struct CustomKeyboardView: View {

@@ -10,39 +10,11 @@ import SwiftUI
 struct UserDialogInputField: View {
     @Binding var inputText: String
     @Binding var showCursor: Bool
-    @FocusState var isFocused: Bool
+    @FocusState var isFocused: Bool // 사용하지 않음(커스텀 키보드)
     let submitAction: () -> Void
     
     var body: some View {
-        ZStack(alignment: .leading) {
-            if inputText.isEmpty && !isFocused {
-                HStack(spacing: 0) {
-                    // 깜빡이는 커서
-                    if showCursor {
-                        Text("_") // 또는 "|"
-                            .foregroundColor(.green)
-                            .font(NLPFont.body)
-                    }
-                }
-            }
-//            TextEditor(text: $inputText)
-//                .background(.black)
-            
-            TextField("", text: $inputText, axis: .vertical)
-                .font(NLPFont.body)
-                .foregroundStyle(.white)
-                .focused($isFocused)
-                .onChange(of: inputText) { _, newValue in
-                    if newValue.last == "\n" {
-                        inputText = String(newValue.dropLast())
-                        if !inputText.isEmpty {
-                            submitAction()
-                            isFocused = false
-                        }
-                    }
-                }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        CustomKeyboardView(text: $inputText, onCommit: submitAction)
     }
 }
 
