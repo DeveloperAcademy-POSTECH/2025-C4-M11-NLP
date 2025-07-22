@@ -8,12 +8,16 @@
 import SwiftUI
 import Foundation
 
+import Combine
+
 public struct CustomKeyboardView: View {
     @Binding var text: String
     var onCommit: (() -> Void)?
     @State private var inputMode: InputMode = .korean
     @State private var jamoBuffer: [String] = [] // 한글 자모 버퍼
     @State private var isShifted: Bool = false // Shift 상태
+    @State private var backspaceTimer: Timer? = nil
+    @State private var isPressingBackspace: Bool = false
 
     public enum InputMode { case korean, english, number, symbol }
 
@@ -39,19 +43,59 @@ public struct CustomKeyboardView: View {
             ForEach(keyRows, id: \ .self) { row in
                 HStack(spacing: 6) {
                     ForEach(row, id: \ .self) { key in
-                        Button(action: {
-                            onKeyPress(key)
-                        }) {
-                            Text(displayKey(key))
-                                .font(.custom("Galmuri11-Bold", size: 18))
-                                .foregroundColor(.white)
-                                .frame(height: 45)
-                                .frame(maxWidth: .infinity)
-                                .background(Color.clear)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.green, lineWidth: 2)
-                                )
+                        if key == "←" {
+                            Button(action: {
+                                onBackspace()
+                            }) {
+                                Text(displayKey(key))
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                    .frame(height: 45)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.clear)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.green, lineWidth: 2)
+                                    )
+                            }
+                            .simultaneousGesture(
+                                LongPressGesture(minimumDuration: 0.4)
+                                    .onEnded { _ in
+                                        isPressingBackspace = true
+                                        startBackspaceTimer()
+                                    }
+                            )
+                            .onChange(of: isPressingBackspace) { isPressing in
+                                if !isPressing {
+                                    stopBackspaceTimer()
+                                }
+                            }
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onEnded { _ in
+                                        isPressingBackspace = false
+                                    }
+                            )
+                            .onLongPressGesture(minimumDuration: 0, pressing: { pressing in
+                                if !pressing {
+                                    isPressingBackspace = false
+                                }
+                            }, perform: {})
+                        } else {
+                            Button(action: {
+                                onKeyPress(key)
+                            }) {
+                                Text(displayKey(key))
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                    .frame(height: 45)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.clear)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.green, lineWidth: 2)
+                                    )
+                            }
                         }
                     }
                 }
@@ -226,6 +270,18 @@ public struct CustomKeyboardView: View {
         if !text.isEmpty {
             text.removeLast()
         }
+    }
+
+    private func startBackspaceTimer() {
+        backspaceTimer?.invalidate()
+        backspaceTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { _ in
+            onBackspace()
+        }
+    }
+
+    private func stopBackspaceTimer() {
+        backspaceTimer?.invalidate()
+        backspaceTimer = nil
     }
 
     private func isHangulJamo(_ key: String) -> Bool {
