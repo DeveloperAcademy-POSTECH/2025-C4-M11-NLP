@@ -100,7 +100,7 @@ public struct CustomKeyboardView: View {
                     }
                 }
             }
-            // 하단: 한/영, 스페이스(길게), 특수문자 전환
+            // 하단: 한/영, 스페이스(길게), 엔터, 특수문자 전환
             HStack(spacing: 8) {
                 Button(action: { toggleInputMode() }) {
                     Text(inputMode == .korean ? "한/영" : "영/한")
@@ -115,6 +115,15 @@ public struct CustomKeyboardView: View {
                         .font(.custom("Galmuri11-Bold", size: 18))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, minHeight: 45)
+                        .background(Color.clear)
+                        .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
+                }
+                // 엔터 버튼
+                Button(action: { onKeyPress(" ↵ ") }) {
+                    Text("↵")
+                        .font(.custom("Galmuri11-Bold", size: 18))
+                        .foregroundColor(.white)
+                        .frame(width: 60, height: 45)
                         .background(Color.clear)
                         .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                 }

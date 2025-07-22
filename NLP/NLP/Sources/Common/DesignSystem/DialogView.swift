@@ -57,6 +57,17 @@ struct DialogView: View {
                     inputText = ""
                 })
             }
+            // XButton을 최상단에 오버레이로 배치
+            VStack {
+                HStack {
+                    Spacer()
+                    XButton(isPresented: $isPresented)
+                        .padding([.top, .trailing], 16)
+                }
+                Spacer()
+            }
+            .allowsHitTesting(true)
+            .zIndex(1)
         }
         .onChange(of: isPresented) { newValue in
             if !newValue {
@@ -73,5 +84,3 @@ struct DialogView: View {
         isPresented: .constant(true)
     )
 }
-
-
