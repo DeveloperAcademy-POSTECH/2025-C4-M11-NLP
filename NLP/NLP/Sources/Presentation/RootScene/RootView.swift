@@ -48,6 +48,12 @@ struct RootView: View {
                             coordinator: coordinator,
                             storiesType: storiesType
                         )
+                    case .stageThreeScene:
+                        StageThreeView(
+                            coordinator: coordinator,
+                            dialogManager: dialogManager
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
                     }
                 }
         }
