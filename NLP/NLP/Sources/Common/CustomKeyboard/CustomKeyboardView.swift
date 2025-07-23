@@ -76,61 +76,33 @@ public struct CustomKeyboardView: View {
                 stopBackspaceTimer()
             }
             // 키패드 (3~4줄)
-            ForEach(keyRows, id: \ .self) { row in
+            ForEach(Array(keyRows.enumerated()), id: \.offset) { rowIndex, row in
                 HStack(spacing: 6) {
-                    ForEach(row, id: \ .self) { key in
-                        if key == "←" {
-                            Button(action: {
-                                onBackspace()
-                            }) {
-                                Text(displayKey(key))
-                                    .font(.custom("Galmuri11-Bold", size: 18))
-                                    .foregroundColor(.white)
-                                    .frame(height: 45)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.clear)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(Color.green, lineWidth: 2)
-                                    )
-                            }
-                            .simultaneousGesture(
-                                LongPressGesture(minimumDuration: 0.4)
-                                    .onEnded { _ in
-                                        isPressingBackspace = true
-                                        startBackspaceTimer()
-                                    }
-                            )
-                            .onChange(of: isPressingBackspace) { isPressing in
-                                if !isPressing {
-                                    stopBackspaceTimer()
+                    if rowIndex == 1 {
+                        // 2열: 양옆 여백은 Spacer, 나머지는 Button
+                        ForEach(row, id: \.self) { key in
+                            if key == "" {
+                                Spacer().frame(width: 12)
+                            } else {
+                                Button(action: {
+                                    onKeyPress(key)
+                                }) {
+                                    Text(displayKey(key))
+                                        .font(.custom("Galmuri11-Bold", size: 18))
+                                        .foregroundColor(.white)
+                                        .frame(height: 45)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.clear)
+                                        .overlay(
+                                            Rectangle()
+                                                .stroke(Color.green, lineWidth: 2)
+                                        )
                                 }
                             }
-                            .gesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onEnded { _ in
-                                        isPressingBackspace = false
-                                    }
-                            )
-                            .onLongPressGesture(minimumDuration: 0, pressing: { pressing in
-                                if !pressing {
-                                    isPressingBackspace = false
-                                }
-                            }, perform: {})
-                        } else if key == "#?" || key == "ABC" {
-                            Button(action: { toggleSymbolMode() }) {
-                                Text(key)
-                                    .font(.custom("Galmuri11-Bold", size: 18))
-                                    .foregroundColor(inputMode == .symbol ? .green : .white)
-                                    .frame(height: 45)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.clear)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(Color.green, lineWidth: 2)
-                                    )
-                            }
-                        } else {
+                        }
+                    } else {
+                        // 1, 3열 등은 기존 방식
+                        ForEach(row, id: \.self) { key in
                             Button(action: {
                                 onKeyPress(key)
                             }) {
@@ -188,30 +160,42 @@ public struct CustomKeyboardView: View {
         case .korean:
             let isShifted = self.isShifted
             let row1 = isShifted ? ["ㅃ","ㅉ","ㄸ","ㄲ","ㅆ","ㅛ","ㅕ","ㅑ","ㅒ","ㅖ"] : ["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"]
-            let row2 = ["ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ","←"]
-            // 3번째 줄: ⇧, ㅋ, ㅌ, ㅊ, ㅍ, ㅠ, ㅜ, ㅡ, #?
-            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ", (inputMode == .symbol ? "ABC" : "#?")]
+            // 2열: 중앙 정렬, 양옆에 빈칸
+            let row2 = ["", "ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ", ""]
+            // 3열: 특수문자 전환 자리에 ←(Del), #?은 한/영 버튼 옆으로 이동
+            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ","←"]
             return [row1, row2, row3]
         case .english:
             let row1 = isShifted ? ["Q","W","E","R","T","Y","U","I","O","P"] : ["q","w","e","r","t","y","u","i","o","p"]
-            let row2 = isShifted ? ["A","S","D","F","G","H","J","K","L","←"] : ["a","s","d","f","g","h","j","k","l","←"]
-            // 3번째 줄: ⇧, z, x, c, v, b, n, m, #?
-            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M", (inputMode == .symbol ? "ABC" : "#?")] : ["⇧","z","x","c","v","b","n","m", (inputMode == .symbol ? "ABC" : "#?")])
+            // 2열: 중앙 정렬, 양옆에 빈칸
+            let row2 = ["", isShifted ? "A":"a", isShifted ? "S":"s", isShifted ? "D":"d", isShifted ? "F":"f", isShifted ? "G":"g", isShifted ? "H":"h", isShifted ? "J":"j", isShifted ? "K":"k", isShifted ? "L":"l", ""]
+            // 3열: 특수문자 전환 자리에 ←(Del), #?은 한/영 버튼 옆으로 이동
+            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M","←"] : ["⇧","z","x","c","v","b","n","m","←"])
             return [row1, row2, row3]
         case .number:
             return [
                 ["1","2","3","4","5","6","7","8","9","0"],
-                ["-","/",":",";","(",")","$","&","@","\"","←"],
-                // 3번째 줄: ., ,, ?, !, ', #?
-                [".",",","?","!","'", (inputMode == .symbol ? "ABC" : "#?")]
+                ["-","/",":",";","(",")","$","&","@","\""],
+                [".",",","?","!","'","←"]
             ]
         case .symbol:
             return [
-                ["[","]","{","}","#","%","^","*","+","="],
-                ["_","\\","|","~","<",">","€","£","¥","•","←"],
-                // 3번째 줄: ., ,, ?, !, ', #?
-                [".",",","?","!","'", (inputMode == .symbol ? "ABC" : "#?")]
+                ["[", "]", "{", "}", "#", "%", "^", "*", "+", "="],
+                ["_", "\\", "|", "~", "<", ">", "€", "£", "¥", "•"],
+                [".",",","?","!","'","←"]
             ]
+        }
+    }
+
+    // 하단 버튼: 한/영, 특수문자 전환, 스페이스, 엔터
+    private var bottomRow: [String] {
+        switch inputMode {
+        case .korean:
+            return ["한/영", "#?", "Space", "↵"]
+        case .english:
+            return ["한/영", "#?", "Space", "↵"]
+        case .number, .symbol:
+            return ["ABC", "한/영", "Space", "↵"]
         }
     }
 
