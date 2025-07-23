@@ -11,6 +11,7 @@ struct GameIntroView: View {
     @ObservedObject var coordinator: Coordinator
     @State private var pageIndex: Int = 0
     @State private var isStreamingCompleted: Bool = false
+    @State private var skipStreaming: Bool = false
     
     // 이미지가 필요한 페이지는 imageName, 아닌 곳은 nil
     private let stories: [(image: String?, title: String, description: String)] = [
@@ -64,6 +65,7 @@ struct GameIntroView: View {
                 StreamingText(
                     fullDialog: stories[pageIndex].description,
                     streamingSpeed: 0.03,
+                    skip: $skipStreaming,
                     streamingCompleted: { isStreamingCompleted = true }
                 )
                 .font(.custom("Galmuri11", size: 18))
@@ -73,6 +75,7 @@ struct GameIntroView: View {
                 .padding(.bottom, 32)
                 .onAppear {
                     isStreamingCompleted = false
+                    skipStreaming = false
                 }
                 .id(pageIndex) // 페이지 바뀔 때마다 리셋
 
@@ -81,9 +84,11 @@ struct GameIntroView: View {
                 // 네비게이션 버튼
                 HStack {
                     Button(action: {
+                        MusicManager.shared.playClickSound()
                         if pageIndex > 0 {
                             pageIndex -= 1
                             isStreamingCompleted = false
+                            skipStreaming = true // 돌아간 페이지는 항상 완성된 텍스트
                         }
                     }) {
                         HStack {
@@ -93,13 +98,17 @@ struct GameIntroView: View {
                         .foregroundColor(pageIndex == 0 ? .gray : .white)
                         .font(.custom("Galmuri11-Bold", size: 20))
                     }
-                    .disabled(pageIndex == 0 || !isStreamingCompleted)
+                    .disabled(pageIndex == 0)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     Button(action: {
-                        if pageIndex < stories.count - 1 {
+                        MusicManager.shared.playClickSound()
+                        if !isStreamingCompleted {
+                            skipStreaming = true
+                        } else if pageIndex < stories.count - 1 {
                             pageIndex += 1
                             isStreamingCompleted = false
+                            skipStreaming = false
                         } else {
                             coordinator.push(.stageOneIntroScene)
                         }
@@ -111,12 +120,15 @@ struct GameIntroView: View {
                         .foregroundColor(.white)
                         .font(.custom("Galmuri11-Bold", size: 20))
                     }
-                    .disabled(!isStreamingCompleted)
+                    // 항상 활성화, 내부에서 분기
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 24)
             }
+        }
+        .onAppear {
+            MusicManager.shared.playMusic(named: "bgm_2")
         }
     }
 } 

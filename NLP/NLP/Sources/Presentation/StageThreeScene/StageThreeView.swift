@@ -11,6 +11,7 @@ import SwiftUI
 struct StageThreeView: View {
     @StateObject var viewModel: StageThreeViewModel
     @ObservedObject var dialogManager: DialogManager
+    @State private var skipStreaming: Bool = false
     
     init(coordinator: Coordinator, dialogManager: DialogManager) {
         _viewModel = StateObject(wrappedValue: StageThreeViewModel(coordinator: coordinator))
@@ -27,7 +28,8 @@ struct StageThreeView: View {
             if viewModel.state.isMonologuePresented {
                 MonologueView(
                     actions: configureMonologueActions(),
-                    phase: $viewModel.state.stageThreePhase
+                    phase: $viewModel.state.stageThreePhase,
+                    skip: $skipStreaming
                 )
             }
             

@@ -28,6 +28,7 @@ import SwiftUI
 struct StreamingText: View {
     var fullDialog: String
     var streamingSpeed: Double
+    @Binding var skip: Bool
     @State var timer: Timer?
     @State var currentText: String = ""
     @State var index: Int = 0
@@ -43,7 +44,24 @@ struct StreamingText: View {
                 timer?.invalidate()
                 currentText = ""
                 index = 0
+                skip = false
                 startTimer()
+            }
+            .onChange(of: skip) { _, newValue in
+                if newValue {
+                    timer?.invalidate()
+                    currentText = fullDialog
+                    index = fullDialog.count
+                    streamingCompleted?()
+                } else {
+                    // skip이 false로 바뀌면(새로운 문장 등) 타이핑 재시작
+                    if currentText != fullDialog {
+                        timer?.invalidate()
+                        currentText = ""
+                        index = 0
+                        startTimer()
+                    }
+                }
             }
     }
     

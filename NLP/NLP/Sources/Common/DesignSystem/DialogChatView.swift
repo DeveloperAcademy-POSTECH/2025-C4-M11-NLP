@@ -14,6 +14,7 @@ struct DialogChatView: View {
     @State var inputText: String = ""
     @FocusState private var isFocused: Bool
     @State var showCursor: Bool = true
+    @State private var skipStreaming: Bool = false
 
     // 타이머로 커서 깜빡임 제어
     let cursorTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
@@ -33,7 +34,7 @@ struct DialogChatView: View {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 16) {
                                     if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
-                                        ForEach(conversationLogs, id: \.self) { log in
+                                        ForEach(Array(conversationLogs.enumerated()), id: \ .element) { idx, log in
                                             if log.sender == .user {
                                                 HStack {
                                                     Text(log.content)
@@ -54,11 +55,26 @@ struct DialogChatView: View {
                                                 )
                                                 .padding(.leading, 20)
                                             } else {
-                                                HStack {
-                                                    StreamingText(fullDialog: log.content, streamingSpeed: 0.03)
+                                                HStack(alignment: .center) {
+                                                    StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
                                                         .font(NLPFont.body)
                                                         .foregroundStyle(.white)
                                                         .padding(20)
+                                                    // 마지막 AI 메시지에만 '다음' 버튼 표시
+                                                    if idx == conversationLogs.count - 1 {
+                                                        Button(action: {
+                                                            skipStreaming = true
+                                                        }) {
+                                                            Text("다음")
+                                                                .font(.custom("Galmuri11-Bold", size: 18))
+                                                                .foregroundColor(.white)
+                                                                .padding(.horizontal, 16)
+                                                                .padding(.vertical, 8)
+                                                                .background(Color.green.opacity(0.7))
+                                                                .cornerRadius(8)
+                                                        }
+                                                        .padding(.trailing, 8)
+                                                    }
                                                     Spacer()
                                                 }
                                                 .background(

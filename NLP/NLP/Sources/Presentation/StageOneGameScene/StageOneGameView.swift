@@ -12,6 +12,7 @@ import SpriteKit
 struct StageOneGameView: View {
     @StateObject var viewModel: StageOneGameViewModel
     @ObservedObject var dialogManager = DialogManager()
+    @State private var skipStreaming: Bool = false
     
     init(coordinator: Coordinator, dialogManager: DialogManager) {
         self._viewModel = StateObject(wrappedValue: StageOneGameViewModel(coordinator: coordinator))
@@ -30,7 +31,8 @@ struct StageOneGameView: View {
             if viewModel.state.isDialogPresented {
                 MonologueView(
                     actions: configureMonologueActions(),
-                    phase: $viewModel.state.stageOnePhase
+                    phase: $viewModel.state.stageOnePhase,
+                    skip: $skipStreaming
                 )
             }
             
