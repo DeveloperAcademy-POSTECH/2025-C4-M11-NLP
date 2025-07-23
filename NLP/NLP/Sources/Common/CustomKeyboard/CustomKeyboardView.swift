@@ -19,6 +19,8 @@ public struct CustomKeyboardView: View {
     @State private var isShifted: Bool = false // Shift 상태
     @State private var backspaceTimer: Timer? = nil
     @State private var isPressingBackspace: Bool = false
+    @State private var showCursor: Bool = true
+    @State private var cursorTimer: Timer? = nil
 
     public enum InputMode { case korean, english, number, symbol }
 
@@ -28,7 +30,7 @@ public struct CustomKeyboardView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             // 입력창
             HStack {
                 Text(text + HangulComposer.compose(jamoBuffer))
@@ -37,9 +39,42 @@ public struct CustomKeyboardView: View {
                     .padding(.vertical, 18)
                     .padding(.horizontal, 12)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.black)
+                    .background(
+                        Rectangle()
+                            .fill(Color.black)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(Color.green, lineWidth: 2)
+                            )
+                    )
+                    .overlay(
+                        // 커서 효과
+                        VStack {
+                            Spacer()
+                            HStack {
+                                if text.isEmpty && jamoBuffer.isEmpty {
+                                    Rectangle()
+                                        .fill(Color.white)
+                                        .frame(width: 20, height: 2)
+                                        .opacity(showCursor ? 1 : 0)
+                                        .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCursor)
+                                }
+                                Spacer()
+                            }
+                            .padding(.leading, 12)
+                            .padding(.bottom, 8)
+                        }
+                    )
             }
             .frame(height: 44)
+            .offset(y: -10)
+            .onAppear {
+                startCursorBlink()
+            }
+            .onDisappear {
+                stopCursorBlink()
+                stopBackspaceTimer()
+            }
             // 키패드 (3~4줄)
             ForEach(keyRows, id: \ .self) { row in
                 HStack(spacing: 6) {
@@ -144,6 +179,7 @@ public struct CustomKeyboardView: View {
             }
             .frame(height: 45)
         }
+        .offset(y: -20)
     }
 
     // 키패드 행별 배열
@@ -311,5 +347,17 @@ public struct CustomKeyboardView: View {
     private func triggerHaptic() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
+    }
+    
+    private func startCursorBlink() {
+        cursorTimer?.invalidate()
+        cursorTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+            showCursor.toggle()
+        }
+    }
+    
+    private func stopCursorBlink() {
+        cursorTimer?.invalidate()
+        cursorTimer = nil
     }
 } 
