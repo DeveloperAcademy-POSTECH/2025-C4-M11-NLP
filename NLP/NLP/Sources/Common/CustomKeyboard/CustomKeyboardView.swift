@@ -267,9 +267,7 @@ public struct CustomKeyboardView: View {
                 return
             } else {
                 commitBuffer()
-                if key != " ↵ " && key != "Enter" {
-                    insert(key)
-                }
+                insert(key)
                 return
             }
             // 입력창 업데이트
@@ -287,9 +285,8 @@ public struct CustomKeyboardView: View {
             } else if key == "Enter" || key == " ↵ " {
                 onCommit?()
             } else {
-                if key != " ↵ " && key != "Enter" {
-                    insert(key)
-                }
+                commitBuffer()
+                insert(key)
             }
         }
     }
