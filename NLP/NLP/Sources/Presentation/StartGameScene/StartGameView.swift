@@ -9,6 +9,8 @@ import SwiftUI
 
 struct StartGameView: View {
     @StateObject var viewModel: StartGameViewModel
+    @State private var showKeyboardTest: Bool = false
+    @State private var keyboardTestText: String = ""
     
     init(coordinator: Coordinator) {
         self._viewModel = StateObject(wrappedValue: StartGameViewModel(coordinator: coordinator))
@@ -94,7 +96,66 @@ struct StartGameView: View {
                     }
                 }
                 .padding(.horizontal, 40)
+                .padding(.bottom, 16)
+                // Keyboard Test 버튼
+                Button(action: {
+                    withAnimation {
+                        showKeyboardTest.toggle()
+                    }
+                }) {
+                    Text("Keyboard Test")
+                        .font(.custom("Galmuri11-Bold", size: 22))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            Rectangle()
+                                .stroke(Color.green, lineWidth: 3)
+                                .background(Color.black.opacity(0.5).cornerRadius(6))
+                        )
+                }
+                .padding(.horizontal, 80)
                 .padding(.bottom, 60)
+            }
+            // 키보드 테스트 뷰 (화면 하단에 오버레이)
+            if showKeyboardTest {
+                VStack {
+                    Spacer()
+                    ZStack {
+                        Color.black.opacity(0.7)
+                            .ignoresSafeArea()
+                        VStack(spacing: 0) {
+                            HStack {
+                                Text("Keyboard Test")
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Button(action: { withAnimation { showKeyboardTest = false } }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.title2)
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 12)
+                            .padding(.bottom, 4)
+                            // 입력 결과 표시
+                            Text(keyboardTestText)
+                                .font(.custom("Galmuri11-Bold", size: 22))
+                                .foregroundColor(.green)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.black.opacity(0.5))
+                                .cornerRadius(8)
+                                .padding(.horizontal)
+                            // 커스텀 키보드
+                            CustomKeyboardView(text: $keyboardTestText)
+                                .background(Color.black)
+                        }
+                        .padding(.bottom, 0)
+                    }
+                }
+                .transition(.move(edge: .bottom))
             }
         }
     }
