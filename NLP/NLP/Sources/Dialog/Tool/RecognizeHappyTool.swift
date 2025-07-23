@@ -14,17 +14,17 @@ struct RecognizeHappyTool: Tool {
     
     init(afterRecognizeAction: @escaping (() -> Void)) {
         self.afterRecognizeAction = afterRecognizeAction
-        description = "Please make sure to detect and trigger whenever a sentence from the user shows happiness or joy!"
+        description = "사용자의 행복과 기쁨이 나타나는 문장을 반드시 인식해 호출하세요! 제발!"
     }
     
     @Generable
     struct Arguments {
-        @Guide(description: "Here is the user’s full sentence that feels happy.")
+        @Guide(description: "행복이 느껴지는 사용자의 전체 문장입니다.")
         var happySentence: String
     }
     
     func call(arguments: Arguments) -> ToolOutput {
         afterRecognizeAction()
-        return ToolOutput("I can feel joy in your sentence. I’m so happy too! :)")
+        return ToolOutput("문장에서 기쁨이 느껴져요. 저도 너무 기뻐요 :)")
     }
 }
