@@ -48,32 +48,41 @@ struct HangulComposer {
             if let choIdx = choseong.firstIndex(of: jamo[i]),
                i+1 < jamo.count,
                let jungIdx = jungseong.firstIndex(of: jamo[i+1]) {
-                // 종성까지 있는지 확인
-                var jongIdx = 0
-                var consumed = 2
-                var hasJong = false
-                if i+2 < jamo.count, let idx = jongseong.firstIndex(of: jamo[i+2]) {
-                    jongIdx = idx
-                    consumed = 3
-                    hasJong = true
+                // 1. 복합 종성(겹받침) 우선
+                if i+3 < jamo.count, let comp = complexJongseong[jamo[i+2] + jamo[i+3]], let idx = jongseong.firstIndex(of: comp) {
+                    let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + idx
+                    if let uni = UnicodeScalar(scalar) {
+                        result.append(String(uni))
+                        i += 4
+                        continue
+                    }
                 }
-                // 종성 뒤에 모음이 오면 종성을 초성으로 넘김
-                if hasJong, i+3 < jamo.count, jungseong.contains(jamo[i+3]) {
+                // 2. 단일 받침 + 모음 조합 처리
+                if i+3 < jamo.count, jongseong.contains(jamo[i+2]), jungseong.contains(jamo[i+3]) {
                     // 현재 글자: 초성+중성 (종성 없이)
                     let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + 0
                     if let uni = UnicodeScalar(scalar) {
                         result.append(String(uni))
                     }
-                    // 다음 글자: 초성(종성), 중성(다음 모음) + 나머지 자모 전체
+                    // 다음 글자: 초성(받침), 중성(다음 모음) + 나머지 자모 전체
                     let nextJamo = Array(jamo[(i+2)...])
                     result += compose(nextJamo)
-                    return result // 남은 자모는 재귀로 처리했으니 return
+                    return result
                 }
-                // 일반적인 한글 조합
-                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + jongIdx
+                // 3. 단일 종성
+                if i+2 < jamo.count, let idx = jongseong.firstIndex(of: jamo[i+2]) {
+                    let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + idx
+                    if let uni = UnicodeScalar(scalar) {
+                        result.append(String(uni))
+                        i += 3
+                        continue
+                    }
+                }
+                // 4. 초성+중성만
+                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28)
                 if let uni = UnicodeScalar(scalar) {
                     result.append(String(uni))
-                    i += consumed
+                    i += 2
                     continue
                 }
             }
