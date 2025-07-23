@@ -50,6 +50,9 @@ struct StageThreeView: View {
             viewModel.action(.transitionComplete)
             viewModel.state.isMonologuePresented = true
         }
+        .task {
+            scene.hideKillerRobot()
+        }
         .overlay(
             Color.black
                 .opacity(viewModel.state.isTransitioning ? 1 : 0)
@@ -79,6 +82,11 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        Task {
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.changeRobotToDead()
+                            scene.showKillerRobot()
+                        }
                     }
                 )
             ],

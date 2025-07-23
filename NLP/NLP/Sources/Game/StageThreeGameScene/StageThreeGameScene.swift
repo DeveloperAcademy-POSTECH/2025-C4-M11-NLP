@@ -10,6 +10,7 @@ import SpriteKit
 class StageThreeGameScene: GameScene {
     var robot: RobotSprite?
     var finn: FinnSprite?
+    var killerRobot: KillerRobotSprite?
     
     var isAutoMoving: Bool = false // 자동 이동 중 여부
     
@@ -27,6 +28,9 @@ class StageThreeGameScene: GameScene {
             } else if let finn = child as? FinnSprite {
                 finn.configurePhysics()
                 self.finn = finn
+            } else if let killerRobot = child as? KillerRobotSprite {
+                killerRobot.configurePhysics()
+                self.killerRobot = killerRobot
             }
         }
     }
@@ -86,6 +90,24 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
                     self?.isAutoMoving = false
                 }
             }
+        }
+    }
+    
+    func changeRobotToDead() {
+        if let robot = robot {
+            robot.texture = SKTexture(imageNamed: "robot-dead")
+        }
+    }
+    
+    func showKillerRobot() {
+        if let killerRobot = killerRobot {
+            killerRobot.isHidden = false
+        }
+    }
+    
+    func hideKillerRobot() {
+        if let killerRobot = killerRobot {
+            killerRobot.isHidden = true
         }
     }
 }
