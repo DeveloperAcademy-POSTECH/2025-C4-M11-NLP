@@ -30,7 +30,7 @@ public struct CustomKeyboardView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             // 입력창
             HStack {
                 Text(text + HangulComposer.compose(jamoBuffer))
@@ -67,6 +67,7 @@ public struct CustomKeyboardView: View {
                     )
             }
             .frame(height: 44)
+            .offset(y: -10)
             .onAppear {
                 startCursorBlink()
             }
@@ -178,7 +179,7 @@ public struct CustomKeyboardView: View {
             }
             .frame(height: 45)
         }
-        .padding(.top, -20)
+        .offset(y: -20)
     }
 
     // 키패드 행별 배열
