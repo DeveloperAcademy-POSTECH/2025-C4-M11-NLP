@@ -57,9 +57,9 @@ class MusicManager {
     func playClickSound() {
         print("[MusicManager] playClickSound() called")
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            print("[MusicManager] try to load click.mp3 from bundle")
-            guard let url = Bundle.main.url(forResource: "click", withExtension: "mp3") else {
-                print("[MusicManager] 효과음 파일을 찾을 수 없음: click.mp3")
+            print("[MusicManager] try to load click.wav from bundle")
+            guard let url = Bundle.main.url(forResource: "click", withExtension: "wav") else {
+                print("[MusicManager] 효과음 파일을 찾을 수 없음: click.wav")
                 return
             }
             do {

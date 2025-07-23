@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct StageOneIntroView: View {
     @StateObject var viewModel: StageOneIntroViewModel
@@ -21,6 +22,12 @@ struct StageOneIntroView: View {
                 HeartBeatView()
                     .onAppear {
                         print("[StageOneIntroView] HeartBeatView onAppear")
+                        // 2초 후 반드시 .introDialog로 전환 (무한 heartBeat 방지)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            if viewModel.state.phase == .heartBeat {
+                                viewModel.state.phase = .introDialog
+                            }
+                        }
                     }
             case .introDialog:
                 IntroDialogView(dialogsEndAction: {
@@ -33,14 +40,13 @@ struct StageOneIntroView: View {
             }
         }
         .onAppear {
-            print("[StageOneIntroView] 전체 뷰 onAppear - heart.wav 재생 시도")
-            MusicManager.shared.stopMusic()
-            MusicManager.shared.playMusic(named: "heart", fileExtension: "wav")
+            print("[StageOneIntroView] 전체 뷰 onAppear - heart.mp3 재생 시도")
+            MusicManager.shared.playMusic(named: "heart")
         }
-        .onDisappear {
-            print("[StageOneIntroView] 전체 뷰 onDisappear - stopMusic")
-            MusicManager.shared.stopMusic()
-        }
+//        .onDisappear {
+//            print("[StageOneIntroView] 전체 뷰 onDisappear - stopMusic")
+//            MusicManager.shared.stopMusic()
+//        }
     }
 }
 
