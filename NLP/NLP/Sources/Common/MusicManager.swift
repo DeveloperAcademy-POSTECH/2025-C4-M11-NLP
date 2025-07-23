@@ -13,7 +13,8 @@ class MusicManager {
 
     func playMusic(named fileName: String, fileExtension: String = "mp3", loop: Bool = true) {
         print("[MusicManager] playMusic called with: \(fileName).\(fileExtension)")
-        guard currentFileName != fileName else {
+        // 이미 같은 음악이 재생 중이면 아무것도 하지 않음
+        if currentFileName == fileName, player?.isPlaying == true {
             print("[MusicManager] 이미 같은 음악 재생 중, 무시")
             return
         }
@@ -43,8 +44,8 @@ class MusicManager {
         }
     }
 
-    func stopMusic() {
-        print("[MusicManager] stopMusic() called")
+    func stopMusic(file: String = #file, function: String = #function, line: Int = #line) {
+        print("[MusicManager] stopMusic() called from \(file):\(function):\(line)")
         player?.stop()
         player = nil
         currentFileName = nil

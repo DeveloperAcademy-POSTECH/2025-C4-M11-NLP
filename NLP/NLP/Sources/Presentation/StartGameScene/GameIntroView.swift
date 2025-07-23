@@ -130,8 +130,5 @@ struct GameIntroView: View {
         .onAppear {
             MusicManager.shared.playMusic(named: "bgm_2")
         }
-        .onDisappear {
-            MusicManager.shared.stopMusic()
-        }
     }
 } 

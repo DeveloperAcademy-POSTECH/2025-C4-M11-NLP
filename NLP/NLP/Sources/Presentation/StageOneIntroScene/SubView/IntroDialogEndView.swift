@@ -35,6 +35,7 @@ struct IntroDialogEndView: View {
                     buttonText: "시작하기",
                     buttonWidth: 154
                 ) {
+                    MusicManager.shared.stopMusic()
                     guard let startButtonTapped = startButtonTapped else { return }
                     startButtonTapped()
                 }
@@ -51,5 +52,9 @@ struct IntroDialogEndView: View {
         .padding(.horizontal, 24)
         .ignoresSafeArea()
         .background(.black)
+        .onAppear {
+            print("[IntroDialogEndView] onAppear - beat.mp3 재생 시도")
+            MusicManager.shared.playMusic(named: "beat")
+        }
     }
 }
