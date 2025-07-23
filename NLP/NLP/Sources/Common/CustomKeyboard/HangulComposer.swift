@@ -45,58 +45,41 @@ struct HangulComposer {
         var result = ""
         var i = 0
         while i < jamo.count {
-            // 초성
-            guard i < jamo.count, let choIdx = choseong.firstIndex(of: jamo[i]) else {
-                result += jamo[i]
-                i += 1
-                continue
-            }
-            // 중성 (복합 모음 우선)
-            var jung: String? = nil
-            var jungLen = 1
-            if i+2 < jamo.count, let comp = complexJungseong[jamo[i+1] + jamo[i+2]] {
-                jung = comp
-                jungLen = 2
-            } else if i+1 < jamo.count, jungseong.contains(jamo[i+1]) {
-                jung = jamo[i+1]
-            }
-            guard let jungStr = jung, let jungIdx = jungseong.firstIndex(of: jungStr) else {
-                result += jamo[i]
-                i += 1
-                continue
-            }
-            // 종성 (복합 받침 우선)
-            var jong: String? = nil
-            var jongLen = 1
-            if i+1+jungLen+1 < jamo.count, let comp = complexJongseong[jamo[i+1+jungLen] + jamo[i+1+jungLen+1]] {
-                jong = comp
-                jongLen = 2
-            } else if i+1+jungLen < jamo.count, jongseong.contains(jamo[i+1+jungLen]) {
-                jong = jamo[i+1+jungLen]
-            }
-            // 종성+중성 조합 시, 종성의 마지막 자음을 초성으로 넘김
-            if let jongStr = jong, i+1+jungLen+jongLen < jamo.count, jungseong.contains(jamo[i+1+jungLen+jongLen]) {
-                let (prevJong, nextCho) = splitJongseong(jongStr)
-                // 이전 글자: 초성+중성+앞받침
-                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + (prevJong != "" ? (jongseong.firstIndex(of: prevJong) ?? 0) : 0)
-                if let uni = UnicodeScalar(scalar) {
-                    result += String(uni)
+            if let choIdx = choseong.firstIndex(of: jamo[i]),
+               i+1 < jamo.count,
+               let jungIdx = jungseong.firstIndex(of: jamo[i+1]) {
+                // 종성까지 있는지 확인
+                var jongIdx = 0
+                var consumed = 2
+                var hasJong = false
+                if i+2 < jamo.count, let idx = jongseong.firstIndex(of: jamo[i+2]) {
+                    jongIdx = idx
+                    consumed = 3
+                    hasJong = true
                 }
-                // 다음 글자: 초성(분리된 받침) + 중성(새로 입력된 모음)
-                let nextJamo = [nextCho, jamo[i+1+jungLen+jongLen]]
-                result += compose(nextJamo)
-                i = i+1+jungLen+jongLen+1
-                continue
+                // 종성 뒤에 모음이 오면 종성을 초성으로 넘김
+                if hasJong, i+3 < jamo.count, jungseong.contains(jamo[i+3]) {
+                    // 현재 글자: 초성+중성 (종성 없이)
+                    let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + 0
+                    if let uni = UnicodeScalar(scalar) {
+                        result.append(String(uni))
+                    }
+                    // 다음 글자: 초성(종성), 중성(다음 모음) + 나머지 자모 전체
+                    let nextJamo = Array(jamo[(i+2)...])
+                    result += compose(nextJamo)
+                    return result // 남은 자모는 재귀로 처리했으니 return
+                }
+                // 일반적인 한글 조합
+                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + jongIdx
+                if let uni = UnicodeScalar(scalar) {
+                    result.append(String(uni))
+                    i += consumed
+                    continue
+                }
             }
-            let jongIdx = jong.flatMap { jongseong.firstIndex(of: $0) } ?? 0
-            let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + jongIdx
-            if let uni = UnicodeScalar(scalar) {
-                result += String(uni)
-                i += 1 + jungLen + (jong == nil ? 0 : jongLen)
-            } else {
-                result += jamo[i]
-                i += 1
-            }
+            // 조합 불가: 자모 그대로
+            result.append(jamo[i])
+            i += 1
         }
         return result
     }
