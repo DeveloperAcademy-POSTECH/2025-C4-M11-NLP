@@ -45,50 +45,64 @@ struct HangulComposer {
         var result = ""
         var i = 0
         while i < jamo.count {
-            if let choIdx = choseong.firstIndex(of: jamo[i]),
-               i+1 < jamo.count,
-               let jungIdx = jungseong.firstIndex(of: jamo[i+1]) {
-                // 1. 복합 종성(겹받침) 우선
-                if i+3 < jamo.count, let comp = complexJongseong[jamo[i+2] + jamo[i+3]], let idx = jongseong.firstIndex(of: comp) {
-                    let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + idx
-                    if let uni = UnicodeScalar(scalar) {
-                        result.append(String(uni))
-                        i += 4
-                        continue
-                    }
-                }
-                // 2. 단일 받침 + 모음 조합 처리
-                if i+3 < jamo.count, jongseong.contains(jamo[i+2]), jungseong.contains(jamo[i+3]) {
-                    // 현재 글자: 초성+중성 (종성 없이)
-                    let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + 0
-                    if let uni = UnicodeScalar(scalar) {
-                        result.append(String(uni))
-                    }
-                    // 다음 글자: 초성(받침), 중성(다음 모음) + 나머지 자모 전체
-                    let nextJamo = Array(jamo[(i+2)...])
-                    result += compose(nextJamo)
-                    return result
-                }
-                // 3. 단일 종성
-                if i+2 < jamo.count, let idx = jongseong.firstIndex(of: jamo[i+2]) {
-                    let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + idx
-                    if let uni = UnicodeScalar(scalar) {
-                        result.append(String(uni))
-                        i += 3
-                        continue
-                    }
-                }
-                // 4. 초성+중성만
-                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28)
+            // 초성
+            guard i < jamo.count, let choIdx = choseong.firstIndex(of: jamo[i]) else {
+                result.append(jamo[i])
+                i += 1
+                continue
+            }
+            // 중성 (복합 모음 우선)
+            var jung: String? = nil
+            var jungLen = 1
+            if i+2 < jamo.count, let comp = complexJungseong[jamo[i+1] + jamo[i+2]] {
+                jung = comp
+                jungLen = 2
+            } else if i+1 < jamo.count, jungseong.contains(jamo[i+1]) {
+                jung = jamo[i+1]
+                jungLen = 1
+            }
+            guard let jungStr = jung, let jungIdx = jungseong.firstIndex(of: jungStr) else {
+                result.append(jamo[i])
+                i += 1
+                continue
+            }
+            // 1. 복합 종성(겹받침) 우선
+            if i+1+jungLen+1 < jamo.count, let comp = complexJongseong[jamo[i+1+jungLen] + jamo[i+1+jungLen+1]], let idx = jongseong.firstIndex(of: comp) {
+                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + idx
                 if let uni = UnicodeScalar(scalar) {
                     result.append(String(uni))
-                    i += 2
+                    i += 1 + jungLen + 2
                     continue
                 }
             }
-            // 조합 불가: 자모 그대로
-            result.append(jamo[i])
-            i += 1
+            // 2. 단일 받침 + 모음 조합 처리
+            if i+1+jungLen+1 < jamo.count, jongseong.contains(jamo[i+1+jungLen]), jungseong.contains(jamo[i+1+jungLen+1]) {
+                // 현재 글자: 초성+중성 (종성 없이)
+                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + 0
+                if let uni = UnicodeScalar(scalar) {
+                    result.append(String(uni))
+                }
+                // 다음 글자: 초성(받침), 중성(다음 모음) + 나머지 자모 전체
+                let nextJamo = Array(jamo[(i+1+jungLen)...])
+                result += compose(nextJamo)
+                return result
+            }
+            // 3. 단일 종성
+            if i+1+jungLen < jamo.count, let idx = jongseong.firstIndex(of: jamo[i+1+jungLen]) {
+                let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28) + idx
+                if let uni = UnicodeScalar(scalar) {
+                    result.append(String(uni))
+                    i += 1 + jungLen + 1
+                    continue
+                }
+            }
+            // 4. 초성+중성만
+            let scalar = 0xAC00 + (choIdx * 21 * 28) + (jungIdx * 28)
+            if let uni = UnicodeScalar(scalar) {
+                result.append(String(uni))
+                i += 1 + jungLen
+                continue
+            }
         }
         return result
     }
