@@ -14,7 +14,7 @@ final class StageThreeViewModel: ViewModelable {
         var isMonologuePresented: Bool = false
         var isItemCollecting: Bool = false
         var isDialogPresented: Bool = false
-        var stageThreePhase: StageThreeMonologuePhase = .findFinn1
+        var stageThreePhase: StageThreeMonologuePhase = .stageArrived
         
         var isTouchDisabled: Bool = false
     }

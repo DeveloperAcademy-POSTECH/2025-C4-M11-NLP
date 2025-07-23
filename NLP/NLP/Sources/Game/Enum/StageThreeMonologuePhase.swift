@@ -7,6 +7,7 @@
 
 enum StageThreeMonologuePhase: MonologuePhase {
     
+    case stageArrived
     case findFinn1
     case findFinn2
     case jtoDie1
@@ -49,6 +50,10 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var monologue: String {
         switch self {
+        case .stageArrived:
+            return """
+            여기는 도킹베이... 기계장치에 문제가 생기지는 않았을지...
+            """
         case .findFinn1:
             return """
             핀이 여기에 있다니...말도 안돼... 야, 너 괜찮아?? 왜 여기 혼자 쓰러져 있는거야...
@@ -225,8 +230,10 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var previousPhase: Self? {
         switch self {
-        case .findFinn1:
+        case .stageArrived:
             return nil
+        case .findFinn1:
+            return .stageArrived
         case .findFinn2:
             return .findFinn1
         case .jtoDie1:
@@ -304,6 +311,8 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var nextPhase: Self? {
         switch self {
+        case .stageArrived:
+            return .findFinn1
         case .findFinn1:
             return .findFinn2
         case .findFinn2:

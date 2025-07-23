@@ -114,7 +114,6 @@ class GameScene: SKScene {
 extension GameScene {
     // MARK: 사용자의 움직임 이후 사용자의 위치로 카메라를 함께 옮겨주기 위함
     private func moveCamera(_ playerLocation: CGPoint) {
-        guard isJoystickTouchActive else { return }
         let stride = 0.25
         self.camera?.position.x.interpolate(
             towards: playerLocation.x,

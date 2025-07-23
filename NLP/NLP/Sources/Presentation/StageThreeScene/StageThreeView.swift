@@ -17,7 +17,7 @@ struct StageThreeView: View {
         self.dialogManager = dialogManager
     }
     
-    @State var scene: StageThreeGameScene = StageThreeGameScene(fileNamed: "StageTwoGameScene")!
+    @State var scene: StageThreeGameScene = StageThreeGameScene(fileNamed: "StageThreeGameScene")!
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -63,6 +63,17 @@ struct StageThreeView: View {
     
     private func configureMonologueActions() -> [StageThreeMonologuePhase: [MonologueAction]] {
         return [
+            .stageArrived: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveToFinn {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
             .findFinn2: [
                 MonologueAction(
                     monologue: "다음",
