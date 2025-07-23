@@ -30,7 +30,7 @@ public struct CustomKeyboardView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 6) {
             // 입력창
             HStack {
                 Text(text + HangulComposer.compose(jamoBuffer))
