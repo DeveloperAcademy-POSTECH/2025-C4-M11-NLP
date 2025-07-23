@@ -123,30 +123,23 @@ public struct CustomKeyboardView: View {
             }
             // 하단: 한/영, 스페이스(길게), 엔터만 배치
             HStack(spacing: 8) {
-                Button(action: { toggleInputMode() }) {
-                    Text(inputMode == .korean ? "한/영" : "영/한")
-                        .font(.custom("Galmuri11", size: 18))
-                        .foregroundColor(.white)
-                        .frame(width: 60, height: 45)
-                        .background(Color.clear)
-                        .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
-                }
-                Button(action: { onKeyPress("Space") }) {
-                    Text("Space")
-                        .font(.custom("Galmuri11-Bold", size: 18))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, minHeight: 45)
-                        .background(Color.clear)
-                        .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
-                }
-                // 엔터 버튼
-                Button(action: { onKeyPress(" ↵ ") }) {
-                    Text("↵")
-                        .font(.custom("Galmuri11-Bold", size: 18))
-                        .foregroundColor(.white)
-                        .frame(width: 60, height: 45)
-                        .background(Color.clear)
-                        .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
+                ForEach(bottomRow, id: \.self) { key in
+                    Button(action: { onKeyPress(key) }) {
+                        if key == "한/영" {
+                            Image(systemName: "globe")
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 60, height: 45)
+                        } else {
+                            Text(key)
+                                .font(.custom("Galmuri11-Bold", size: 18))
+                                .foregroundColor(.white)
+                                .frame(width: key == "Space" ? nil : 60, height: 45)
+                                .frame(maxWidth: key == "Space" ? .infinity : nil)
+                        }
+                    }
+                    .background(Color.clear)
+                    .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                 }
             }
             .frame(height: 45)
@@ -222,6 +215,7 @@ public struct CustomKeyboardView: View {
 
     private func toggleSymbolMode() {
         if inputMode == .symbol {
+            // symbol 모드에서 이전 모드로 복귀 (영문 기본)
             inputMode = .english
         } else {
             inputMode = .symbol
@@ -231,6 +225,10 @@ public struct CustomKeyboardView: View {
 
     private func onKeyPress(_ key: String) {
         triggerHaptic()
+        if key == "#?" || key == "ABC" {
+            toggleSymbolMode()
+            return
+        }
         if inputMode == .korean {
             if key == "⇧" {
                 toggleShift()
