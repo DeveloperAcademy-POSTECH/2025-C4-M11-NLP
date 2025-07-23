@@ -78,45 +78,108 @@ public struct CustomKeyboardView: View {
             // 키패드 (3~4줄)
             ForEach(Array(keyRows.enumerated()), id: \.offset) { rowIndex, row in
                 HStack(spacing: 6) {
-                    if rowIndex == 1 {
-                        // 2열: 양옆 여백은 Spacer, 나머지는 Button
+                    if rowIndex == 2 {
+                        // 3열: 양옆 여백은 Spacer, 나머지는 Button
                         ForEach(row, id: \.self) { key in
                             if key == "" {
-                                Spacer().frame(width: 12)
+                                Spacer().frame(width: 16)
                             } else {
-                                Button(action: {
-                                    onKeyPress(key)
-                                }) {
+                                Button(action: { onKeyPress(key) }) {
                                     Text(displayKey(key))
                                         .font(.custom("Galmuri11-Bold", size: 18))
                                         .foregroundColor(.white)
                                         .frame(height: 45)
                                         .frame(maxWidth: .infinity)
                                         .background(Color.clear)
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(Color.green, lineWidth: 2)
-                                        )
+                                        .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                                 }
+                                .background(
+                                    Rectangle()
+                                        .fill(Color.black.opacity(0.6))
+                                )
                             }
                         }
+                    } else if rowIndex == 3 {
+                        // 4번째 줄(시프트/딜리트 등)은 기존 방식(폭 넓힘 등)
+                        if let first = row.first, let last = row.last {
+                            Button(action: { onKeyPress(first) }) {
+                                if first == "⇧" {
+                                    Text("↑")
+                                        .font(.custom("Galmuri11-Bold", size: 22))
+                                        .foregroundColor(.white)
+                                        .frame(width: 45, height: 45)
+                                } else {
+                                    Text(displayKey(first))
+                                        .font(.custom("Galmuri11-Bold", size: 18))
+                                        .foregroundColor(.white)
+                                        .frame(width: 45, height: 45)
+                                }
+                            }
+                            .background(Color.clear)
+                            .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
+                            ForEach(row.dropFirst().dropLast(), id: \.self) { key in
+                                Button(action: { onKeyPress(key) }) {
+                                    Text(displayKey(key))
+                                        .font(.custom("Galmuri11-Bold", size: 18))
+                                        .foregroundColor(.white)
+                                        .frame(height: 45)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.clear)
+                                        .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
+                                }
+                                .background(
+                                    Rectangle()
+                                        .fill(Color.black.opacity(0.6))
+                                )
+                            }
+                            Button(action: { onKeyPress(last) }) {
+                                Text(displayKey(last))
+                                    .font(.custom("Galmuri11-Bold", size: 18))
+                                    .foregroundColor(.white)
+                                    .frame(width: 45, height: 45)
+                                    .background(Color.clear)
+                                    .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
+                            }
+                            .simultaneousGesture(
+                                LongPressGesture(minimumDuration: 0.4)
+                                    .onEnded { _ in
+                                        isPressingBackspace = true
+                                        startBackspaceTimer()
+                                    }
+                            )
+                            .onChange(of: isPressingBackspace) { isPressing in
+                                if !isPressing {
+                                    stopBackspaceTimer()
+                                }
+                            }
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onEnded { _ in
+                                        isPressingBackspace = false
+                                    }
+                            )
+                            .onLongPressGesture(minimumDuration: 0, pressing: { pressing in
+                                if !pressing {
+                                    isPressingBackspace = false
+                                }
+                            }, perform: {})
+                        }
                     } else {
-                        // 1, 3열 등은 기존 방식
+                        // 숫자열(0) 및 1열 등은 기존 방식, 단 숫자열만 높이 35
                         ForEach(row, id: \.self) { key in
-                            Button(action: {
-                                onKeyPress(key)
-                            }) {
+                            Button(action: { onKeyPress(key) }) {
                                 Text(displayKey(key))
                                     .font(.custom("Galmuri11-Bold", size: 18))
                                     .foregroundColor(.white)
-                                    .frame(height: 45)
+                                    .frame(height: rowIndex == 0 ? 35 : 45)
                                     .frame(maxWidth: .infinity)
                                     .background(Color.clear)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(Color.green, lineWidth: 2)
-                                    )
+                                    .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
                             }
+                            .background(
+                                Rectangle()
+                                    .fill(Color.black.opacity(0.6))
+                            )
                         }
                     }
                 }
@@ -129,13 +192,18 @@ public struct CustomKeyboardView: View {
                             Image(systemName: "globe")
                                 .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.white)
-                                .frame(width: 60, height: 45)
+                                .frame(width: 50, height: 45)
+                        } else if key == "Space" {
+                            Text("Space")
+                                .font(.custom("Galmuri11-Bold", size: 18))
+                                .foregroundColor(.white)
+                                .frame(height: 45)
+                                .frame(maxWidth: .infinity)
                         } else {
                             Text(key)
                                 .font(.custom("Galmuri11-Bold", size: 18))
                                 .foregroundColor(.white)
-                                .frame(width: key == "Space" ? nil : 60, height: 45)
-                                .frame(maxWidth: key == "Space" ? .infinity : nil)
+                                .frame(width: 50, height: 45)
                         }
                     }
                     .background(Color.clear)
@@ -152,19 +220,18 @@ public struct CustomKeyboardView: View {
         switch inputMode {
         case .korean:
             let isShifted = self.isShifted
+            let numberRow = ["1","2","3","4","5","6","7","8","9","0"]
             let row1 = isShifted ? ["ㅃ","ㅉ","ㄸ","ㄲ","ㅆ","ㅛ","ㅕ","ㅑ","ㅒ","ㅖ"] : ["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"]
-            // 2열: 중앙 정렬, 양옆에 빈칸
             let row2 = ["", "ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ", ""]
-            // 3열: 특수문자 전환 자리에 ←(Del), #?은 한/영 버튼 옆으로 이동
             let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ","←"]
-            return [row1, row2, row3]
+            return [numberRow, row1, row2, row3]
         case .english:
+            let isShifted = self.isShifted
+            let numberRow = ["1","2","3","4","5","6","7","8","9","0"]
             let row1 = isShifted ? ["Q","W","E","R","T","Y","U","I","O","P"] : ["q","w","e","r","t","y","u","i","o","p"]
-            // 2열: 중앙 정렬, 양옆에 빈칸
             let row2 = ["", isShifted ? "A":"a", isShifted ? "S":"s", isShifted ? "D":"d", isShifted ? "F":"f", isShifted ? "G":"g", isShifted ? "H":"h", isShifted ? "J":"j", isShifted ? "K":"k", isShifted ? "L":"l", ""]
-            // 3열: 특수문자 전환 자리에 ←(Del), #?은 한/영 버튼 옆으로 이동
             let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M","←"] : ["⇧","z","x","c","v","b","n","m","←"])
-            return [row1, row2, row3]
+            return [numberRow, row1, row2, row3]
         case .number:
             return [
                 ["1","2","3","4","5","6","7","8","9","0"],
@@ -172,11 +239,11 @@ public struct CustomKeyboardView: View {
                 [".",",","?","!","'","←"]
             ]
         case .symbol:
-            return [
-                ["[", "]", "{", "}", "#", "%", "^", "*", "+", "="],
-                ["_", "\\", "|", "~", "<", ">", "€", "£", "¥", "•"],
-                [".",",","?","!","'","←"]
-            ]
+            let numberRow = ["1","2","3","4","5","6","7","8","9","0"]
+            let row1 = ["[", "]", "{", "}", "#", "%", "^", "*", "+", "="]
+            let row2 = ["_", "\\", "|", "~", "<", ">", "€", "£", "¥", "•"]
+            let row3 = [".",",","?","!","'","←"]
+            return [numberRow, row1, row2, row3]
         }
     }
 
@@ -225,8 +292,17 @@ public struct CustomKeyboardView: View {
 
     private func onKeyPress(_ key: String) {
         triggerHaptic()
+        if key == "한/영" {
+            toggleInputMode()
+            return
+        }
         if key == "#?" || key == "ABC" {
             toggleSymbolMode()
+            return
+        }
+        if key == "Enter" || key == "↵" || key == " ↵ " {
+            commitBuffer()
+            onCommit?()
             return
         }
         if inputMode == .korean {
@@ -242,10 +318,6 @@ public struct CustomKeyboardView: View {
             } else if key == "Space" {
                 commitBuffer()
                 insert(" ")
-                return
-            } else if key == "Enter" || key == " ↵ " {
-                commitBuffer()
-                onCommit?()
                 return
             } else {
                 commitBuffer()
@@ -264,8 +336,6 @@ public struct CustomKeyboardView: View {
                 onBackspace()
             } else if key == "Space" {
                 insert(" ")
-            } else if key == "Enter" || key == " ↵ " {
-                onCommit?()
             } else {
                 commitBuffer()
                 insert(key)
