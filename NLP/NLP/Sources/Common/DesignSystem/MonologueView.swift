@@ -9,6 +9,7 @@ import SwiftUI
 struct MonologueView<T: MonologuePhase>: View {
     let actions: [T: [MonologueAction]]
     @Binding var phase: T
+    @Binding var skip: Bool
     
     var body: some View {
         VStack {
@@ -16,7 +17,7 @@ struct MonologueView<T: MonologuePhase>: View {
                 .fill(.black.opacity(0.1))
             
                 VStack(alignment: .leading) {
-                    StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03)
+                    StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03, skip: $skip)
                         .font(NLPFont.body)
                         .foregroundStyle(.white)
                     Spacer()

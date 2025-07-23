@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 /**
  게임에서 사용할 커스텀 버튼 뷰입니다.
@@ -58,6 +59,7 @@ struct GameButton: View {
     
     var body: some View {
         Button(action: {
+            MusicManager.shared.playClickSound()
             /** 버튼이 눌렸을 때 지정된 액션을 실행합니다. */
             guard let buttonTapAction = buttonTapAction else { return }
             buttonTapAction()

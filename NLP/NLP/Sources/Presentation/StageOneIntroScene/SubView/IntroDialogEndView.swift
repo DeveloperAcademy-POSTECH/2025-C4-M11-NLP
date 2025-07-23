@@ -9,6 +9,7 @@ import SwiftUI
 struct IntroDialogEndView: View {
     @State var isStartButtonEnabled: Bool = false
     var startButtonTapped: (() -> Void)?
+    @State private var skipStreaming: Bool = false
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -18,7 +19,8 @@ struct IntroDialogEndView: View {
             }
             StreamingText(
                 fullDialog: ConstantGameDialogs.introDialogBeforeStageOneStart,
-                streamingSpeed: 0.1
+                streamingSpeed: 0.1,
+                skip: $skipStreaming
             ) {
                 isStartButtonEnabled = true
             }

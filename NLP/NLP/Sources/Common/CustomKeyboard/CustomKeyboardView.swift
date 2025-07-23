@@ -292,6 +292,7 @@ public struct CustomKeyboardView: View {
 
     private func onKeyPress(_ key: String) {
         triggerHaptic()
+        MusicManager.shared.playClickSound()
         if key == "한/영" {
             toggleInputMode()
             return
