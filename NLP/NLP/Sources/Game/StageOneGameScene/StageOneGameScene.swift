@@ -81,6 +81,9 @@ class StageOneGameScene: GameScene {
                     }
                 }
             }
+            if let door = child as? DoorSprite {
+                door.configurePhysics()
+            }
         }
         
         viewModel?.$state
@@ -171,6 +174,16 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.state.isChatBotSettingPresented = true
         } else if let _ = nodeA as? ChatBotSettingSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.state.isChatBotSettingPresented = true
+        }
+        // DoorSprite와 PlayerSprite 충돌 시 효과음+흔들림 효과
+        if (nodeA is PlayerSprite && nodeB is DoorSprite) || (nodeA is DoorSprite && nodeB is PlayerSprite) {
+            MusicManager.shared.playEffect(named: "door")
+            if let door = nodeA as? DoorSprite {
+                door.runShakeEffect()
+            } else if let door = nodeB as? DoorSprite {
+                door.runShakeEffect()
+            }
+            return
         }
     }
     
