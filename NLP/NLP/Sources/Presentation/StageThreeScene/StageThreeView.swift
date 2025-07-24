@@ -44,6 +44,13 @@ struct StageThreeView: View {
                     }
                 )
             }
+            
+            if viewModel.state.isSignalMachinePresented {
+                SignalMachineDetailView(
+                    action: configureSignalMachineActions(),
+                    phase: $viewModel.state.signalMachinePhase
+                )
+            }
         }
         .onAppear {
             initScene()
@@ -52,6 +59,13 @@ struct StageThreeView: View {
         }
         .task {
             scene.hideKillerRobot()
+        }
+        .onChange(of: viewModel.state.isSignalMachinePresented) { _, newValue in
+            if newValue {
+                scene.signalMachineInteractionStart()
+            } else {
+                scene.signalMachineInteractionEnd()
+            }
         }
         .overlay(
             Color.black
@@ -95,6 +109,7 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.activateItemCollecting)
+                        scene.standUpFinn()
                     }
                 )
             ],
@@ -117,6 +132,10 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.state.isMonologuePresented = false
+                        scene.moveToSignalMachine {
+                            
+                        }
                     }
                 )
             ],
@@ -144,6 +163,15 @@ struct StageThreeView: View {
                     }
                 )
             ]
+        ]
+    }
+    
+    private func configureSignalMachineActions() -> [SignalMachinePhase: () -> Void] {
+        return [
+            .signal4: {
+                viewModel.action(.deactivateSignalMachine)
+                viewModel.action(.activateMonologue(withNextPhase: true))
+            }
         ]
     }
 }

@@ -20,7 +20,7 @@ class KillerRobotSprite: SKSpriteNode {
         self.physicsBody?.friction = 0.2 // 기본 마찰력
         self.physicsBody?.linearDamping = 5.0 // 빠르게 천천히 속도를 줄일 수 있도록
         self.physicsBody?.restitution = 0 // 튕김 방지
-        self.physicsBody?.categoryBitMask = PhysicsCategory.robot.rawValue
+        self.physicsBody?.categoryBitMask = PhysicsCategory.killerRobot.rawValue
         self.physicsBody?.contactTestBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.collisionBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.affectedByGravity = false

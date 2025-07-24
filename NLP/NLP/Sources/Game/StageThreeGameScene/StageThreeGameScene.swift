@@ -5,13 +5,16 @@
 //  Created by 양시준 on 7/22/25.
 //
 
+import Combine
 import SpriteKit
 
 class StageThreeGameScene: GameScene {
     var robot: RobotSprite?
     var finn: FinnSprite?
     var killerRobot: KillerRobotSprite?
+    var signalMachine: SignalMachineSprite?
     
+    private var cancellables = Set<AnyCancellable>()
     var isAutoMoving: Bool = false // 자동 이동 중 여부
     
     weak var viewModel: StageThreeViewModel?
@@ -31,6 +34,9 @@ class StageThreeGameScene: GameScene {
             } else if let killerRobot = child as? KillerRobotSprite {
                 killerRobot.configurePhysics()
                 self.killerRobot = killerRobot
+            } else if let signalMachine = child as? SignalMachineSprite {
+                signalMachine.configurePhysics()
+                self.signalMachine = signalMachine
             }
         }
     }
@@ -68,7 +74,11 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         let nodeA = contact.bodyA.node
         let nodeB = contact.bodyB.node
         
-        
+        if let _ = nodeA as? PlayerSprite, let _ = nodeB as? SignalMachineSprite {
+            viewModel?.state.isSignalMachinePresented = true
+        } else if let _ = nodeB as? PlayerSprite, let _ = nodeA as? SignalMachineSprite {
+            viewModel?.state.isSignalMachinePresented = true
+        }
     }
     
     func moveToFinn(completion: @escaping () -> Void) {
@@ -109,5 +119,49 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         if let killerRobot = killerRobot {
             killerRobot.isHidden = true
         }
+    }
+    
+    func standUpFinn() {
+        if let finn = finn {
+            finn.texture = SKTexture(imageNamed: "Finn")
+        }
+    }
+    
+    func moveToSignalMachine(completion: @escaping () -> Void) {
+        isAutoMoving = true
+        let playerMoveAction = SKAction.move(to: ConstantPositions.signalMachinePosition, duration: 3.0)
+        if let player = player {
+            player.run(playerMoveAction) { [weak self] in
+                DispatchQueue.main.async {
+                    self?.isAutoMoving = false
+                    completion()
+                }
+            }
+        }
+    }
+    
+    func signalMachineInteractionStart() {
+        guard let player, let signalMachine, let camera else { return }
+        
+        setNodeVisibility(player, visibility: false)
+        let targetPosition = CGPoint(x: signalMachine.position.x, y: signalMachine.position.y-30)
+        let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 0.3, duration: 0.5)
+        let group = SKAction.group([moveAction, scaleAction])
+        camera.run(group)
+    }
+    
+    func signalMachineInteractionEnd() {
+        guard let player, let camera else { return }
+        
+        setNodeVisibility(player, visibility: true)
+        let moveAction = SKAction.move(to: player.position, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 1.0, duration: 0.5)
+        let group = SKAction.group([moveAction, scaleAction])
+        camera.run(group)
+    }
+    
+    private func setNodeVisibility(_ node: SKNode, visibility: Bool) {
+        node.zPosition = visibility ? 1 : -1
     }
 }
