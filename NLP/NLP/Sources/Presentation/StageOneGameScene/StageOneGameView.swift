@@ -45,6 +45,14 @@ struct StageOneGameView: View {
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
+            DialogView(
+                dialogManager: dialogManager,
+                isPresented: $viewModel.state.isOxygenChatting
+            )
+                .opacity(viewModel.state.isOxygenChatting ? 1 : 0)
+                .offset(y: viewModel.state.isOxygenChatting ? 0 : 100)
+                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isOxygenChatting)
+            
             if viewModel.state.isPasswordViewPresented {
                 PasswordView(
                     backButtonTapAction: {
@@ -174,6 +182,21 @@ struct StageOneGameView: View {
                     UnlockTool(rightPasswordAction: {
                         dialogManager.initializeSession(
                             dialogPartner: .computer,
+                            instructions: ConstantInstructions.computerOnboarding,
+                            tools: []
+                        )
+                    })
+                ]
+            )
+            
+            // Oxygen 채팅 초기화
+            dialogManager.initConversation(
+                dialogPartner: .oxygen,
+                instructions: DialogPartnerType.oxygen.instructions,
+                tools: [
+                    UnlockTool(rightPasswordAction: {
+                        dialogManager.initializeSession(
+                            dialogPartner: .oxygen,
                             instructions: ConstantInstructions.computerOnboarding,
                             tools: []
                         )

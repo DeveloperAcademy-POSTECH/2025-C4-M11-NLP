@@ -87,6 +87,11 @@ class StageOneGameScene: GameScene {
                 } else {
                     self?.computerInteractionEnd()
                 }
+                if state.isOxygenChatting {
+                    self?.oxygenInteractionStart()
+                } else {
+                    self?.oxygenInteractionEnd()
+                }
             }
             .store(in: &cancellables)
     }
@@ -101,7 +106,7 @@ class StageOneGameScene: GameScene {
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         } else {
-            if let gs = viewModel?.state, gs.isChatting { return }
+            if let gs = viewModel?.state, gs.isChatting || gs.isOxygenChatting { return }
             // 조이스틱이 없거나 조이스틱 영역이 아닌 경우 새로운 조이스틱 생성
             self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
@@ -143,9 +148,9 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         } else if let _ = nodeA as? DoorLockSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.showPasswordView)
         } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? OxygenSprite {
-            viewModel?.state.isOxygenFound = true
+            viewModel?.state.isOxygenChatting = true
         } else if let _ = nodeA as? OxygenSprite, let _ = nodeB as? PlayerSprite {
-            viewModel?.state.isOxygenFound = true
+            viewModel?.state.isOxygenChatting = true
         }
     }
     
@@ -203,6 +208,44 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
     }
 
     func computerInteractionEnd() {
+        guard let player, let camera else { return }
+
+        setNodeVisibility(player, visibility: true)
+        // 조이스틱이 존재하는 경우에만 표시
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: true)
+            setNodeVisibility(joyStick.joystickKnob, visibility: true)
+        }
+
+        // 카메라 애니메이션 복귀
+        let moveAction = SKAction.move(to: player.position, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 1.0, duration: 0.5)
+        let group = SKAction.group([moveAction, scaleAction])
+        camera.run(group)
+    }
+    
+    func oxygenInteractionStart() {
+        guard let player, let oxygen, let camera else { return }
+        
+        isJoystickTouchActive = false
+        
+        // 채팅시 플레이어와 조이스틱 가리기
+        setNodeVisibility(player, visibility: false)
+        // 조이스틱이 존재하는 경우에만 숨김
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: false)
+            setNodeVisibility(joyStick.joystickKnob, visibility: false)
+        }
+
+        // 카메라 애니메이션 이동 + 확대
+        let targetPosition = CGPoint(x: oxygen.position.x, y: oxygen.position.y-30)
+        let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 0.3, duration: 0.5)
+        let group = SKAction.group([moveAction, scaleAction])
+        camera.run(group)
+    }
+
+    func oxygenInteractionEnd() {
         guard let player, let camera else { return }
 
         setNodeVisibility(player, visibility: true)
