@@ -18,6 +18,9 @@ class StageOneGameViewModel: ViewModelable {
         var isNoteFoundPresented: Bool = false
         var isArrivedAtCentralControlRoomDoor: Bool = false
         var isTransitioning: Bool = false // 암전 효과용 상태 추가
+        var isFlashlightFound: Bool = false // 손전등 발견 여부
+        var isExplorationStarted: Bool = false // 돌아다니기 시작 여부
+        var isOxygenWarningShown: Bool = false // 산소 부족 경고 대화 표시 여부
     }
     
     enum Action {
@@ -30,6 +33,9 @@ class StageOneGameViewModel: ViewModelable {
         case showNoteFoundPresented
         case hideNoteFoundPresented
         case arrivedAtCentralControlRoomDoor
+        case startExploration
+        case flashlightFound
+        case oxygenWarningShown
     }
     
     @ObservedObject var coordinator: Coordinator
@@ -60,6 +66,12 @@ class StageOneGameViewModel: ViewModelable {
             state.isNoteFoundPresented = false
         case .arrivedAtCentralControlRoomDoor:
             state.isArrivedAtCentralControlRoomDoor = true
+        case .startExploration:
+            state.isExplorationStarted = true
+        case .flashlightFound:
+            state.isFlashlightFound = true
+        case .oxygenWarningShown:
+            state.isOxygenWarningShown = true
         }
     }
 

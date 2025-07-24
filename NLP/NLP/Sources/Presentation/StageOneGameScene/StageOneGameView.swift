@@ -22,6 +22,7 @@ struct StageOneGameView: View {
     @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
     @State private var isDoorOpened: Bool = false
     @State private var isOxygenDecreasingStarted: Bool = false
+    @State private var explorationTimer: Timer? = nil
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -48,8 +49,12 @@ struct StageOneGameView: View {
                 PasswordView(
                     backButtonTapAction: {
                         viewModel.action(.hidePasswordView)
-                        viewModel.state.stageOnePhase = .decreaseOxygen
-                        viewModel.action(.showDialog)
+                        // 산소 부족 경고가 이미 표시되었다면 대화를 다시 표시하지 않음
+                        if !viewModel.state.isOxygenWarningShown {
+                            viewModel.state.stageOnePhase = .decreaseOxygen
+                            viewModel.action(.showDialog)
+                            viewModel.action(.oxygenWarningShown)
+                        }
                     },
                     successAction: {
                         viewModel.action(.hidePasswordView)
@@ -88,6 +93,7 @@ struct StageOneGameView: View {
                     nextButtonTapAction: {
                         scene.hideFlashlight()
                         viewModel.action(.hideFlashlightFoundPresented)
+                        viewModel.action(.flashlightFound)
                         scene.changeLightMode(lightMode: .turnOnFlashlight)
                         viewModel.state.stageOnePhase = .findFlashlight
                         viewModel.action(.showDialog)
@@ -136,6 +142,19 @@ struct StageOneGameView: View {
                 isOxygenDecreasingStarted = true
             }
         }
+        .onChange(of: viewModel.state.isExplorationStarted) { isStarted in
+            if isStarted && !viewModel.state.isFlashlightFound {
+                // 돌아다니기 시작하고 손전등을 아직 발견하지 않았다면 10초 타이머 시작
+                startExplorationTimer()
+            }
+        }
+        .onChange(of: viewModel.state.isFlashlightFound) { isFound in
+            if isFound {
+                // 손전등을 발견하면 탐색 타이머 취소
+                explorationTimer?.invalidate()
+                explorationTimer = nil
+            }
+        }
         .onAppear {
             initializeScene()
             dialogManager.initConversation(
@@ -152,11 +171,31 @@ struct StageOneGameView: View {
                 ]
             )
         }
+        .onDisappear {
+            // 타이머 정리
+            explorationTimer?.invalidate()
+            explorationTimer = nil
+        }
     }
     
     private func initializeScene() {
         scene.viewModel = viewModel
         scene.scaleMode = .aspectFill
+    }
+    
+    private func startExplorationTimer() {
+        // 기존 타이머가 있다면 취소
+        explorationTimer?.invalidate()
+        
+        // 10초 후 산소 부족 트리거
+        explorationTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { _ in
+            if !viewModel.state.isFlashlightFound {
+                // 손전등을 아직 발견하지 않았다면 산소 부족 트리거
+                viewModel.state.stageOnePhase = .decreaseOxygen
+                viewModel.action(.showDialog)
+                viewModel.action(.oxygenWarningShown)
+            }
+        }
     }
   
     private func configureMonologueActions() -> [StageOneMonologuePhase: [MonologueAction]] {
@@ -166,6 +205,7 @@ struct StageOneGameView: View {
                     monologue: "돌아다니기",
                     action: {
                         viewModel.action(.hideDialog)
+                        viewModel.action(.startExploration)
                     }
                 )
             ],
