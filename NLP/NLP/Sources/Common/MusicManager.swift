@@ -14,21 +14,27 @@ class MusicManager {
     func playMusic(named fileName: String, fileExtension: String = "mp3", loop: Bool = true) {
         print("[MusicManager] playMusic called with: \(fileName).\(fileExtension)")
         // 이미 같은 음악이 재생 중이면 아무것도 하지 않음
-        if currentFileName == fileName, player?.isPlaying == true {
+        if currentFileName == fileName, let player = player, player.isPlaying {
             print("[MusicManager] 이미 같은 음악 재생 중, 무시")
             return
         }
+        
         stopMusic()
+        
         guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
             print("[MusicManager] 파일을 찾을 수 없음: \(fileName).\(fileExtension)")
             return
         }
+        
         do {
             player = try AVAudioPlayer(contentsOf: url)
-            player?.numberOfLoops = loop ? -1 : 0
-            player?.prepareToPlay()
+            
+            guard let player = player else { return }
+            
+            player.numberOfLoops = loop ? -1 : 0
+            player.prepareToPlay()
             print("[MusicManager] AVAudioPlayer prepared, try play()")
-            player?.play()
+            player.play()
             print("[MusicManager] AVAudioPlayer play() 호출됨")
             currentFileName = fileName
             if fileName == "heart" {
@@ -55,32 +61,26 @@ class MusicManager {
         player?.isPlaying ?? false
     }
 
-    func playClickSound() {
-        print("[MusicManager] playClickSound() called")
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            print("[MusicManager] try to load click.wav from bundle")
-            guard let url = Bundle.main.url(forResource: "click", withExtension: "wav") else {
-                print("[MusicManager] 효과음 파일을 찾을 수 없음: click.wav")
-                return
+    func playClickSound() async {
+        guard let url = Bundle.main.url(forResource: "click", withExtension: "wav") else {
+            print("[MusicManager] 효과음 파일을 찾을 수 없음: click.wav")
+            return
+        }
+        
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.prepareToPlay()
+            player.play()
+            await MainActor.run { [weak self] in
+                self?.effectPlayers.append(player)
             }
-            do {
-                print("[MusicManager] AVAudioPlayer 생성 시도")
-                let player = try AVAudioPlayer(contentsOf: url)
-                player.prepareToPlay()
-                print("[MusicManager] AVAudioPlayer prepared, try play()")
-                player.play()
-                print("[MusicManager] AVAudioPlayer play() 호출됨")
-                DispatchQueue.main.async {
-                    self?.effectPlayers.append(player)
-                }
-                DispatchQueue.global().asyncAfter(deadline: .now() + player.duration + 0.1) { [weak self] in
-                    DispatchQueue.main.async {
-                        self?.effectPlayers.removeAll { $0 === player }
-                    }
-                }
-            } catch {
-                print("[MusicManager] 효과음 재생 실패: \(error)")
+            
+            try? await Task.sleep(for: .seconds(player.duration + 0.1))
+            await MainActor.run { [weak self] in
+                self?.effectPlayers.removeAll { $0 == player }
             }
+        } catch {
+            print("[MusicManager] 효과음 재생 실패: \(error)")
         }
     }
 } 
