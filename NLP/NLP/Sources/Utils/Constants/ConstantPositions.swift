@@ -8,5 +8,5 @@
 import SwiftUI
 
 struct ConstantPositions {
-    static let centeralControlRoomDoorPoisition: CGPoint = .init(x: -130, y: 2040)
+    static let centeralControlRoomDoorPoisition: CGPoint = .init(x: 0, y: 2340)
 }
