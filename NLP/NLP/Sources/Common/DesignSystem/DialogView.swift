@@ -46,7 +46,7 @@ struct DialogView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 )
-                .padding(.bottom, 320) // 입력창+키보드 높이만큼 충분히 크게 패딩
+                .padding(.bottom, 350) // 입력창+키보드 높이만큼 충분히 크게 패딩
             // 하단 고정: 입력창 + 커스텀 키보드 (한 번만)
             VStack(spacing: 0) {
                 CustomKeyboardView(text: $inputText, onCommit: {

@@ -58,6 +58,9 @@ struct ItemCollectionView: View {
             .padding(.horizontal, 30)
         }
         .background(.black.opacity(0.5))
+        .onAppear {
+            MusicManager.shared.playEffect(named: "item")
+        }
     }
 }
 

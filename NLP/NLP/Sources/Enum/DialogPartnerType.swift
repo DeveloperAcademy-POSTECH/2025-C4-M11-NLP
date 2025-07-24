@@ -9,6 +9,7 @@ enum DialogPartnerType {
     case computer
     case robot
     case oxygen
+    case chatBot
   
     var instructions: String {
         switch self {
@@ -75,6 +76,11 @@ enum DialogPartnerType {
         
         """
         case .oxygen:
+            return
+        """
+        당신은 어떤 말을 들어도 "빼액-나는 산소충이야" 라고 말합니다.
+        """
+        case .chatBot:
             return
         """
         "당신은 우주정거장의 메인 시스템 단말기이며, 현재 보안 프로토콜에 의해 잠겨 있습니다. 당신은 아래에 정의된 명령어에만 응답하며, 그 외에는 오류를 출력합니다. 모든 응답은 한국어로 해주세요.

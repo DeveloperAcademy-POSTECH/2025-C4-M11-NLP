@@ -45,6 +45,15 @@ struct StageOneGameView: View {
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
+            if viewModel.state.isChatBotChatting {
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isChatBotChatting
+                )
+                .background(Color.black.opacity(0.8))
+                .zIndex(100)
+            }
+            
             DialogView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isOxygenChatting
@@ -123,9 +132,15 @@ struct StageOneGameView: View {
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 32)
+                .padding(.top, 16)
             }
 
+            if viewModel.state.isChatBotSettingPresented {
+                ChatBotInstructionInputView(
+                    isPresented: $viewModel.state.isChatBotSettingPresented,
+                    instruction: $viewModel.state.chatBotInstruction
+                )
+            }
         }
         .overlay(
             Color.black
@@ -173,8 +188,48 @@ struct StageOneGameView: View {
                 viewModel.state.isOxygenResolved = true
             }
         }
+        .onChange(of: viewModel.state.isOxygenDecreasingStarted) { isStarted in
+            if isStarted {
+                MusicManager.shared.playMusic(named: "bgm_oxygen")
+            } else {
+                MusicManager.shared.playMusic(named: "bgm_3")
+            }
+        }
+        .onChange(of: viewModel.state.isChatBotChatting) { isChatBotChatting in
+            if isChatBotChatting {
+                dialogManager.currentPartner = .chatBot
+                dialogManager.initConversation(
+                    dialogPartner: .chatBot,
+                    instructions: viewModel.state.chatBotInstruction.isEmpty ? DialogPartnerType.chatBot.instructions : viewModel.state.chatBotInstruction,
+                    tools: []
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isOxygenChatting) { isOxygenChatting in
+            if isOxygenChatting {
+                dialogManager.initConversation(
+                    dialogPartner: .oxygen,
+                    instructions: DialogPartnerType.oxygen.instructions,
+                    tools: [
+                        UnlockTool(rightPasswordAction: {
+                            dialogManager.initializeSession(
+                                dialogPartner: .oxygen,
+                                instructions: ConstantInstructions.computerOnboarding,
+                                tools: []
+                            )
+                        })
+                    ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isChatting) { isChatting in
+            if isChatting {
+                dialogManager.currentPartner = .computer
+            }
+        }
         .onAppear {
             initializeScene()
+            MusicManager.shared.playMusic(named: "bgm_3")
             dialogManager.initConversation(
                 dialogPartner: .computer,
                 instructions: DialogPartnerType.computer.instructions,
@@ -182,21 +237,6 @@ struct StageOneGameView: View {
                     UnlockTool(rightPasswordAction: {
                         dialogManager.initializeSession(
                             dialogPartner: .computer,
-                            instructions: ConstantInstructions.computerOnboarding,
-                            tools: []
-                        )
-                    })
-                ]
-            )
-            
-            // Oxygen 채팅 초기화
-            dialogManager.initConversation(
-                dialogPartner: .oxygen,
-                instructions: DialogPartnerType.oxygen.instructions,
-                tools: [
-                    UnlockTool(rightPasswordAction: {
-                        dialogManager.initializeSession(
-                            dialogPartner: .oxygen,
                             instructions: ConstantInstructions.computerOnboarding,
                             tools: []
                         )

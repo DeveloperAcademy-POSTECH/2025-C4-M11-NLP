@@ -15,6 +15,7 @@ class StageOneGameScene: GameScene {
     var note: NoteSprite?
     var doorLock: DoorLockSprite?
     var oxygen: OxygenSprite?
+    var chatBot: ChatBotSprite? // 추가
     var noLight: NoLightSprite?
     var turnOnFlashlight: TurnOnFlashlightSprite?
     weak var viewModel: StageOneGameViewModel?
@@ -56,6 +57,15 @@ class StageOneGameScene: GameScene {
             if let oxygen = child as? OxygenSprite {
                 oxygen.configurePhysics()
                 self.oxygen = oxygen
+            }
+            
+            if let chatBot = child as? ChatBotSprite {
+                chatBot.configurePhysics()
+                self.chatBot = chatBot
+            }
+            
+            if let chatBotSetting = child as? ChatBotSettingSprite {
+                chatBotSetting.configurePhysics()
             }
             
             if let player = child as? PlayerSprite {
@@ -151,6 +161,16 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.state.isOxygenChatting = true
         } else if let _ = nodeA as? OxygenSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.state.isOxygenChatting = true
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? ChatBotSprite {
+            viewModel?.state.isChatting = false
+            viewModel?.state.isChatBotChatting = true
+        } else if let _ = nodeA as? ChatBotSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.state.isChatting = false
+            viewModel?.state.isChatBotChatting = true
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? ChatBotSettingSprite {
+            viewModel?.state.isChatBotSettingPresented = true
+        } else if let _ = nodeA as? ChatBotSettingSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.state.isChatBotSettingPresented = true
         }
     }
     

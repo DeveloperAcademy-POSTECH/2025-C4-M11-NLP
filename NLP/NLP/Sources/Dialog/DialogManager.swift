@@ -14,6 +14,7 @@ class DialogManager: ObservableObject {
     @Published var isGenerating = false
     @Published var currentPartner: DialogPartnerType?
     @Published var conversationLogs: [DialogPartnerType: [Dialog]] = [:]
+    @Published var inputText: String = ""
     private var currentTask: Task<Void, Never>?
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     
@@ -29,6 +30,11 @@ class DialogManager: ObservableObject {
         )
         currentPartner = dialogPartner
         conversationLogs[dialogPartner] = []
+        if dialogPartner == .oxygen {
+            conversationLogs[.oxygen] = [
+                Dialog(content: "산소 발생기는 위급한 상황에서만 사용 가능합니다.\n작동해야 하는 사유를 말씀해주세요.", sender: .partner)
+            ]
+        }
     }
     
     func initializeSession(
