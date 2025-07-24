@@ -84,4 +84,23 @@ class MusicManager {
             print("[MusicManager] 효과음 재생 실패: \(error)")
         }
     }
+
+    // 범용 효과음 재생
+    func playEffect(named fileName: String, fileExtension: String = "mp3") {
+        guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
+            print("[MusicManager] 효과음 파일을 찾을 수 없음: \(fileName).\(fileExtension)")
+            return
+        }
+        do {
+            let effectPlayer = try AVAudioPlayer(contentsOf: url)
+            effectPlayer.prepareToPlay()
+            effectPlayer.play()
+            self.effectPlayers.append(effectPlayer)
+            DispatchQueue.main.asyncAfter(deadline: .now() + effectPlayer.duration + 0.1) { [weak self] in
+                self?.effectPlayers.removeAll { $0 == effectPlayer }
+            }
+        } catch {
+            print("[MusicManager] 효과음 재생 실패: \(error)")
+        }
+    }
 } 
