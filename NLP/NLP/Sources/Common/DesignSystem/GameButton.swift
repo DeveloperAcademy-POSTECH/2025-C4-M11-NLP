@@ -58,8 +58,7 @@ struct GameButton: View {
     }
     
     var body: some View {
-        Button(action: {
-            MusicManager.shared.playClickSound()
+        Button(isClickSoundAvailable: true, action: {
             /** 버튼이 눌렸을 때 지정된 액션을 실행합니다. */
             guard let buttonTapAction = buttonTapAction else { return }
             buttonTapAction()

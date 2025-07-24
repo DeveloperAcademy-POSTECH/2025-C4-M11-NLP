@@ -11,8 +11,7 @@ import Foundation
 struct XButton: View {
     @Binding var isPresented: Bool
     var body: some View {
-        Button {
-            MusicManager.shared.playClickSound()
+        Button(isClickSoundAvailable: true) {
             isPresented = false
         } label: {
             Image("x-symbol")

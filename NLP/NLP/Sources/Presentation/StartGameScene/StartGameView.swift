@@ -34,9 +34,7 @@ struct StartGameView: View {
                     .padding(.bottom, 180)
                 Spacer()
                 // 시작 버튼
-                Button(action: {
-                    print("버튼 클릭! (Start)")
-                    MusicManager.shared.playClickSound()
+                Button(isClickSoundAvailable: true, action: {
                     viewModel.action(.startButtonTapped)
                 }) {
                     Text("Start")
@@ -54,9 +52,7 @@ struct StartGameView: View {
                 .padding(.bottom, 16)
                 // 테스트용 Stage 이동 버튼들 (가로 배치)
                 HStack(spacing: 16) {
-                    Button(action: {
-                        print("버튼 클릭! (Stage1)")
-                        MusicManager.shared.playClickSound()
+                    Button(isClickSoundAvailable: true, action: {
                         viewModel.action(.goStage1)
                     }) {
                         Text("Stage 1")
@@ -70,9 +66,7 @@ struct StartGameView: View {
                                     .background(Color.black.opacity(0.5).cornerRadius(6))
                             )
                     }
-                    Button(action: {
-                        print("버튼 클릭! (Stage2)")
-                        MusicManager.shared.playClickSound()
+                    Button(isClickSoundAvailable: true, action: {
                         viewModel.action(.goStage2)
                     }) {
                         Text("Stage 2")
@@ -86,9 +80,7 @@ struct StartGameView: View {
                                     .background(Color.black.opacity(0.5).cornerRadius(6))
                             )
                     }
-                    Button(action: {
-                        print("버튼 클릭! (Stage3)")
-                        MusicManager.shared.playClickSound()
+                    Button(isClickSoundAvailable: true, action: {
                         viewModel.action(.goStage3)
                     }) {
                         Text("Stage 3")
@@ -106,9 +98,7 @@ struct StartGameView: View {
                 .padding(.horizontal, 40)
                 .padding(.bottom, 16)
                 // Keyboard Test 버튼
-                Button(action: {
-                    print("버튼 클릭! (Keyboard Test)")
-                    MusicManager.shared.playClickSound()
+                Button(isClickSoundAvailable: true, action: {
                     withAnimation {
                         showKeyboardTest.toggle()
                     }
