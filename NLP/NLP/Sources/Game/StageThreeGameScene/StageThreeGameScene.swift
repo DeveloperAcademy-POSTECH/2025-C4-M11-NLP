@@ -127,14 +127,13 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         }
     }
     
-    func moveToSignalMachine(completion: @escaping () -> Void) {
+    func moveToSignalMachine() {
         isAutoMoving = true
         let playerMoveAction = SKAction.move(to: ConstantPositions.signalMachinePosition, duration: 3.0)
         if let player = player {
             player.run(playerMoveAction) { [weak self] in
                 DispatchQueue.main.async {
                     self?.isAutoMoving = false
-                    completion()
                 }
             }
         }

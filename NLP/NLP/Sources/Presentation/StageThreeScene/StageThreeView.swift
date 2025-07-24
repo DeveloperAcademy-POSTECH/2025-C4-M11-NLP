@@ -135,9 +135,17 @@ struct StageThreeView: View {
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
                         viewModel.state.isMonologuePresented = false
-                        scene.moveToSignalMachine {
-                            
-                        }
+                        scene.moveToSignalMachine()
+                    }
+                )
+            ],
+            .receiveSign8: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.state.isMonologuePresented = false
+                        scene.moveToSignalMachine()
                     }
                 )
             ],
@@ -173,6 +181,10 @@ struct StageThreeView: View {
             .signal4: {
                 viewModel.action(.deactivateSignalMachine)
                 viewModel.action(.activateMonologue(withNextPhase: true))
+            },
+            .signalAgain: {
+                viewModel.action(.deactivateSignalMachine)
+                viewModel.action(.activateMonologue(withNextPhase: false))
             }
         ]
     }
