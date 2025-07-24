@@ -173,8 +173,16 @@ struct StageOneGameView: View {
                 viewModel.state.isOxygenResolved = true
             }
         }
+        .onChange(of: viewModel.state.isOxygenDecreasingStarted) { isStarted in
+            if isStarted {
+                MusicManager.shared.playMusic(named: "bgm_oxygen")
+            } else {
+                MusicManager.shared.playMusic(named: "bgm_3")
+            }
+        }
         .onAppear {
             initializeScene()
+            MusicManager.shared.playMusic(named: "bgm_3")
             dialogManager.initConversation(
                 dialogPartner: .computer,
                 instructions: DialogPartnerType.computer.instructions,
