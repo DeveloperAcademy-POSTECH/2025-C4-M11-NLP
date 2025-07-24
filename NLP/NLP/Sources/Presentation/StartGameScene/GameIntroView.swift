@@ -83,8 +83,7 @@ struct GameIntroView: View {
 
                 // 네비게이션 버튼
                 HStack {
-                    Button(action: {
-                        MusicManager.shared.playClickSound()
+                    Button(isClickSoundAvailable: true, action: {
                         if pageIndex > 0 {
                             pageIndex -= 1
                             isStreamingCompleted = false
@@ -101,8 +100,7 @@ struct GameIntroView: View {
                     .disabled(pageIndex == 0)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Button(action: {
-                        MusicManager.shared.playClickSound()
+                    Button(isClickSoundAvailable: true, action: {
                         if !isStreamingCompleted {
                             skipStreaming = true
                         } else if pageIndex < stories.count - 1 {
