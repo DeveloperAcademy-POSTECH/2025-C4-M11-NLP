@@ -10,6 +10,7 @@ import SwiftUI
 struct SignalMachineDetailView: View {
     var action: [SignalMachinePhase: () -> Void]
     @Binding var phase: SignalMachinePhase
+    @State private var skipStreaming: Bool = false
     
     var body: some View {
         VStack {
@@ -19,11 +20,11 @@ struct SignalMachineDetailView: View {
             VStack(alignment: .leading) {
                 VStack(alignment: .leading, spacing: 24) {
                     if phase.playerText != nil {
-                        StreamingText(fullDialog: phase.playerText!, streamingSpeed: 0.03)
+                        StreamingText(fullDialog: phase.playerText!, streamingSpeed: 0.03, skip: $skipStreaming)
                             .font(NLPFont.body)
                             .foregroundStyle(.white)
                     }
-                    StreamingText(fullDialog: phase.signalText, streamingSpeed: 0.03)
+                    StreamingText(fullDialog: phase.signalText, streamingSpeed: 0.03, skip: $skipStreaming)
                         .font(NLPFont.body)
                         .foregroundStyle(NLPColor.green)
                 }

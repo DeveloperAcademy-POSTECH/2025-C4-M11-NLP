@@ -104,7 +104,7 @@ struct PasswordView: View {
             } else {
                 print("실패")
                 handleFailure()
-                if passwordIncorrectCount >= 3 {
+                if passwordIncorrectCount >= 1 {
                     failureAction?()
                 }
             }

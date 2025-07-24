@@ -35,6 +35,8 @@ struct StartGameView: View {
                 Spacer()
                 // 시작 버튼
                 Button(action: {
+                    print("버튼 클릭! (Start)")
+                    MusicManager.shared.playClickSound()
                     viewModel.action(.startButtonTapped)
                 }) {
                     Text("Start")
@@ -53,6 +55,8 @@ struct StartGameView: View {
                 // 테스트용 Stage 이동 버튼들 (가로 배치)
                 HStack(spacing: 16) {
                     Button(action: {
+                        print("버튼 클릭! (Stage1)")
+                        MusicManager.shared.playClickSound()
                         viewModel.action(.goStage1)
                     }) {
                         Text("Stage 1")
@@ -67,6 +71,8 @@ struct StartGameView: View {
                             )
                     }
                     Button(action: {
+                        print("버튼 클릭! (Stage2)")
+                        MusicManager.shared.playClickSound()
                         viewModel.action(.goStage2)
                     }) {
                         Text("Stage 2")
@@ -81,6 +87,8 @@ struct StartGameView: View {
                             )
                     }
                     Button(action: {
+                        print("버튼 클릭! (Stage3)")
+                        MusicManager.shared.playClickSound()
                         viewModel.action(.goStage3)
                     }) {
                         Text("Stage 3")
@@ -99,6 +107,8 @@ struct StartGameView: View {
                 .padding(.bottom, 16)
                 // Keyboard Test 버튼
                 Button(action: {
+                    print("버튼 클릭! (Keyboard Test)")
+                    MusicManager.shared.playClickSound()
                     withAnimation {
                         showKeyboardTest.toggle()
                     }
@@ -157,6 +167,9 @@ struct StartGameView: View {
                 }
                 .transition(.move(edge: .bottom))
             }
+        }
+        .onAppear {
+            MusicManager.shared.playMusic(named: "bgm_1")
         }
     }
 }

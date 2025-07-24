@@ -14,6 +14,7 @@ struct DialogView: View {
     @State var inputText: String = ""
     @FocusState private var isFocused: Bool
     @State var showCursor: Bool = true
+    @State private var skipStreaming: Bool = false
 
     // 타이머로 커서 깜빡임 제어
     let cursorTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
@@ -33,7 +34,7 @@ struct DialogView: View {
                                             .font(NLPFont.body)
                                             .foregroundStyle(.white)
                                     } else {
-                                        StreamingText(fullDialog: log.content, streamingSpeed: 0.03)
+                                        StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
                                             .font(NLPFont.body)
                                             .foregroundStyle(.white)
                                     }

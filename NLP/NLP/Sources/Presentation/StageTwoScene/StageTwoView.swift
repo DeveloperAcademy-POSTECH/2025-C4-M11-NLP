@@ -12,6 +12,7 @@ import SwiftUI
 struct StageTwoView: View {
     @StateObject var viewModel: StageTwoViewModel
     @ObservedObject var dialogManager: DialogManager
+    @State private var skipStreaming: Bool = false
     
     init(coordinator: Coordinator, dialogManager: DialogManager) {
         _viewModel = StateObject(wrappedValue: StageTwoViewModel(coordinator: coordinator))
@@ -28,7 +29,8 @@ struct StageTwoView: View {
             if viewModel.state.isMonologuePresented {
                 MonologueView(
                     actions: configureMonologueActions(),
-                    phase: $viewModel.state.stageTwoPhase
+                    phase: $viewModel.state.stageTwoPhase,
+                    skip: $skipStreaming
                 )
             }
             

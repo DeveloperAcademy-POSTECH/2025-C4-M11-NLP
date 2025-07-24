@@ -10,6 +10,7 @@ import SwiftUI
 struct IntroDialogView: View {
     @State var lineNumber: Int = 1
     @State var dialogsEndAction: (() -> Void)?
+    @State private var skipStreaming: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 35) {
@@ -20,7 +21,8 @@ struct IntroDialogView: View {
             ForEach(0..<lineNumber, id: \.self) { index in
                 StreamingText(
                     fullDialog: ConstantGameDialogs.introDialogs[index],
-                    streamingSpeed: 0.05
+                    streamingSpeed: 0.05,
+                    skip: $skipStreaming
                 ) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                         guard lineNumber < ConstantGameDialogs.introDialogs.count else {
