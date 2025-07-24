@@ -52,8 +52,9 @@ class MusicManager {
 
     func stopMusic(file: String = #file, function: String = #function, line: Int = #line) {
         print("[MusicManager] stopMusic() called from \(file):\(function):\(line)")
-        player?.stop()
-        player = nil
+        guard let player = player else { return }
+        player.stop()
+        self.player = nil
         currentFileName = nil
     }
 
