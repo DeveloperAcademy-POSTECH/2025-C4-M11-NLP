@@ -141,6 +141,14 @@ struct StageOneGameView: View {
                     instruction: $viewModel.state.chatBotInstruction
                 )
             }
+
+            DialogView(
+                dialogManager: dialogManager,
+                isPresented: $viewModel.state.isMachineChatting
+            )
+                .opacity(viewModel.state.isMachineChatting ? 1 : 0)
+                .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
+                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
         }
         .overlay(
             Color.black
@@ -230,6 +238,15 @@ struct StageOneGameView: View {
                             )
                         })
                     ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isMachineChatting) { isMachineChatting in
+            if isMachineChatting {
+                dialogManager.initConversation(
+                    dialogPartner: .machine,
+                    instructions: DialogPartnerType.machine.instructions,
+                    tools: []
                 )
             }
         }

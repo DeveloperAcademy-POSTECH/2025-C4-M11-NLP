@@ -17,4 +17,5 @@ enum PhysicsCategory: UInt32 {
     case note = 0b1000000  // 64
     case doorLock = 0b10000000 // 128
     case oxygen = 0b100000000 // 256
+    case machine = 0b1000000000 // 512
 }
