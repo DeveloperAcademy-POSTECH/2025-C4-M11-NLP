@@ -12,7 +12,12 @@ extension Button {
         action: @escaping @MainActor () -> Void,
         @ViewBuilder label: () -> Label
     ) {
-        self.init(action: action, label: label)
-        Task { await MusicManager.shared.playClickSound() }
+        self.init(
+            action: {
+                action()
+                Task { await MusicManager.shared.playClickSound() }
+            },
+            label: label
+        )
     }
 }
