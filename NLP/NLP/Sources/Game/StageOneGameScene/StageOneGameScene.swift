@@ -15,6 +15,7 @@ class StageOneGameScene: GameScene {
     var note: NoteSprite?
     var doorLock: DoorLockSprite?
     var oxygen: OxygenSprite?
+    var chatBot: ChatBotSprite? // 추가
     var noLight: NoLightSprite?
     var turnOnFlashlight: TurnOnFlashlightSprite?
     weak var viewModel: StageOneGameViewModel?
@@ -58,6 +59,15 @@ class StageOneGameScene: GameScene {
                 self.oxygen = oxygen
             }
             
+            if let chatBot = child as? ChatBotSprite {
+                chatBot.configurePhysics()
+                self.chatBot = chatBot
+            }
+            
+            if let chatBotSetting = child as? ChatBotSettingSprite {
+                chatBotSetting.configurePhysics()
+            }
+            
             if let player = child as? PlayerSprite {
                 for child in player.children {
                     if let noLight = child as? NoLightSprite {
@@ -70,6 +80,9 @@ class StageOneGameScene: GameScene {
                         self.turnOnFlashlight?.alpha = 0
                     }
                 }
+            }
+            if let door = child as? DoorSprite {
+                door.configurePhysics()
             }
         }
         
@@ -151,6 +164,26 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.state.isOxygenChatting = true
         } else if let _ = nodeA as? OxygenSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.state.isOxygenChatting = true
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? ChatBotSprite {
+            viewModel?.state.isChatting = false
+            viewModel?.state.isChatBotChatting = true
+        } else if let _ = nodeA as? ChatBotSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.state.isChatting = false
+            viewModel?.state.isChatBotChatting = true
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? ChatBotSettingSprite {
+            viewModel?.state.isChatBotSettingPresented = true
+        } else if let _ = nodeA as? ChatBotSettingSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.state.isChatBotSettingPresented = true
+        }
+        // DoorSprite와 PlayerSprite 충돌 시 효과음+흔들림 효과
+        if (nodeA is PlayerSprite && nodeB is DoorSprite) || (nodeA is DoorSprite && nodeB is PlayerSprite) {
+            MusicManager.shared.playEffect(named: "door")
+            if let door = nodeA as? DoorSprite {
+                door.runShakeEffect()
+            } else if let door = nodeB as? DoorSprite {
+                door.runShakeEffect()
+            }
+            return
         }
     }
     

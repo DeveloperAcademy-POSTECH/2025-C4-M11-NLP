@@ -21,4 +21,5 @@ enum CoordinatorPath: Hashable {
     case middleStoryScene(StoriesType)
     
     case stageThreeScene
+    case stageFourScene
 }
