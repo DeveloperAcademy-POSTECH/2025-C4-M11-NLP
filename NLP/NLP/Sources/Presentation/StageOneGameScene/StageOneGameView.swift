@@ -211,13 +211,7 @@ struct StageOneGameView: View {
                     dialogPartner: .oxygen,
                     instructions: DialogPartnerType.oxygen.instructions,
                     tools: [
-                        UnlockTool(rightPasswordAction: {
-                            dialogManager.initializeSession(
-                                dialogPartner: .oxygen,
-                                instructions: ConstantInstructions.computerOnboarding,
-                                tools: []
-                            )
-                        })
+                        OxygenTool()
                     ]
                 )
             }
