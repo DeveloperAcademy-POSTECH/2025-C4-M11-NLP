@@ -22,6 +22,7 @@ class StageOneGameViewModel: ViewModelable {
         var isExplorationStarted: Bool = false // 돌아다니기 시작 여부
         var isOxygenWarningShown: Bool = false // 산소 부족 경고 대화 표시 여부
         var isOxygenDecreasingStarted: Bool = false // 산소 게이지 시작 여부
+        var oxygenGuageValue: Int = 30 // 산소 양
         var isOxygenFound: Bool = false // 산소 발견 여부
         var isOxygenResolved: Bool = false // 산소 문제 해결 여부 (한 번 해결되면 다시 발생하지 않음)
         var isPasswordWarningShown: Bool = false // 비밀번호 오류 경고 대화 표시 여부
@@ -30,7 +31,7 @@ class StageOneGameViewModel: ViewModelable {
         var isChatBotSettingPresented: Bool = false // 챗봇 세팅 UI 표시 여부
         var chatBotInstruction: String = "" // 챗봇 instruction
     }
-    
+
     enum Action {
         case showDialog
         case hideDialog
@@ -45,15 +46,15 @@ class StageOneGameViewModel: ViewModelable {
         case flashlightFound
         case oxygenWarningShown
     }
-    
+
     @ObservedObject var coordinator: Coordinator
-    
-    @Published var state: State = State()
-    
+
+    @Published var state: State = .init()
+
     init(coordinator: Coordinator) {
         self.coordinator = coordinator
     }
-    
+
     func action(_ action: Action) {
         switch action {
         case .showDialog:
@@ -82,6 +83,4 @@ class StageOneGameViewModel: ViewModelable {
             state.isOxygenWarningShown = true
         }
     }
-
-
 }
