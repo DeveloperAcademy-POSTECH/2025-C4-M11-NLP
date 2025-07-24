@@ -13,6 +13,9 @@ class StageThreeGameScene: GameScene {
     var finn: FinnSprite?
     var killerRobot: KillerRobotSprite?
     var signalMachine: SignalMachineSprite?
+    var flame: FlameSprite?
+    var door: DoorLockSprite?
+    var jane: JaneSprite?
     
     private var cancellables = Set<AnyCancellable>()
     var isAutoMoving: Bool = false // 자동 이동 중 여부
@@ -37,6 +40,12 @@ class StageThreeGameScene: GameScene {
             } else if let signalMachine = child as? SignalMachineSprite {
                 signalMachine.configurePhysics()
                 self.signalMachine = signalMachine
+            } else if let flame = child as? FlameSprite {
+                self.flame = flame
+            } else if let door = child as? DoorLockSprite {
+                self.door = door
+            } else if let jane = child as? JaneSprite {
+                self.jane = jane
             }
         }
     }
@@ -139,6 +148,37 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         }
     }
     
+    func moveToSignalMachineFinn(completion: @escaping () -> Void) {
+        isAutoMoving = true
+        let finnMoveAction = SKAction.move(to: ConstantPositions.signalMachineFinnPosition, duration: 3.0)
+        if let finn = finn {
+            finn.run(finnMoveAction) { [weak self] in
+                DispatchQueue.main.async {
+                    self?.isAutoMoving = false
+                    completion()
+                }
+            }
+        }
+    }
+    
+    func moveToSignalMachineRobot() {
+        isAutoMoving = true
+        let robotMoveAction = SKAction.move(to: ConstantPositions.signalMachineRobotPosition, duration: 3.0)
+        if let robot = robot {
+            robot.run(robotMoveAction) { [weak self] in
+                DispatchQueue.main.async {
+                    self?.isAutoMoving = false
+                }
+            }
+        }
+    }
+    
+    func changeRobotToNew() {
+        if let robot = robot {
+            robot.texture = SKTexture(imageNamed: "robot-new")
+        }
+    }
+    
     func signalMachineInteractionStart() {
         guard let player, let signalMachine, let camera else { return }
         
@@ -158,6 +198,104 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         let scaleAction = SKAction.scale(to: 1.0, duration: 0.5)
         let group = SKAction.group([moveAction, scaleAction])
         camera.run(group)
+    }
+    
+    func changePositionPlayerToPlazmaRoomDoor() {
+        guard let player else { return }
+        
+        let targetPosition = ConstantPositions.plazmaRoomDoorPlayerPosition
+        player.position = targetPosition
+    }
+    
+    func changePositionFinnToPlazmaRoomDoor() {
+        guard let finn else { return }
+        
+        let targetPosition = ConstantPositions.plazmaRoomDoorFinnPosition
+        finn.position = targetPosition
+    }
+    
+    func changePositionRobotToPlazmaRoomDoor() {
+        guard let robot else { return }
+        
+        let targetPosition = ConstantPositions.plazmaRoomDoorRobotPosition
+        robot.position = targetPosition
+    }
+    
+    func movePlayerToAnalyzeDoor() {
+        guard let player else { return }
+        
+        let targetPosition = ConstantPositions.analyzeDoorPlayerPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
+        player.run(moveAction)
+    }
+    
+    func moveFinnToAnalyzeDoor() {
+        guard let finn else { return }
+        
+        let targetPosition = ConstantPositions.analyzeDoorFinnPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
+        finn.run(moveAction)
+    }
+    
+    func moveRobotToAnalyzeDoor() {
+        guard let robot else { return }
+        
+        let targetPosition = ConstantPositions.analyzeDoorRobotPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
+        robot.run(moveAction)
+    }
+    
+    func showFlame() {
+        flame?.isHidden = false
+    }
+    
+    func hideFlame() {
+        flame?.isHidden = true
+    }
+    
+    func explodeAnimation() {
+        let textures: [SKTexture] = [
+            SKTexture(imageNamed: "flame1"),
+            SKTexture(imageNamed: "flame2"),
+            SKTexture(imageNamed: "flame3"),
+            SKTexture(imageNamed: "flame4"),
+            SKTexture(imageNamed: "flame5"),
+            SKTexture(imageNamed: "flame6"),
+            SKTexture(imageNamed: "flame5"),
+            SKTexture(imageNamed: "flame4"),
+            SKTexture(imageNamed: "flame3"),
+            SKTexture(imageNamed: "flame2"),
+            SKTexture(imageNamed: "flame1"),
+        ]
+        let timePerFrame: TimeInterval = 0.3
+        
+        let animationAction = SKAction.animate(with: textures, timePerFrame: timePerFrame)
+
+        if let flame = flame {
+            flame.run(animationAction)
+        }
+    }
+    
+    func hideDoor() {
+        door?.isHidden = true
+    }
+    
+    func moveRobotToAfterExplosion() {
+        guard let robot else { return }
+        
+        let targetPosition = ConstantPositions.afterExplosionRobotPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 2)
+        let rotateAction = SKAction.rotate(byAngle: CGFloat.pi/3, duration: 0.5)
+        robot.run(moveAction)
+        robot.run(rotateAction)
+    }
+    
+    func moveAfterExplosionJanePosition() {
+        guard let jane else { return }
+        
+        let targetPosition = ConstantPositions.afterExplosionJanePosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 3)
+        jane.run(moveAction)
     }
     
     private func setNodeVisibility(_ node: SKNode, visibility: Bool) {
