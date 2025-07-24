@@ -92,23 +92,25 @@ struct DialogChatView: View {
                                         }
                                     }
                                     
-                                    UserDialogInputField(
-                                        inputText: $inputText,
-                                        showCursor: $showCursor,
-                                        isFocused: _isFocused,
-                                        submitAction: {
-                                            dialogManager.respond(
-                                                inputText,
-                                                dialogPartnerType: dialogManager.currentPartner ?? .computer,
-                                                isLogged: true
-                                            )
-                                            inputText = ""
-                                        }
-                                    )
-                                    .padding(8)
-                                    .background(Color.black.opacity(0.2))
-                                    .padding(.bottom, 12)
-                                    .frame(maxWidth: .infinity)
+                                    if dialogManager.currentPartner != .chatBot {
+                                        UserDialogInputField(
+                                            inputText: $inputText,
+                                            showCursor: $showCursor,
+                                            isFocused: _isFocused,
+                                            submitAction: {
+                                                dialogManager.respond(
+                                                    inputText,
+                                                    dialogPartnerType: dialogManager.currentPartner ?? .computer,
+                                                    isLogged: true
+                                                )
+                                                inputText = ""
+                                            }
+                                        )
+                                        .padding(8)
+                                        .background(Color.black.opacity(0.2))
+                                        .padding(.bottom, 12)
+                                        .frame(maxWidth: .infinity)
+                                    }
                                 }
                                 .onReceive(cursorTimer) { _ in
                                     showCursor.toggle()

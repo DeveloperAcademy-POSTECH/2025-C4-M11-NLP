@@ -14,6 +14,7 @@ class DialogManager: ObservableObject {
     @Published var isGenerating = false
     @Published var currentPartner: DialogPartnerType?
     @Published var conversationLogs: [DialogPartnerType: [Dialog]] = [:]
+    @Published var inputText: String = ""
     private var currentTask: Task<Void, Never>?
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     

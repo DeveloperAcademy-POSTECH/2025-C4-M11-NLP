@@ -64,6 +64,10 @@ class StageOneGameScene: GameScene {
                 self.chatBot = chatBot
             }
             
+            if let chatBotSetting = child as? ChatBotSettingSprite {
+                chatBotSetting.configurePhysics()
+            }
+            
             if let player = child as? PlayerSprite {
                 for child in player.children {
                     if let noLight = child as? NoLightSprite {

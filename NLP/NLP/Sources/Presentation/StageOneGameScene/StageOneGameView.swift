@@ -46,13 +46,25 @@ struct StageOneGameView: View {
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
             if viewModel.state.isChatBotChatting {
-                DialogChatView(
-                    dialogManager: dialogManager,
-                    isPresented: $viewModel.state.isChatBotChatting
-                )
-                .opacity(viewModel.state.isChatBotChatting ? 1 : 0)
-                .offset(y: viewModel.state.isChatBotChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatBotChatting)
+                VStack(spacing: 0) {
+                    DialogChatView(
+                        dialogManager: dialogManager,
+                        isPresented: $viewModel.state.isChatBotChatting
+                    )
+                    CustomKeyboardView(
+                        text: $dialogManager.inputText,
+                        onCommit: {
+                            dialogManager.respond(
+                                dialogManager.inputText,
+                                dialogPartnerType: .chatBot,
+                                isLogged: true
+                            )
+                            dialogManager.inputText = ""
+                        }
+                    )
+                }
+                .background(Color.black.opacity(0.8))
+                .zIndex(100)
             }
             
             DialogView(
