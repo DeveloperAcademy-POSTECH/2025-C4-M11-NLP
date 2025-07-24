@@ -1,5 +1,5 @@
-import Foundation
 import AVFoundation
+import Foundation
 
 class MusicManager {
     static let shared = MusicManager()
@@ -18,19 +18,19 @@ class MusicManager {
             print("[MusicManager] 이미 같은 음악 재생 중, 무시")
             return
         }
-        
+
         stopMusic()
-        
+
         guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
             print("[MusicManager] 파일을 찾을 수 없음: \(fileName).\(fileExtension)")
             return
         }
-        
+
         do {
             player = try AVAudioPlayer(contentsOf: url)
-            
+
             guard let player = player else { return }
-            
+
             player.numberOfLoops = loop ? -1 : 0
             player.prepareToPlay()
             print("[MusicManager] AVAudioPlayer prepared, try play()")
@@ -67,7 +67,7 @@ class MusicManager {
             print("[MusicManager] 효과음 파일을 찾을 수 없음: click.wav")
             return
         }
-        
+
         do {
             let player = try AVAudioPlayer(contentsOf: url)
             player.prepareToPlay()
@@ -75,7 +75,7 @@ class MusicManager {
             await MainActor.run { [weak self] in
                 self?.effectPlayers.append(player)
             }
-            
+
             try? await Task.sleep(for: .seconds(player.duration + 0.1))
             await MainActor.run { [weak self] in
                 self?.effectPlayers.removeAll { $0 == player }
@@ -95,7 +95,7 @@ class MusicManager {
             let effectPlayer = try AVAudioPlayer(contentsOf: url)
             effectPlayer.prepareToPlay()
             effectPlayer.play()
-            self.effectPlayers.append(effectPlayer)
+            effectPlayers.append(effectPlayer)
             DispatchQueue.main.asyncAfter(deadline: .now() + effectPlayer.duration + 0.1) { [weak self] in
                 self?.effectPlayers.removeAll { $0 == effectPlayer }
             }
@@ -103,4 +103,4 @@ class MusicManager {
             print("[MusicManager] 효과음 재생 실패: \(error)")
         }
     }
-} 
+}

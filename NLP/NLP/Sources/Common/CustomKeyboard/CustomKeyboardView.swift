@@ -5,8 +5,8 @@
 //  Created by Gojaehyun on 7/22/25.
 //
 
-import SwiftUI
 import Foundation
+import SwiftUI
 import UIKit
 
 import Combine
@@ -56,7 +56,7 @@ public struct CustomKeyboardView: View {
                                     Rectangle()
                                         .fill(Color.white)
                                         .frame(width: 20, height: 2)
-                                        .opacity(showCursor ? 1 : 0)
+                                        .opacity(showCursor ? 1:0)
                                         .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCursor)
                                 }
                                 Spacer()
@@ -171,7 +171,7 @@ public struct CustomKeyboardView: View {
                                 Text(displayKey(key))
                                     .font(.custom("Galmuri11-Bold", size: 18))
                                     .foregroundColor(.white)
-                                    .frame(height: rowIndex == 0 ? 35 : 45)
+                                    .frame(height: rowIndex == 0 ? 35:45)
                                     .frame(maxWidth: .infinity)
                                     .background(Color.clear)
                                     .overlay(Rectangle().stroke(Color.green, lineWidth: 2))
@@ -220,29 +220,29 @@ public struct CustomKeyboardView: View {
         switch inputMode {
         case .korean:
             let isShifted = self.isShifted
-            let numberRow = ["1","2","3","4","5","6","7","8","9","0"]
-            let row1 = isShifted ? ["ㅃ","ㅉ","ㄸ","ㄲ","ㅆ","ㅛ","ㅕ","ㅑ","ㅒ","ㅖ"] : ["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"]
-            let row2 = ["", "ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ", ""]
-            let row3 = ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ","←"]
+            let numberRow = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+            let row1 = isShifted ? ["ㅃ", "ㅉ", "ㄸ", "ㄲ", "ㅆ", "ㅛ", "ㅕ", "ㅑ", "ㅒ", "ㅖ"]:["ㅂ", "ㅈ", "ㄷ", "ㄱ", "ㅅ", "ㅛ", "ㅕ", "ㅑ", "ㅐ", "ㅔ"]
+            let row2 = ["", "ㅁ", "ㄴ", "ㅇ", "ㄹ", "ㅎ", "ㅗ", "ㅓ", "ㅏ", "ㅣ", ""]
+            let row3 = ["⇧", "ㅋ", "ㅌ", "ㅊ", "ㅍ", "ㅠ", "ㅜ", "ㅡ", "←"]
             return [numberRow, row1, row2, row3]
         case .english:
             let isShifted = self.isShifted
-            let numberRow = ["1","2","3","4","5","6","7","8","9","0"]
-            let row1 = isShifted ? ["Q","W","E","R","T","Y","U","I","O","P"] : ["q","w","e","r","t","y","u","i","o","p"]
+            let numberRow = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+            let row1 = isShifted ? ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]:["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]
             let row2 = ["", isShifted ? "A":"a", isShifted ? "S":"s", isShifted ? "D":"d", isShifted ? "F":"f", isShifted ? "G":"g", isShifted ? "H":"h", isShifted ? "J":"j", isShifted ? "K":"k", isShifted ? "L":"l", ""]
-            let row3 = (isShifted ? ["⇧","Z","X","C","V","B","N","M","←"] : ["⇧","z","x","c","v","b","n","m","←"])
+            let row3 = (isShifted ? ["⇧", "Z", "X", "C", "V", "B", "N", "M", "←"]:["⇧", "z", "x", "c", "v", "b", "n", "m", "←"])
             return [numberRow, row1, row2, row3]
         case .number:
             return [
-                ["1","2","3","4","5","6","7","8","9","0"],
-                ["-","/",":",";","(",")","$","&","@","\""],
-                [".",",","?","!","'","←"]
+                ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+                ["-", "/", ":", ";", "(", ")", "$", "&", "@", "\""],
+                [".", ",", "?", "!", "'", "←"]
             ]
         case .symbol:
-            let numberRow = ["1","2","3","4","5","6","7","8","9","0"]
+            let numberRow = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
             let row1 = ["[", "]", "{", "}", "#", "%", "^", "*", "+", "="]
             let row2 = ["_", "\\", "|", "~", "<", ">", "€", "£", "¥", "•"]
-            let row3 = [".",",","?","!","'","←"]
+            let row3 = [".", ",", "?", "!", "'", "←"]
             return [numberRow, row1, row2, row3]
         }
     }
@@ -398,16 +398,16 @@ public struct CustomKeyboardView: View {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
     }
-    
+
     private func startCursorBlink() {
         cursorTimer?.invalidate()
         cursorTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
             showCursor.toggle()
         }
     }
-    
+
     private func stopCursorBlink() {
         cursorTimer?.invalidate()
         cursorTimer = nil
     }
-} 
+}
