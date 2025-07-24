@@ -18,7 +18,7 @@ struct StageThreeView: View {
         self.dialogManager = dialogManager
     }
     
-    @State var scene: StageThreeGameScene = StageThreeGameScene(fileNamed: "StageTwoGameScene")!
+    @State var scene: StageThreeGameScene = StageThreeGameScene(fileNamed: "StageThreeGameScene")!
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -46,11 +46,30 @@ struct StageThreeView: View {
                     }
                 )
             }
+            
+            if viewModel.state.isSignalMachinePresented {
+                SignalMachineDetailView(
+                    action: configureSignalMachineActions(),
+                    phase: $viewModel.state.signalMachinePhase,
+                    skip: $skipStreaming
+                )
+            }
         }
         .onAppear {
             initScene()
             viewModel.action(.transitionComplete)
             viewModel.state.isMonologuePresented = true
+        }
+        .task {
+            scene.hideKillerRobot()
+            scene.hideFlame()
+        }
+        .onChange(of: viewModel.state.isSignalMachinePresented) { _, newValue in
+            if newValue {
+                scene.signalMachineInteractionStart()
+            } else {
+                scene.signalMachineInteractionEnd()
+            }
         }
         .overlay(
             Color.black
@@ -65,11 +84,27 @@ struct StageThreeView: View {
     
     private func configureMonologueActions() -> [StageThreeMonologuePhase: [MonologueAction]] {
         return [
+            .stageArrived: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveToFinn {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
             .findFinn2: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        Task {
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.changeRobotToDead()
+                            scene.showKillerRobot()
+                        }
                     }
                 )
             ],
@@ -78,6 +113,7 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.activateItemCollecting)
+                        scene.standUpFinn()
                     }
                 )
             ],
@@ -99,7 +135,32 @@ struct StageThreeView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.state.isMonologuePresented = false
+                        viewModel.action(.goToNextPhase)
+                        scene.moveToSignalMachine()
+                    }
+                )
+            ],
+            .receiveSign3: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.changeRobotToNew()
+                        scene.moveToSignalMachineRobot()
+                        scene.moveToSignalMachineFinn {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
+            .receiveSign8: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.state.isMonologuePresented = false
+                        scene.moveToSignalMachine()
+                        viewModel.action(.goToNextPhase)
                     }
                 )
             ],
@@ -108,14 +169,54 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        Task {
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.changePositionPlayerToPlazmaRoomDoor()
+                            scene.changePositionFinnToPlazmaRoomDoor()
+                            scene.changePositionRobotToPlazmaRoomDoor()
+                        }
                     }
                 )
             ],
-            .lockedDoor8: [
+            .lockedDoor5: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.action(.goToNextPhase)
+                        Task {
+                            scene.moveRobotToAnalyzeDoor()
+                            scene.movePlayerToAnalyzeDoor()
+                            scene.moveFinnToAnalyzeDoor()
+                        }
+                    }
+                )
+            ],
+            .lockedDoor7: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        Task {
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.showFlame()
+                            scene.explodeAnimation()
+                        }
+                        Task {
+                            try? await Task.sleep(for: .seconds(4))
+                            scene.hideFlame()
+                            scene.hideDoor()
+                            scene.moveRobotToAfterExplosion()
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
+            .explosion2: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        scene.moveAfterExplosionJanePosition()
+                        viewModel.action(.goToNextPhase)
                     }
                 )
             ],
@@ -127,6 +228,19 @@ struct StageThreeView: View {
                     }
                 )
             ]
+        ]
+    }
+    
+    private func configureSignalMachineActions() -> [SignalMachinePhase: () -> Void] {
+        return [
+            .signal4: {
+                viewModel.action(.deactivateSignalMachine)
+                viewModel.action(.activateMonologue(withNextPhase: true))
+            },
+            .signalAgain: {
+                viewModel.action(.deactivateSignalMachine)
+                viewModel.action(.activateMonologue(withNextPhase: false))
+            }
         ]
     }
 }

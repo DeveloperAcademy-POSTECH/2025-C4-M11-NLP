@@ -18,13 +18,10 @@ class DialogManager: ObservableObject {
     private var currentTask: Task<Void, Never>?
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     
-    //test 로직 추가
+    // test 로직 추가
     @Published var isToolCalled: Bool = false
     
-    
     private var toolSessions: [DialogPartnerType: LanguageModelSession] = [:]
-    
-    
     
     func initConversation(
         dialogPartner: DialogPartnerType,
@@ -54,8 +51,7 @@ class DialogManager: ObservableObject {
         instructions: String,
         tools: [any Tool]
     ) {
-        
-        //test로직
+        // test로직
         // 기존 일반 세션 생성
         let generalSession = LanguageModelSession(
             model: .default,
@@ -91,7 +87,7 @@ class DialogManager: ObservableObject {
         isLogged: Bool
     ) {
         currentPartner = dialogPartnerType
-        //test 로직
+        // test 로직
         isGenerating = true
         
         /// 유저 메시지 추가
@@ -102,8 +98,7 @@ class DialogManager: ObservableObject {
         
         currentTask = Task {
             do {
-                
-                //test
+                // test
                 // TDialogManager 로직 통합: 도구 호출 시도
                 if let toolSession = toolSessions[dialogPartnerType] {
                     try await attemptToolCall(
@@ -130,19 +125,15 @@ class DialogManager: ObservableObject {
                 
                 isGenerating = false
                 
-                
             } catch {
                 isGenerating = false
             }
         }
     }
     
+    // test
     
-    
-    
-    //test
-    
-    //도구 호출 로직
+    // 도구 호출 로직
     private func attemptToolCall(
         userInput: String,
         toolSession: LanguageModelSession,
@@ -157,7 +148,7 @@ class DialogManager: ObservableObject {
                     name: "Type",
                     schema: DynamicGenerationSchema(
                         name: "Type",
-                        anyOf: ["OOxygen"]
+                        anyOf: ["OOxygen", "CCrash"]
                     )
                 ),
                 DynamicGenerationSchema.Property(
@@ -182,7 +173,7 @@ class DialogManager: ObservableObject {
         )
     }
     
-    //일반 응답 처리
+    // 일반 응답 처리
     private func generateGeneralResponse(
         userInput: String,
         dialogPartnerType: DialogPartnerType,
@@ -202,5 +193,4 @@ class DialogManager: ObservableObject {
             print("General response error: \(error)")
         }
     }
-    
 }

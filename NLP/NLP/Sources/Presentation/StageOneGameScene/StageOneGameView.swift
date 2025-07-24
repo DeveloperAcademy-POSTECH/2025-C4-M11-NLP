@@ -5,9 +5,8 @@
 //  Created by 양시준 on 7/14/25.
 //
 
-import SwiftUI
 import SpriteKit
-
+import SwiftUI
 
 struct StageOneGameView: View {
     @StateObject var viewModel: StageOneGameViewModel
@@ -19,7 +18,7 @@ struct StageOneGameView: View {
         self.dialogManager = dialogManager
     }
     
-    @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
+    @State var scene: StageOneGameScene = .init(fileNamed: "StageOneGameScene")!
     @State private var isDoorOpened: Bool = false
     @State private var isOxygenDecreasingStarted: Bool = false
     @State private var explorationTimer: Timer? = nil
@@ -41,9 +40,9 @@ struct StageOneGameView: View {
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isChatting
             )
-                .opacity(viewModel.state.isChatting ? 1 : 0)
-                .offset(y: viewModel.state.isChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
+            .opacity(viewModel.state.isChatting ? 1 : 0)
+            .offset(y: viewModel.state.isChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
             if viewModel.state.isChatBotChatting {
                 DialogChatView(
@@ -58,9 +57,9 @@ struct StageOneGameView: View {
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isOxygenChatting
             )
-                .opacity(viewModel.state.isOxygenChatting ? 1 : 0)
-                .offset(y: viewModel.state.isOxygenChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isOxygenChatting)
+            .opacity(viewModel.state.isOxygenChatting ? 1 : 0)
+            .offset(y: viewModel.state.isOxygenChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isOxygenChatting)
             
             if viewModel.state.isPasswordViewPresented {
                 PasswordView(
@@ -92,7 +91,7 @@ struct StageOneGameView: View {
             if viewModel.state.isNoteFoundPresented {
                 ItemCollectionView(
                     isPresented: $viewModel.state.isNoteFoundPresented,
-                    item: GameItems.note,  // ⭐ 직접 참조
+                    item: GameItems.note, // ⭐ 직접 참조
                     backButtonTapAction: {
                         viewModel.action(.hideNoteFoundPresented)
                     },
@@ -106,7 +105,7 @@ struct StageOneGameView: View {
             if viewModel.state.isFlashlightFoundPresented {
                 ItemCollectionView(
                     isPresented: $viewModel.state.isFlashlightFoundPresented,
-                    item: GameItems.flashLight,  // ⭐ 직접 참조
+                    item: GameItems.flashLight, // ⭐ 직접 참조
                     backButtonTapAction: {
                         viewModel.action(.hideFlashlightFoundPresented)
                     },
@@ -124,7 +123,7 @@ struct StageOneGameView: View {
             
             if viewModel.state.isOxygenDecreasingStarted && !isDoorOpened {
                 VStack {
-                    OxygenGaugeView(initialOxygen: 30) {
+                    OxygenGaugeView(initialOxygen: $viewModel.state.oxygenGuageValue) {
                         withAnimation(.linear(duration: 1)) {
                             viewModel.state.isTransitioning = true
                         }
@@ -219,7 +218,24 @@ struct StageOneGameView: View {
                     dialogPartner: .oxygen,
                     instructions: DialogPartnerType.oxygen.instructions,
                     tools: [
-                        OxygenTool()
+                        OxygenTool(callAction: { oxygen, degreeOfOxygen in
+                            print("oxygen: \(oxygen), degreeOfOxygen: \(degreeOfOxygen)")
+                            guard let partner = dialogManager.currentPartner else { return }
+                            print("partner: \(partner)")
+                            switch degreeOfOxygen {
+                            case "high":
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많은 상태입니다. 산소를 채우지 않겠습니다.", sender: .partner, fromToolCalling: true))
+                            case "middle":
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "적당한 산소양을 가지고 있습니다. 조금 채워드리겠습니다.", sender: .partner, fromToolCalling: true))
+                                viewModel.state.oxygenGuageValue += 10
+                            case "low":
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많이 부족한 상황입니다. 산소를 채우겠습니다.", sender: .partner, fromToolCalling: true))
+                                viewModel.state.oxygenGuageValue += 30
+                            default:
+                                break
+                            }
+                            
+                        })
                     ]
                 )
             }

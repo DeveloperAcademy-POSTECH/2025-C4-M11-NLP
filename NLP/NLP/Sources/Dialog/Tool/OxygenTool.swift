@@ -7,9 +7,10 @@
 
 import FoundationModels
 
-@Generable(description: "About oxygen")
+@Generable(description: "A type related to oxygen or life-critical situations for the user")
 enum Type: String, CaseIterable {
     case oxygen
+    case crash
 }
 
 @Generable(description: "It's about degree of oxygen.")
@@ -30,9 +31,11 @@ struct Oxygengauge {
 struct OxygenTool: Tool {
     let name: String = "generateOxygen"
     let description: String
+    let callAction: (String, String) -> Void
 
-    init() {
+    init(callAction: @escaping (String, String) -> Void) {
         description = "사용자가 말한 문장에서 산소 부족과 관련된 내용을 감지합니다."
+        self.callAction = callAction
     }
 
     @Generable
@@ -43,6 +46,7 @@ struct OxygenTool: Tool {
 
     func call(arguments: Arguments) async throws -> some PromptRepresentable {
         print("사용자가 부족한 것의 정도는 \(arguments.oxygengauge.degreeOfOxygen)이고 부족한 종류는 \(arguments.oxygengauge.type) 입니다.")
+        callAction(arguments.oxygengauge.type.rawValue, arguments.oxygengauge.degreeOfOxygen.rawValue)
         return ""
     }
 }

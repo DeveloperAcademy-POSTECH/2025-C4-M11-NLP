@@ -7,6 +7,7 @@
 
 enum StageThreeMonologuePhase: MonologuePhase {
     
+    case stageArrived
     case findFinn1
     case findFinn2
     case jtoDie1
@@ -37,7 +38,6 @@ enum StageThreeMonologuePhase: MonologuePhase {
     case lockedDoor5
     case lockedDoor6
     case lockedDoor7
-    case lockedDoor8
     case explosion1
     case explosion2
     case explosion3
@@ -49,6 +49,10 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var monologue: String {
         switch self {
+        case .stageArrived:
+            return """
+            여기는 도킹베이... 기계장치에 문제가 생기지는 않았을지...
+            """
         case .findFinn1:
             return """
             핀이 여기에 있다니...말도 안돼... 야, 너 괜찮아?? 왜 여기 혼자 쓰러져 있는거야...
@@ -179,17 +183,13 @@ enum StageThreeMonologuePhase: MonologuePhase {
             """
         case .lockedDoor6:
             return """
-            생긴건 정말 재수가 없군. JTO가 아니라 JOT이라 불러야겠어.
-            """
-        case .lockedDoor7:
-            return """
             JTO: 공감 모드를 재실행합...
 
             미안!!! 농담이었어!!!
 
             JTO: 나도 농담이었어.
             """
-        case .lockedDoor8:
+        case .lockedDoor7:
             return """
             JTO: 이 문은 대폭발을 방지하게 위해 존재해. 플라즈마실에는 뭔가 숨겨진 비밀이 있는 듯 하다. 잠시 몸을 숨기고 있으면 내가 문을 열어볼게.
             """
@@ -225,8 +225,10 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var previousPhase: Self? {
         switch self {
-        case .findFinn1:
+        case .stageArrived:
             return nil
+        case .findFinn1:
+            return .stageArrived
         case .findFinn2:
             return .findFinn1
         case .jtoDie1:
@@ -285,10 +287,8 @@ enum StageThreeMonologuePhase: MonologuePhase {
             return .lockedDoor5
         case .lockedDoor7:
             return .lockedDoor6
-        case .lockedDoor8:
-            return .lockedDoor7
         case .explosion1:
-            return .lockedDoor8
+            return .lockedDoor7
         case .explosion2:
             return .explosion1
         case .explosion3:
@@ -304,6 +304,8 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var nextPhase: Self? {
         switch self {
+        case .stageArrived:
+            return .findFinn1
         case .findFinn1:
             return .findFinn2
         case .findFinn2:
@@ -363,8 +365,6 @@ enum StageThreeMonologuePhase: MonologuePhase {
         case .lockedDoor6:
             return .lockedDoor7
         case .lockedDoor7:
-            return .lockedDoor8
-        case .lockedDoor8:
             return .explosion1
         case .explosion1:
             return .explosion2
