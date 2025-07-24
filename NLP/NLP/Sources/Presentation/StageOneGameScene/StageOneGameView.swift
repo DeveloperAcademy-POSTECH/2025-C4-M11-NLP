@@ -45,6 +45,16 @@ struct StageOneGameView: View {
                 .offset(y: viewModel.state.isChatting ? 0 : 100)
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
+            if viewModel.state.isChatBotChatting {
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isChatBotChatting
+                )
+                .opacity(viewModel.state.isChatBotChatting ? 1 : 0)
+                .offset(y: viewModel.state.isChatBotChatting ? 0 : 100)
+                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatBotChatting)
+            }
+            
             DialogView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isOxygenChatting
@@ -126,6 +136,29 @@ struct StageOneGameView: View {
                 .padding(.top, 32)
             }
 
+            if viewModel.state.isChatBotSettingPresented {
+                VStack(spacing: 16) {
+                    Text("챗봇 인스트럭션 입력")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                    TextField("챗봇 인스트럭션을 입력하세요", text: $viewModel.state.chatBotInstruction)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal, 24)
+                    Button("확인") {
+                        viewModel.state.isChatBotSettingPresented = false
+                    }
+                    .padding()
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                }
+                .padding()
+                .background(Color.black.opacity(0.8))
+                .cornerRadius(16)
+                .frame(maxWidth: 400)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .zIndex(100)
+            }
         }
         .overlay(
             Color.black
@@ -178,6 +211,16 @@ struct StageOneGameView: View {
                 MusicManager.shared.playMusic(named: "bgm_oxygen")
             } else {
                 MusicManager.shared.playMusic(named: "bgm_3")
+            }
+        }
+        .onChange(of: viewModel.state.isChatBotChatting) { isChatBotChatting in
+            if isChatBotChatting {
+                dialogManager.currentPartner = .chatBot
+                dialogManager.initConversation(
+                    dialogPartner: .chatBot,
+                    instructions: viewModel.state.chatBotInstruction.isEmpty ? DialogPartnerType.chatBot.instructions : viewModel.state.chatBotInstruction,
+                    tools: []
+                )
             }
         }
         .onAppear {

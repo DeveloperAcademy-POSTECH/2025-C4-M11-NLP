@@ -26,6 +26,9 @@ class StageOneGameViewModel: ViewModelable {
         var isOxygenResolved: Bool = false // 산소 문제 해결 여부 (한 번 해결되면 다시 발생하지 않음)
         var isPasswordWarningShown: Bool = false // 비밀번호 오류 경고 대화 표시 여부
         var isOxygenChatting: Bool = false // 산소와의 채팅 여부
+        var isChatBotChatting: Bool = false // 챗봇과의 채팅 여부
+        var isChatBotSettingPresented: Bool = false // 챗봇 세팅 UI 표시 여부
+        var chatBotInstruction: String = "" // 챗봇 instruction
     }
     
     enum Action {
