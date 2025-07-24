@@ -18,6 +18,14 @@ class DialogManager: ObservableObject {
     private var currentTask: Task<Void, Never>?
     private var conversations: [DialogPartnerType: LanguageModelSession] = [:]
     
+    //test 로직 추가
+    @Published var isToolCalled: Bool = false
+    
+    
+    private var toolSessions: [DialogPartnerType: LanguageModelSession] = [:]
+    
+    
+    
     func initConversation(
         dialogPartner: DialogPartnerType,
         instructions: String,
@@ -42,13 +50,26 @@ class DialogManager: ObservableObject {
         instructions: String,
         tools: [any Tool]
     ) {
-        let newSession: LanguageModelSession = LanguageModelSession(
+        
+        //test로직
+        // 기존 일반 세션 생성
+        let generalSession = LanguageModelSession(
             model: .default,
-            tools: tools,
             instructions: instructions
         )
-        newSession.prewarm()
-        conversations[dialogPartner] = newSession
+        generalSession.prewarm()
+        conversations[dialogPartner] = generalSession
+        
+        // 도구 호출용 세션 추가 생성
+        if !tools.isEmpty {
+            let toolSession = LanguageModelSession(
+                model: .default,
+                tools: tools,
+                instructions: ""
+            )
+            toolSession.prewarm()
+            toolSessions[dialogPartner] = toolSession
+        }
     }
     
     func resetDialogLog(dialogPartner: DialogPartnerType? = nil) {
@@ -66,32 +87,116 @@ class DialogManager: ObservableObject {
         isLogged: Bool
     ) {
         currentPartner = dialogPartnerType
+        //test 로직
+        isGenerating = true
         
         /// 유저 메시지 추가
         let userDialog = Dialog(content: userInput, sender: .user)
         if isLogged {
             conversationLogs[dialogPartnerType]?.append(userDialog)
         }
-
+        
         currentTask = Task {
             do {
-                let session = conversations[dialogPartnerType]
                 
-                guard let session = session else {
-                    return
+                //test
+                // TDialogManager 로직 통합: 도구 호출 시도
+                if let toolSession = toolSessions[dialogPartnerType] {
+                    try await attemptToolCall(
+                        userInput: userInput,
+                        toolSession: toolSession,
+                        dialogPartnerType: dialogPartnerType,
+                        isLogged: isLogged
+                    )
+                    
+                    // 도구가 호출된 경우 일반 응답 건너뛰기
+                    if isToolCalled {
+                        isToolCalled = false
+                        isGenerating = false
+                        return
+                    }
                 }
                 
-                let response = try await session.respond(to: userInput)
-                let partnerDialog = Dialog(content: response.content, sender: .partner)
-                
-                if isLogged {
-                    conversationLogs[dialogPartnerType]?.append(partnerDialog)
-                }
+                // 일반 세션 응답
+                await generateGeneralResponse(
+                    userInput: userInput,
+                    dialogPartnerType: dialogPartnerType,
+                    isLogged: isLogged
+                )
                 
                 isGenerating = false
+                
+                
             } catch {
                 isGenerating = false
             }
         }
     }
+    
+    
+    
+    
+    //test
+    
+    //도구 호출 로직
+    private func attemptToolCall(
+        userInput: String,
+        toolSession: LanguageModelSession,
+        dialogPartnerType: DialogPartnerType,
+        isLogged: Bool
+    ) async throws {
+        // TDialogManager의 동적 스키마 생성 로직
+        let oxygenSchema = DynamicGenerationSchema(
+            name: "Oxygengauge",
+            properties: [
+                DynamicGenerationSchema.Property(
+                    name: "Type",
+                    schema: DynamicGenerationSchema(
+                        name: "Type",
+                        anyOf: ["OOxygen"]
+                    )
+                ),
+                DynamicGenerationSchema.Property(
+                    name: "DegreeOfOxygen",
+                    schema: DynamicGenerationSchema(
+                        name: "DegreeOfOxygen",
+                        anyOf: ["LLow", "MMiddle", "HHigh"]
+                    )
+                )
+            ]
+        )
+        
+        let schema = try GenerationSchema(root: oxygenSchema, dependencies: [])
+        
+        print("😀 사용자: \(userInput)")
+        
+        // 도구 호출 시도 (TDialogManager 로직)
+        let _ = try await toolSession.respond(
+            to: userInput,
+            schema: schema,
+            includeSchemaInPrompt: false
+        )
+    }
+    
+    //일반 응답 처리
+    private func generateGeneralResponse(
+        userInput: String,
+        dialogPartnerType: DialogPartnerType,
+        isLogged: Bool
+    ) async {
+        guard let session = conversations[dialogPartnerType] else { return }
+        
+        do {
+            let response = try await session.respond(to: userInput)
+            print("🤖 봇: \(response.content)")
+            
+            let partnerDialog = Dialog(content: response.content, sender: .partner)
+            if isLogged {
+                conversationLogs[dialogPartnerType]?.append(partnerDialog)
+            }
+        } catch {
+            print("General response error: \(error)")
+        }
+    }
+    
 }
