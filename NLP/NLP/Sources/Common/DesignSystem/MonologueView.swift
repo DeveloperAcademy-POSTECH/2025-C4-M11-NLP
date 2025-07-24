@@ -25,7 +25,11 @@ struct MonologueView<T: MonologuePhase>: View {
                     HStack {
                         Spacer()
                         if actions[phase] == nil {
-                            Button(action: {
+                            Button(isClickSoundAvailable: true, action: {
+                                if !skip {
+                                    skip.toggle()
+                                    return
+                                }
                                 phase = phase.nextPhase ?? .lastPhase
                             }) {
                                 Text("다음 >")
@@ -40,6 +44,10 @@ struct MonologueView<T: MonologuePhase>: View {
                                 // 선택지 버튼 반복
                                 ForEach(actions[phase] ?? [], id: \.self) { action in
                                     GameButton(buttonText: action.monologue) {
+                                        if !skip {
+                                            skip.toggle()
+                                            return
+                                        }
                                         action.action()
                                     }
                                 }

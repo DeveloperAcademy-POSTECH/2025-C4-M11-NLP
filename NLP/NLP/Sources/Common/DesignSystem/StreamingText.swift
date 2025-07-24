@@ -75,11 +75,11 @@ struct StreamingText: View {
             index += 1
             guard index < fullDialog.count else {
                 guard let dialogCompleted = streamingCompleted else {
+                    skip = true
                     timer.invalidate()
                     return
                 }
-                dialogCompleted()
-                timer.invalidate()
+                skip = true
                 return
             }
         }
