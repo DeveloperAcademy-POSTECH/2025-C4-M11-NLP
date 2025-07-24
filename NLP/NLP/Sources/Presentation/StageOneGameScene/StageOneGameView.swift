@@ -218,7 +218,19 @@ struct StageOneGameView: View {
         }
         .onChange(of: viewModel.state.isChatting) { isChatting in
             if isChatting {
-                dialogManager.currentPartner = .computer
+                dialogManager.initConversation(
+                    dialogPartner: .computer,
+                    instructions: DialogPartnerType.computer.instructions,
+                    tools: [
+                        UnlockTool(rightPasswordAction: {
+                            dialogManager.initializeSession(
+                                dialogPartner: .computer,
+                                instructions: ConstantInstructions.computerOnboarding,
+                                tools: []
+                            )
+                        })
+                    ]
+                )
             }
         }
         .onAppear {
