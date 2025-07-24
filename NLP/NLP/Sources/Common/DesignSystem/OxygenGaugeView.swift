@@ -8,25 +8,25 @@
 import SwiftUI
 
 struct OxygenGaugeView: View {
-    @State private var oxygen: Int
+    @Binding private var oxygen: Int
     var onOxygenDepleted: () -> Void
 
-    init(initialOxygen: Int, onOxygenDepleted: @escaping () -> Void) {
-            self._oxygen = State(initialValue: initialOxygen)
-            self.onOxygenDepleted = onOxygenDepleted
+    init(initialOxygen: Binding<Int>, onOxygenDepleted: @escaping () -> Void) {
+        self._oxygen = initialOxygen
+        self.onOxygenDepleted = onOxygenDepleted
     }
 
     var body: some View {
         let gaugeWidth = ConstantScreenSize.screenWidth * 0.78
         let gaugeHeight = ConstantScreenSize.screenHeight * 0.03
 
-        ZStack{
+        ZStack {
             ZStack(alignment: .leading) {
                 Image("oxygenGauge")
                     .resizable()
                     .frame(width: gaugeWidth, height: gaugeHeight)
                 Rectangle()
-                    .frame(width: gaugeWidth * CGFloat(oxygen) / 100, height: gaugeHeight*0.7)
+                    .frame(width: gaugeWidth * CGFloat(oxygen) / 100, height: gaugeHeight * 0.7)
                     .foregroundColor(.green)
                     .animation(.linear(duration: 0.3), value: oxygen)
                     .padding(4)
@@ -48,7 +48,7 @@ struct OxygenGaugeView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    ZStack {
 //        Color.gray.ignoresSafeArea()
 //        OxygenGaugeView(initialOxygen: 30) {
@@ -57,4 +57,4 @@ struct OxygenGaugeView: View {
 //            }
 //        }
 //    }
-//}
+// }
