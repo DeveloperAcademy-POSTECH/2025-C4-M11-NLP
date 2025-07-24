@@ -84,6 +84,9 @@ class StageOneGameScene: GameScene {
             if let door = child as? DoorSprite {
                 door.configurePhysics()
             }
+            if let machine = child as? MachineSprite {
+                machine.configurePhysics()
+            }
         }
         
         viewModel?.$state
@@ -174,6 +177,10 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.state.isChatBotSettingPresented = true
         } else if let _ = nodeA as? ChatBotSettingSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.state.isChatBotSettingPresented = true
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? MachineSprite {
+            viewModel?.state.isMachineChatting = true
+        } else if let _ = nodeB as? PlayerSprite, let _ = nodeA as? MachineSprite {
+            viewModel?.state.isMachineChatting = true
         }
         // DoorSprite와 PlayerSprite 충돌 시 효과음+흔들림 효과
         if (nodeA is PlayerSprite && nodeB is DoorSprite) || (nodeA is DoorSprite && nodeB is PlayerSprite) {
