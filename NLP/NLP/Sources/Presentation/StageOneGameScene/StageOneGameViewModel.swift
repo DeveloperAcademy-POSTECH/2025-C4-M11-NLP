@@ -21,6 +21,10 @@ class StageOneGameViewModel: ViewModelable {
         var isFlashlightFound: Bool = false // 손전등 발견 여부
         var isExplorationStarted: Bool = false // 돌아다니기 시작 여부
         var isOxygenWarningShown: Bool = false // 산소 부족 경고 대화 표시 여부
+        var isOxygenDecreasingStarted: Bool = false // 산소 게이지 시작 여부
+        var isOxygenFound: Bool = false // 산소 발견 여부
+        var isOxygenResolved: Bool = false // 산소 문제 해결 여부 (한 번 해결되면 다시 발생하지 않음)
+        var isPasswordWarningShown: Bool = false // 비밀번호 오류 경고 대화 표시 여부
     }
     
     enum Action {

@@ -62,8 +62,11 @@ struct StageOneGameView: View {
                     },
                     failureAction: {
                         viewModel.action(.hidePasswordView)
-                        viewModel.state.stageOnePhase = .wrongPassword
-                        viewModel.action(.showDialog)
+                        if !viewModel.state.isPasswordWarningShown {
+                            viewModel.state.stageOnePhase = .wrongPassword
+                            viewModel.action(.showDialog)
+                            viewModel.state.isPasswordWarningShown = true
+                        }
                     },
                     isDoorOpened: $isDoorOpened
                 )
@@ -102,7 +105,7 @@ struct StageOneGameView: View {
                 )
             }
             
-            if isOxygenDecreasingStarted && !isDoorOpened {
+            if viewModel.state.isOxygenDecreasingStarted && !isDoorOpened {
                 VStack {
                     OxygenGaugeView(initialOxygen: 30) {
                         withAnimation(.linear(duration: 1)) {
@@ -138,8 +141,8 @@ struct StageOneGameView: View {
             }
         }
         .onChange(of: viewModel.state.stageOnePhase) { newPhase in
-            if newPhase == .decreaseOxygen {
-                isOxygenDecreasingStarted = true
+            if newPhase == .decreaseOxygen && !viewModel.state.isOxygenResolved {
+                viewModel.state.isOxygenDecreasingStarted = true
             }
         }
         .onChange(of: viewModel.state.isExplorationStarted) { isStarted in
@@ -153,6 +156,13 @@ struct StageOneGameView: View {
                 // 손전등을 발견하면 탐색 타이머 취소
                 explorationTimer?.invalidate()
                 explorationTimer = nil
+            }
+        }
+        .onChange(of: viewModel.state.isOxygenFound) { isFound in
+            if isFound {
+                // 산소 발견 시 게이지만 해결 (아이템은 유지)
+                viewModel.state.isOxygenDecreasingStarted = false
+                viewModel.state.isOxygenResolved = true
             }
         }
         .onAppear {

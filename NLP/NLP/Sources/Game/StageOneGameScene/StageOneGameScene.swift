@@ -14,6 +14,7 @@ class StageOneGameScene: GameScene {
     var flashlight: FlashlightSprite?
     var note: NoteSprite?
     var doorLock: DoorLockSprite?
+    var oxygen: OxygenSprite?
     var noLight: NoLightSprite?
     var turnOnFlashlight: TurnOnFlashlightSprite?
     weak var viewModel: StageOneGameViewModel?
@@ -50,6 +51,11 @@ class StageOneGameScene: GameScene {
             if let doorLock = child as? DoorLockSprite {
                 doorLock.configurePhysics()
                 self.doorLock = doorLock
+            }
+            
+            if let oxygen = child as? OxygenSprite {
+                oxygen.configurePhysics()
+                self.oxygen = oxygen
             }
             
             if let player = child as? PlayerSprite {
@@ -136,6 +142,10 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.action(.showPasswordView)
         } else if let _ = nodeA as? DoorLockSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.showPasswordView)
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? OxygenSprite {
+            viewModel?.state.isOxygenFound = true
+        } else if let _ = nodeA as? OxygenSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.state.isOxygenFound = true
         }
     }
     
@@ -235,6 +245,11 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
     func hideNote() {
         guard let note else { return }
         note.removeFromParent()
+    }
+    
+    func hideOxygen() {
+        guard let oxygen else { return }
+        oxygen.removeFromParent()
     }
 
     func applySoftPush(from player: PlayerSprite, to box: BoxSprite) {
