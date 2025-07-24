@@ -36,7 +36,7 @@ struct OxygenGaugeView: View {
                 .foregroundColor(.white)
         }
         .onAppear {
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
                 if oxygen > 0 {
                     oxygen -= 1
                 } else {
