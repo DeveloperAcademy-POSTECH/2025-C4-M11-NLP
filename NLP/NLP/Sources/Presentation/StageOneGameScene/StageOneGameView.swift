@@ -48,6 +48,8 @@ struct StageOneGameView: View {
                 PasswordView(
                     backButtonTapAction: {
                         viewModel.action(.hidePasswordView)
+                        viewModel.state.stageOnePhase = .decreaseOxygen
+                        viewModel.action(.showDialog)
                     },
                     successAction: {
                         viewModel.action(.hidePasswordView)
