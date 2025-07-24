@@ -29,7 +29,16 @@ class DialogManager: ObservableObject {
             tools: tools
         )
         currentPartner = dialogPartner
-        conversationLogs[dialogPartner] = []
+        if dialogPartner == .oxygen {
+            // 첫 메시지 자동 추가 (중복 방지)
+            if conversationLogs[.oxygen]?.isEmpty ?? true {
+                conversationLogs[.oxygen] = [
+                    Dialog(content: "산소 발생기는 위급한 상황에서만 사용 가능합니다.\n작동해야 하는 사유를 말씀해주세요.", sender: .partner)
+                ]
+            }
+        } else {
+            conversationLogs[dialogPartner] = []
+        }
     }
     
     func initializeSession(
