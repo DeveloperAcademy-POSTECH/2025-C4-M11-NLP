@@ -46,23 +46,10 @@ struct StageOneGameView: View {
                 .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
             
             if viewModel.state.isChatBotChatting {
-                VStack(spacing: 0) {
-                    DialogChatView(
-                        dialogManager: dialogManager,
-                        isPresented: $viewModel.state.isChatBotChatting
-                    )
-                    CustomKeyboardView(
-                        text: $dialogManager.inputText,
-                        onCommit: {
-                            dialogManager.respond(
-                                dialogManager.inputText,
-                                dialogPartnerType: .chatBot,
-                                isLogged: true
-                            )
-                            dialogManager.inputText = ""
-                        }
-                    )
-                }
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isChatBotChatting
+                )
                 .background(Color.black.opacity(0.8))
                 .zIndex(100)
             }
@@ -149,27 +136,10 @@ struct StageOneGameView: View {
             }
 
             if viewModel.state.isChatBotSettingPresented {
-                VStack(spacing: 16) {
-                    Text("챗봇 인스트럭션 입력")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                    TextField("챗봇 인스트럭션을 입력하세요", text: $viewModel.state.chatBotInstruction)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal, 24)
-                    Button("확인") {
-                        viewModel.state.isChatBotSettingPresented = false
-                    }
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                }
-                .padding()
-                .background(Color.black.opacity(0.8))
-                .cornerRadius(16)
-                .frame(maxWidth: 400)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                .zIndex(100)
+                ChatBotInstructionInputView(
+                    isPresented: $viewModel.state.isChatBotSettingPresented,
+                    instruction: $viewModel.state.chatBotInstruction
+                )
             }
         }
         .overlay(
