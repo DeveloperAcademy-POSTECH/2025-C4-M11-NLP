@@ -19,6 +19,7 @@ class StartGameViewModel: ViewModelable {
         case goStage1
         case goStage2
         case goStage3
+        case goStage4
     }
     
     @ObservedObject var coordinator: Coordinator
@@ -41,6 +42,8 @@ class StartGameViewModel: ViewModelable {
             coordinator.push(.stageTwoScene)
         case .goStage3:
             coordinator.push(.stageThreeScene)
+        case .goStage4:
+            coordinator.push(.stageFourScene)
         }
     }
 }

@@ -54,6 +54,9 @@ struct RootView: View {
                             dialogManager: dialogManager
                         )
                             .toolbar(.hidden, for: .navigationBar)
+                    case .stageFourScene:
+                        StageFourGameView(coordinator: coordinator)
+                            .toolbar(.hidden, for: .navigationBar)
                     }
                 }
         }
