@@ -132,7 +132,7 @@ struct StageOneGameView: View {
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 32)
+                .padding(.top, 16)
             }
 
             if viewModel.state.isChatBotSettingPresented {
@@ -205,6 +205,28 @@ struct StageOneGameView: View {
                 )
             }
         }
+        .onChange(of: viewModel.state.isOxygenChatting) { isOxygenChatting in
+            if isOxygenChatting {
+                dialogManager.initConversation(
+                    dialogPartner: .oxygen,
+                    instructions: DialogPartnerType.oxygen.instructions,
+                    tools: [
+                        UnlockTool(rightPasswordAction: {
+                            dialogManager.initializeSession(
+                                dialogPartner: .oxygen,
+                                instructions: ConstantInstructions.computerOnboarding,
+                                tools: []
+                            )
+                        })
+                    ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isChatting) { isChatting in
+            if isChatting {
+                dialogManager.currentPartner = .computer
+            }
+        }
         .onAppear {
             initializeScene()
             MusicManager.shared.playMusic(named: "bgm_3")
@@ -215,21 +237,6 @@ struct StageOneGameView: View {
                     UnlockTool(rightPasswordAction: {
                         dialogManager.initializeSession(
                             dialogPartner: .computer,
-                            instructions: ConstantInstructions.computerOnboarding,
-                            tools: []
-                        )
-                    })
-                ]
-            )
-            
-            // Oxygen 채팅 초기화
-            dialogManager.initConversation(
-                dialogPartner: .oxygen,
-                instructions: DialogPartnerType.oxygen.instructions,
-                tools: [
-                    UnlockTool(rightPasswordAction: {
-                        dialogManager.initializeSession(
-                            dialogPartner: .oxygen,
                             instructions: ConstantInstructions.computerOnboarding,
                             tools: []
                         )
