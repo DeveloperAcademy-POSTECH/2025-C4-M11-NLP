@@ -17,6 +17,8 @@ class StageThreeGameScene: GameScene {
     var door: DoorLockSprite?
     var jane: JaneSprite?
     
+    var explosionHaptic: GradientHaptic?
+    
     private var cancellables = Set<AnyCancellable>()
     var isAutoMoving: Bool = false // 자동 이동 중 여부
     
@@ -48,6 +50,8 @@ class StageThreeGameScene: GameScene {
                 self.jane = jane
             }
         }
+        
+        explosionHaptic = GradientHaptic()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -289,9 +293,21 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
             SKTexture(imageNamed: "flame1"),
         ]
         let timePerFrame: TimeInterval = 0.3
+        let totalDuration = timePerFrame * Double(textures.count)
         
         let animationAction = SKAction.animate(with: textures, timePerFrame: timePerFrame)
 
+        if let explosionHaptic = explosionHaptic {
+            explosionHaptic.setCurve([
+                (0.0, 0.2),
+                (totalDuration * 0.25, 0.5),
+                (totalDuration * 0.5, 1.0),
+                (totalDuration * 0.75, 0.5),
+                (totalDuration, 0.2)
+            ])
+            explosionHaptic.playHapticGradient(duration: totalDuration)
+        }
+        
         if let flame = flame {
             flame.run(animationAction)
         }
@@ -306,7 +322,8 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         
         let targetPosition = ConstantPositions.afterExplosionRobotPosition
         let moveAction = SKAction.move(to: targetPosition, duration: 2)
-        let rotateAction = SKAction.rotate(byAngle: CGFloat.pi/3, duration: 0.5)
+        let rotateAction = SKAction.rotate(byAngle: CGFloat.pi/3, duration: 2)
+        
         robot.run(moveAction)
         robot.run(rotateAction)
     }
