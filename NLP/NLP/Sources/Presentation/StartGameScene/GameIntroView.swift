@@ -48,7 +48,7 @@ struct GameIntroView: View {
 
         정확히 말하면, 어마어마하게 예쁜 괴짜 과학자다.
         """),
-        ("intro_4", "", """
+        (nil, "", """
         솔직히 말하자면, 처음 봤을 때 살짝 설렜다.
         
         하지만 그녀의 말투에는 늘 가시가 돋쳐있었고 지금껏 연애라는 걸 해본 적 있을까 싶을 만큼… 까칠했다.
@@ -203,6 +203,11 @@ struct GameIntroView: View {
         }
         .onAppear {
             MusicManager.shared.playMusic(named: "bgm_2")
+        }
+        .onChange(of: pageIndex) { newIndex in
+            if newIndex == 5 {
+                MusicManager.shared.playMusic(named: "bgm_oxygen")
+            }
         }
     }
 } 
