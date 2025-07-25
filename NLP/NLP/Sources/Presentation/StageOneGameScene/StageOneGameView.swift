@@ -251,6 +251,7 @@ struct StageOneGameView: View {
         }
         .onChange(of: viewModel.state.isQuizChatting) { _, isQuizChatting in
             if isQuizChatting {
+                Text("기본 안내 메시지입니다") // 기본 문자열 출력
                 dialogManager.initConversation(
                     dialogPartner: .quiz,
                     instructions: DialogPartnerType.quiz.instructions,
@@ -259,9 +260,7 @@ struct StageOneGameView: View {
                             print("number is \(number)")
                             guard let partner = dialogManager.currentPartner else { return }
                             print("partner: \(partner)")
-//                            if number == 10 {
-//                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
-//                            }
+
                             switch number {
                             case ..<10:
                                 dialogManager.conversationLogs[partner]?.append(Dialog(content: "Down", sender: .partner, fromToolCalling: true))
@@ -272,13 +271,6 @@ struct StageOneGameView: View {
                             default:
                                 break
                             }
-//                            if number < 10 {
-//
-//                            }else if number > 10 {
-//                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "UP", sender: .partner, fromToolCalling: true))
-//                            }else{
-//                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
-//                            }
                             
                         })
                     ]
