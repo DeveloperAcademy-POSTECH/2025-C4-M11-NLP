@@ -12,6 +12,7 @@ struct GameIntroView: View {
     @State private var pageIndex: Int = 0
     @State private var isStreamingCompleted: Bool = false
     @State private var skipStreaming: Bool = false
+    @State private var isFadingOut: Bool = false
     
     // 이미지가 필요한 페이지는 imageName, 아닌 곳은 nil
     private let stories: [(image: String?, title: String, description: String)] = [
@@ -185,7 +186,10 @@ struct GameIntroView: View {
                             isStreamingCompleted = false
                             skipStreaming = false
                         } else {
-                            coordinator.push(.stageOneIntroScene)
+                            isFadingOut = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                coordinator.push(.stageOneIntroScene)
+                            }
                         }
                     }) {
                         HStack {
@@ -202,6 +206,12 @@ struct GameIntroView: View {
                 .padding(.bottom, 24)
             }
         }
+        .overlay(
+            Color.black
+                .opacity(isFadingOut ? 1 : 0)
+                .animation(.linear(duration: 1), value: isFadingOut)
+                .ignoresSafeArea()
+        )
         .onAppear {
             MusicManager.shared.playMusic(named: "bgm_2")
         }

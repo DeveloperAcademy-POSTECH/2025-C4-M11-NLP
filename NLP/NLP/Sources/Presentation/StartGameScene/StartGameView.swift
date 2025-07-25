@@ -11,6 +11,7 @@ struct StartGameView: View {
     @StateObject var viewModel: StartGameViewModel
     @State private var showKeyboardTest: Bool = false
     @State private var keyboardTestText: String = ""
+    @State private var isFadingOut: Bool = false
     
     init(coordinator: Coordinator) {
         self._viewModel = StateObject(wrappedValue: StartGameViewModel(coordinator: coordinator))
@@ -35,7 +36,10 @@ struct StartGameView: View {
                 Spacer()
                 // 시작 버튼
                 Button(isClickSoundAvailable: true, action: {
-                    viewModel.action(.startButtonTapped)
+                    isFadingOut = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        viewModel.action(.startButtonTapped)
+                    }
                 }) {
                     Text("Start")
                         .font(.custom("Galmuri11-Bold", size: 24))
@@ -172,6 +176,12 @@ struct StartGameView: View {
                 .transition(.move(edge: .bottom))
             }
         }
+        .overlay(
+            Color.black
+                .opacity(isFadingOut ? 1 : 0)
+                .animation(.linear(duration: 1), value: isFadingOut)
+                .ignoresSafeArea()
+        )
         .onAppear {
             MusicManager.shared.playMusic(named: "bgm_1")
         }
