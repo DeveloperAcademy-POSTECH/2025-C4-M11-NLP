@@ -154,9 +154,9 @@ struct StageOneGameView: View {
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isMachineChatting
             )
-                .opacity(viewModel.state.isMachineChatting ? 1 : 0)
-                .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
+            .opacity(viewModel.state.isMachineChatting ? 1 : 0)
+            .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
         }
         .overlay(
             Color.black
@@ -249,30 +249,49 @@ struct StageOneGameView: View {
                 )
             }
         }
-        .onChange(of: viewModel.state.isQuizChatting) { isQuizChatting in
+        .onChange(of: viewModel.state.isQuizChatting) { _, isQuizChatting in
             if isQuizChatting {
                 dialogManager.initConversation(
                     dialogPartner: .quiz,
                     instructions: DialogPartnerType.quiz.instructions,
                     tools: [
-                        //tool 추가 필요
+                        QuizTool(callAction: { number in
+                            print("number is \(number)")
+                            guard let partner = dialogManager.currentPartner else { return }
+                            print("partner: \(partner)")
+//                            if number == 10 {
+//                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
+//                            }
+                            switch number {
+                            case ..<10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Down", sender: .partner, fromToolCalling: true))
+                            case 10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
+                            case 11...:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "UP", sender: .partner, fromToolCalling: true))
+                            default:
+                                break
+                            }
+//                            if number < 10 {
+//
+//                            }else if number > 10 {
+//                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "UP", sender: .partner, fromToolCalling: true))
+//                            }else{
+//                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
+//                            }
+                            
+                        })
                     ]
                 )
             }
         }
-        .onChange(of: viewModel.state.isChatting) { isChatting in
+        .onChange(of: viewModel.state.isChatting) { _, isChatting in
             if isChatting {
                 dialogManager.initConversation(
                     dialogPartner: .computer,
                     instructions: DialogPartnerType.computer.instructions,
                     tools: [
-                        UnlockTool(rightPasswordAction: {
-                            dialogManager.initializeSession(
-                                dialogPartner: .computer,
-                                instructions: ConstantInstructions.computerOnboarding,
-                                tools: []
-                            )
-                        })
+                        // tool 추가 필요
                     ]
                 )
             }
@@ -293,13 +312,7 @@ struct StageOneGameView: View {
                 dialogPartner: .computer,
                 instructions: DialogPartnerType.computer.instructions,
                 tools: [
-                    UnlockTool(rightPasswordAction: {
-                        dialogManager.initializeSession(
-                            dialogPartner: .computer,
-                            instructions: ConstantInstructions.computerOnboarding,
-                            tools: []
-                        )
-                    })
+                    // tool 추가 필요
                 ]
             )
         }
