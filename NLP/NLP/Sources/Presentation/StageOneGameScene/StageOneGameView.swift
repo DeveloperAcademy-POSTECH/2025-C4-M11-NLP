@@ -240,6 +240,17 @@ struct StageOneGameView: View {
                 )
             }
         }
+        .onChange(of: viewModel.state.isQuizChatting) { isQuizChatting in
+            if isQuizChatting {
+                dialogManager.initConversation(
+                    dialogPartner: .quiz,
+                    instructions: DialogPartnerType.quiz.instructions,
+                    tools: [
+                        //tool 추가 필요
+                    ]
+                )
+            }
+        }
         .onChange(of: viewModel.state.isChatting) { isChatting in
             if isChatting {
                 dialogManager.initConversation(

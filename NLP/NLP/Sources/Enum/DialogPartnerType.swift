@@ -11,6 +11,7 @@ enum DialogPartnerType {
     case oxygen
     case chatBot
     case machine // MachineSprite와 대화용 추가
+    case quiz
   
     var instructions: String {
         switch self {
@@ -142,6 +143,8 @@ enum DialogPartnerType {
                 임시 비밀번호는 0720 입니다. 이 비밀번호를 사용하여 중앙통제실로 접근하세요.
                 "
         """
+        case .quiz:
+            return "너는 퀴즈를 내는 로봇이야 아무 주제로 퀴즈를 내줘 주제는 너가 정해서 퀴즈를 내줘"
         }
     }
 }

@@ -1,16 +1,17 @@
 //
-//  SignalMachineSprite.swift
+//  QuizSprite.swift
 //  NLP
 //
-//  Created by 양시준 on 7/24/25.
+//  Created by 차원준 on 7/25/25.
 //
+
 
 import SpriteKit
 
-class SignalMachineSprite: SKSpriteNode {
+class QuizSprite: SKSpriteNode {
     func configurePhysics() {
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: self.size.height))
-        self.physicsBody?.categoryBitMask = PhysicsCategory.signalMachine.rawValue
+        self.physicsBody?.categoryBitMask = PhysicsCategory.QuizMachine.rawValue
         self.physicsBody?.contactTestBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.collisionBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.friction = 1
@@ -19,4 +20,3 @@ class SignalMachineSprite: SKSpriteNode {
         self.physicsBody?.isDynamic = false
     }
 }
-
