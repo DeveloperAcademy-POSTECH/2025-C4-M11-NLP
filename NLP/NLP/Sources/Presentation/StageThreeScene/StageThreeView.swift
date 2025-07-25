@@ -224,7 +224,7 @@ struct StageThreeView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        
+                        viewModel.coordinator.push(.middleStoryScene(.stageThreeFour))
                     }
                 )
             ]
