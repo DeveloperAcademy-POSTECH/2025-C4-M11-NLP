@@ -19,6 +19,7 @@ final class StageTwoViewModel: ViewModelable {
         var isTouchDisabled: Bool = false
         var hasMetBot: Bool = false // 로봇 최초 만남 여부
         var talkFailCount: Int = 0 // 대화 실패 횟수
+        var talkChatCount: Int = 0 // 대화 채팅 시도 횟수
     }
     
     enum Action {
