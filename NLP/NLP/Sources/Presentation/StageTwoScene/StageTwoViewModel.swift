@@ -49,6 +49,7 @@ final class StageTwoViewModel: ViewModelable {
             
         case .robotEncountered:
             state.isMonologuePresented = true
+            state.stageTwoPhase = .meetBot
         case .activateDialog(let withNextPhase):
             state.isItemCollecting = false
             state.isMonologuePresented = false

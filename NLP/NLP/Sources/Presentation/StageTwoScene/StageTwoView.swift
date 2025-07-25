@@ -97,6 +97,12 @@ struct StageTwoView: View {
             ],
             .tryEmotionalApproach: [
                 MonologueAction(
+                    monologue: "손전등 주기",
+                    action: {
+                        viewModel.action(.goToNextPhase)
+                    }
+                ),
+                MonologueAction(
                     monologue: "대화하기",
                     action: {
                         dialogManager.resetDialogLog()
