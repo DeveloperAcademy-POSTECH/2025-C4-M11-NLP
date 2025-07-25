@@ -73,6 +73,7 @@ struct StageOneGameView: View {
                         }
                     },
                     successAction: {
+                        MusicManager.shared.playMusic(named: "bgm_4")
                         viewModel.action(.hidePasswordView)
                         viewModel.coordinator.push(.middleStoryScene(.stageOneTwo))
                     },
