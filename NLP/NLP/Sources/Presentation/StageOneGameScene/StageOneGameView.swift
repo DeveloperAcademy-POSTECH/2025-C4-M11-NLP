@@ -53,6 +53,15 @@ struct StageOneGameView: View {
                 .zIndex(100)
             }
             
+            if viewModel.state.isQuizChatting {
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isQuizChatting
+                )
+                .background(Color.black.opacity(0.8))
+                .zIndex(100)
+            }
+            
             DialogView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isOxygenChatting
@@ -73,6 +82,7 @@ struct StageOneGameView: View {
                         }
                     },
                     successAction: {
+                        MusicManager.shared.playMusic(named: "bgm_4")
                         viewModel.action(.hidePasswordView)
                         viewModel.coordinator.push(.middleStoryScene(.stageOneTwo))
                     },
@@ -89,17 +99,32 @@ struct StageOneGameView: View {
             }
             
             if viewModel.state.isNoteFoundPresented {
-                ItemCollectionView(
-                    isPresented: $viewModel.state.isNoteFoundPresented,
-                    item: GameItems.note, // ⭐ 직접 참조
-                    backButtonTapAction: {
-                        viewModel.action(.hideNoteFoundPresented)
-                    },
-                    nextButtonTapAction: {
-                        viewModel.action(.hideNoteFoundPresented)
-                        viewModel.action(.showDialog)
-                    }
-                )
+                if viewModel.state.isNoteStreamingText {
+                    ItemStreamingTextView(
+                        isPresented: $viewModel.state.isNoteFoundPresented,
+                        text: """
+컴퓨터는 우리 말을 끝내 못 알아듣지 못한다. 규칙을 따라 명령할 때 따를 뿐이다.
+나는 규칙을 따라 이곳까지 도달했고, 이제 화성으로 떠나겠지.
+help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언신 help만 입력하고 했었지..
+키리듐이 인류 구원이라는 말은 믿지 못하겠다. 나는 컴퓨터 말고는 더 이상 믿지 못하겠다.
+""",
+                        onClose: {
+                            viewModel.state.isNoteStreamingText = false
+                            viewModel.action(.hideNoteFoundPresented)
+                        }
+                    )
+                } else {
+                    ItemCollectionView(
+                        isPresented: $viewModel.state.isNoteFoundPresented,
+                        item: GameItems.note,
+                        backButtonTapAction: {
+                            viewModel.action(.hideNoteFoundPresented)
+                        },
+                        nextButtonTapAction: {
+                            viewModel.state.isNoteStreamingText = true
+                        }
+                    )
+                }
             }
             
             if viewModel.state.isFlashlightFoundPresented {
@@ -145,9 +170,9 @@ struct StageOneGameView: View {
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isMachineChatting
             )
-                .opacity(viewModel.state.isMachineChatting ? 1 : 0)
-                .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
+            .opacity(viewModel.state.isMachineChatting ? 1 : 0)
+            .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
         }
         .overlay(
             Color.black
@@ -195,10 +220,10 @@ struct StageOneGameView: View {
                 viewModel.state.isOxygenResolved = true
             }
         }
-        .onChange(of: viewModel.state.isOxygenDecreasingStarted) { isStarted in
-            if isStarted {
+        .onChange(of: viewModel.state.oxygenGuageValue) { newValue in
+            if newValue <= 32 {
                 MusicManager.shared.playMusic(named: "bgm_oxygen")
-            } else {
+            } else if newValue > 32 {
                 MusicManager.shared.playMusic(named: "bgm_3")
             }
         }
@@ -227,10 +252,10 @@ struct StageOneGameView: View {
                                 dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많은 상태입니다. 산소를 채우지 않겠습니다.", sender: .partner, fromToolCalling: true))
                             case "middle":
                                 dialogManager.conversationLogs[partner]?.append(Dialog(content: "적당한 산소양을 가지고 있습니다. 조금 채워드리겠습니다.", sender: .partner, fromToolCalling: true))
-                                viewModel.state.oxygenGuageValue += 10
+                                viewModel.state.oxygenGuageValue = min(viewModel.state.oxygenGuageValue + 10, 100)
                             case "low":
                                 dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많이 부족한 상황입니다. 산소를 채우겠습니다.", sender: .partner, fromToolCalling: true))
-                                viewModel.state.oxygenGuageValue += 30
+                                viewModel.state.oxygenGuageValue = min(viewModel.state.oxygenGuageValue + 30, 100)
                             default:
                                 break
                             }
@@ -240,19 +265,41 @@ struct StageOneGameView: View {
                 )
             }
         }
-        .onChange(of: viewModel.state.isChatting) { isChatting in
+        .onChange(of: viewModel.state.isQuizChatting) { _, isQuizChatting in
+            if isQuizChatting {
+                Text("기본 안내 메시지입니다") // 기본 문자열 출력
+                dialogManager.initConversation(
+                    dialogPartner: .quiz,
+                    instructions: DialogPartnerType.quiz.instructions,
+                    tools: [
+                        QuizTool(callAction: { number in
+                            print("number is \(number)")
+                            guard let partner = dialogManager.currentPartner else { return }
+                            print("partner: \(partner)")
+
+                            switch number {
+                            case ..<10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Down", sender: .partner, fromToolCalling: true))
+                            case 10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
+                            case 11...:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "UP", sender: .partner, fromToolCalling: true))
+                            default:
+                                break
+                            }
+                            
+                        })
+                    ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isChatting) { _, isChatting in
             if isChatting {
                 dialogManager.initConversation(
                     dialogPartner: .computer,
                     instructions: DialogPartnerType.computer.instructions,
                     tools: [
-                        UnlockTool(rightPasswordAction: {
-                            dialogManager.initializeSession(
-                                dialogPartner: .computer,
-                                instructions: ConstantInstructions.computerOnboarding,
-                                tools: []
-                            )
-                        })
+                        // tool 추가 필요
                     ]
                 )
             }
@@ -273,13 +320,7 @@ struct StageOneGameView: View {
                 dialogPartner: .computer,
                 instructions: DialogPartnerType.computer.instructions,
                 tools: [
-                    UnlockTool(rightPasswordAction: {
-                        dialogManager.initializeSession(
-                            dialogPartner: .computer,
-                            instructions: ConstantInstructions.computerOnboarding,
-                            tools: []
-                        )
-                    })
+                    // tool 추가 필요
                 ]
             )
         }

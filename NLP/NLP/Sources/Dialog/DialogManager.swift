@@ -140,37 +140,68 @@ class DialogManager: ObservableObject {
         dialogPartnerType: DialogPartnerType,
         isLogged: Bool
     ) async throws {
-        // TDialogManager의 동적 스키마 생성 로직
-        let oxygenSchema = DynamicGenerationSchema(
-            name: "Oxygengauge",
-            properties: [
-                DynamicGenerationSchema.Property(
-                    name: "Type",
-                    schema: DynamicGenerationSchema(
+        switch dialogPartnerType {
+        case .oxygen:
+            // TDialogManager의 동적 스키마 생성 로직
+            let oxygenSchema = DynamicGenerationSchema(
+                name: "Oxygengauge",
+                properties: [
+                    DynamicGenerationSchema.Property(
                         name: "Type",
-                        anyOf: ["OOxygen", "CCrash"]
-                    )
-                ),
-                DynamicGenerationSchema.Property(
-                    name: "DegreeOfOxygen",
-                    schema: DynamicGenerationSchema(
+                        schema: DynamicGenerationSchema(
+                            name: "Type",
+                            anyOf: ["OOxygen", "CCrash"]
+                        )
+                    ),
+                    DynamicGenerationSchema.Property(
                         name: "DegreeOfOxygen",
-                        anyOf: ["LLow", "MMiddle", "HHigh"]
+                        schema: DynamicGenerationSchema(
+                            name: "DegreeOfOxygen",
+                            anyOf: ["LLow", "MMiddle", "HHigh"]
+                        )
                     )
-                )
-            ]
-        )
-        
-        let schema = try GenerationSchema(root: oxygenSchema, dependencies: [])
-        
-        print("😀 사용자: \(userInput)")
-        
-        // 도구 호출 시도 (TDialogManager 로직)
-        let _ = try await toolSession.respond(
-            to: userInput,
-            schema: schema,
-            includeSchemaInPrompt: false
-        )
+                ]
+            )
+            
+            let schema = try GenerationSchema(root: oxygenSchema, dependencies: [])
+            
+            print("😀 사용자: \(userInput)")
+            
+            // 도구 호출 시도 (TDialogManager 로직)
+            let _ = try await toolSession.respond(
+                to: userInput,
+                schema: schema,
+                includeSchemaInPrompt: false
+            )
+        case .quiz:
+            // TDialogManager의 동적 스키마 생성 로직
+            let quizScheme = DynamicGenerationSchema(
+                name: "Quiz",
+                properties: [
+                    DynamicGenerationSchema.Property(
+                        name: "NNumber",
+                        schema: DynamicGenerationSchema(
+                            name: "NNumber",
+                            anyOf: ["1", "2", "3", "4"]
+                        )
+                    )
+                ]
+            )
+            
+            let schema = try GenerationSchema(root: quizScheme, dependencies: [])
+            
+            print("😀 사용자: \(userInput)")
+            
+            // 도구 호출 시도 (TDialogManager 로직)
+            let _ = try await toolSession.respond(
+                to: userInput,
+                schema: schema,
+                includeSchemaInPrompt: false
+            )
+            
+        default:
+            break
+        }
     }
     
     // 일반 응답 처리
@@ -183,6 +214,7 @@ class DialogManager: ObservableObject {
         
         do {
             let response = try await session.respond(to: userInput)
+            print("대화 대상 \(dialogPartnerType)에 대해 답변을 요청했습니다.")
             print("🤖 봇: \(response.content)")
             
             let partnerDialog = Dialog(content: response.content, sender: .partner)
