@@ -103,7 +103,9 @@ struct PasswordView: View {
             if inputText == correctPassword {
                 print("성공!")
                 isDoorOpened = true
-                successAction?()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    successAction?()
+                }
             } else {
                 print("실패")
                 handleFailure()

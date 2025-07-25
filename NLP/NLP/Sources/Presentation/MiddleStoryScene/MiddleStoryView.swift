@@ -9,6 +9,8 @@ import SwiftUI
 
 struct MiddleStoryView: View {
     @StateObject var viewModel: MiddleStoryViewModel
+    @State private var isStreamingCompleted: Bool = false
+    @State private var skipStreaming: Bool = false
     
     init(
         coordinator: Coordinator,
@@ -21,43 +23,58 @@ struct MiddleStoryView: View {
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-            }
-            let stories = viewModel.state.storiesType.stories
-            
-            Spacer().frame(height: 60)
-            
-            if let image = stories[viewModel.state.storyIndex].storyImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 270, height: 208)
-            } else {
-                Rectangle()
-                    .fill(.white)
-                    .frame(width: 270, height: 208)
-            }
-            Spacer().frame(height: 20)
-            if let storyTitle = stories[viewModel.state.storyIndex].storyTitle {
-                Text(storyTitle)
-                    .font(NLPFont.headline)
-                    .padding(.bottom, 30)
-                    .padding(.horizontal, 24)
-            }
-            Text(stories[viewModel.state.storyIndex].storyDescription)
+        ZStack {
+            Color(red: 36/255, green: 36/255, blue: 36/255).ignoresSafeArea()
+            VStack {
+                HStack { Spacer() }
+                let stories = viewModel.state.storiesType.stories
+                Spacer().frame(height: 60)
+                if let image = stories[viewModel.state.storyIndex].storyImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 270, height: 208)
+                } else {
+                    Rectangle()
+                        .fill(.white)
+                        .frame(width: 270, height: 208)
+                }
+                Spacer().frame(height: 20)
+                if let storyTitle = stories[viewModel.state.storyIndex].storyTitle {
+                    Text(storyTitle)
+                        .font(NLPFont.headline)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 30)
+                        .padding(.horizontal, 24)
+                }
+                StreamingText(
+                    fullDialog: stories[viewModel.state.storyIndex].storyDescription,
+                    streamingSpeed: 0.03,
+                    skip: $skipStreaming,
+                    streamingCompleted: { isStreamingCompleted = true }
+                )
                 .font(NLPFont.body)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.leading)
                 .padding(.horizontal, 24)
-            Spacer()
-            GameButton(buttonText: "다음") {
-                viewModel.action(.goToNextStory)
+                .onAppear {
+                    isStreamingCompleted = false
+                    skipStreaming = false
+                }
+                Spacer()
+                GameButton(buttonText: "다음") {
+                    if !isStreamingCompleted {
+                        skipStreaming = true
+                    } else {
+                        viewModel.action(.goToNextStory)
+                        isStreamingCompleted = false
+                        skipStreaming = false
+                    }
+                }
+                .padding(.bottom, 40)
+                .padding(.horizontal, 24)
             }
-            .padding(.bottom, 40)
-            .padding(.horizontal, 24)
         }
-        .ignoresSafeArea()
-        .background(Color.gray)
         .overlay(
             Color.black
                 .opacity(viewModel.state.isTransitioning ? 1 : 0)
