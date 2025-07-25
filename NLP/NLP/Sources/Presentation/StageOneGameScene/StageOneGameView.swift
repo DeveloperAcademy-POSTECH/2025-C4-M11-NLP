@@ -53,6 +53,15 @@ struct StageOneGameView: View {
                 .zIndex(100)
             }
             
+            if viewModel.state.isQuizChatting {
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isQuizChatting
+                )
+                .background(Color.black.opacity(0.8))
+                .zIndex(100)
+            }
+            
             DialogView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isOxygenChatting

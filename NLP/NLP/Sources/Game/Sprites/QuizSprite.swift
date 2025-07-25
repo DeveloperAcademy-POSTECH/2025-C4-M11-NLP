@@ -9,9 +9,13 @@
 import SpriteKit
 
 class QuizSprite: SKSpriteNode {
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        texture?.filteringMode = .nearest
+    }
     func configurePhysics() {
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width, height: self.size.height))
-        self.physicsBody?.categoryBitMask = PhysicsCategory.QuizMachine.rawValue
+        self.physicsBody?.categoryBitMask = PhysicsCategory.quizMachine.rawValue
         self.physicsBody?.contactTestBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.collisionBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.friction = 1

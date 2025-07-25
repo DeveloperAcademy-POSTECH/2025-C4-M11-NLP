@@ -88,9 +88,10 @@ struct DialogChatView: View {
                     onCommit: {
                         dialogManager.respond(
                             inputText,
-                            dialogPartnerType: dialogManager.currentPartner ?? .computer,
+                            dialogPartnerType: dialogManager.currentPartner ?? .oxygen,
                             isLogged: true
                         )
+                        print("dialogManager.currentPartner is \(dialogManager.currentPartner)")
                         inputText = ""
                     }
                 )

@@ -88,6 +88,10 @@ class StageOneGameScene: GameScene {
             if let machine = child as? MachineSprite {
                 machine.configurePhysics()
             }
+            if let quiz = child as? QuizSprite {
+                quiz.configurePhysics()
+                
+            }
         }
         
         viewModel?.$state
