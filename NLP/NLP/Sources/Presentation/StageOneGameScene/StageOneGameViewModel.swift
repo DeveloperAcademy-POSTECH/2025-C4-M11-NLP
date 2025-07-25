@@ -16,6 +16,7 @@ class StageOneGameViewModel: ViewModelable {
         var isFlashlightFoundPresented: Bool = false
         var isPasswordViewPresented: Bool = false
         var isNoteFoundPresented: Bool = false
+        var isNoteStreamingText: Bool = false // 노트 스트리밍 텍스트 모드
         var isArrivedAtCentralControlRoomDoor: Bool = false
         var isTransitioning: Bool = false // 암전 효과용 상태 추가
         var isFlashlightFound: Bool = false // 손전등 발견 여부
