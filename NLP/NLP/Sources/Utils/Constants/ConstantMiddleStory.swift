@@ -9,6 +9,7 @@ import SwiftUI
 struct ConstantMiddleStories {
     static let stageOneTwo: [GameStory] = [
         GameStory(
+            storyImage: UIImage(named: "middle_1"),
             storyTitle: "키리던스 현상",
             storyDescription:
                 """
@@ -20,6 +21,7 @@ struct ConstantMiddleStories {
                 """
         ),
         GameStory(
+            storyImage: UIImage(named: "middle_2"),
             storyTitle: "이상한 로봇",
             storyDescription:
                 """
@@ -108,7 +110,7 @@ struct ConstantMiddleStories {
 }
 
 struct GameStory {
-    var storyImage: UIImage?
+    var storyImage: UIImage? = nil
     var storyTitle: String?
     var storyDescription: String
 }
