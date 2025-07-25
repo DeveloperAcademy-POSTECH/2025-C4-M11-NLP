@@ -74,8 +74,8 @@ struct StageTwoView: View {
                 instructions: "",
                 tools: []
             )
-            
             viewModel.action(.transitionComplete)
+            viewModel.action(.activateMonologue(withNextPhase: false))
         }
     }
     
@@ -148,7 +148,39 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        
+                        // 아무것도 하지 않음(다음 phase로)
+                    }
+                )
+            ],
+            .jtoProblemModeInactive: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        // 아무것도 하지 않음(다음 phase로)
+                    }
+                )
+            ],
+            .jtoProblemModeSad: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        // 아무것도 하지 않음(다음 phase로)
+                    }
+                )
+            ],
+            .journeyContinues: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                    }
+                )
+            ],
+            .stageArrived: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
                     }
                 )
             ]
