@@ -51,8 +51,9 @@ final class MiddleStoryViewModel: ViewModelable {
                 case .stageOneTwo:
                     coordinator.push(.stageTwoScene)
                 case .stageTwoThree:
-                    // 임의
-                    coordinator.push(.stageTwoScene)
+                    coordinator.push(.stageThreeScene)
+                case .stageThreeFour:
+                    coordinator.push(.stageFourScene)
                 }
             }
         }
