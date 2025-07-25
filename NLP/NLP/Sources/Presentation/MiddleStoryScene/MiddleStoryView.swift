@@ -69,6 +69,7 @@ struct MiddleStoryView: View {
 enum StoriesType {
     case stageOneTwo
     case stageTwoThree
+    case stageThreeFour
     
     var stories: [GameStory] {
         switch self {
@@ -76,6 +77,8 @@ enum StoriesType {
             return ConstantMiddleStories.stageOneTwo
         case .stageTwoThree:
             return ConstantMiddleStories.stageTwoThree
+        case .stageThreeFour:
+            return ConstantMiddleStories.stageThreeFour
         }
     }
 }

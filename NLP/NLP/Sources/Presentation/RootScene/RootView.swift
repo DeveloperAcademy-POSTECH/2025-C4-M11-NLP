@@ -43,11 +43,6 @@ struct RootView: View {
                             dialogManager: dialogManager
                         )
                             .toolbar(.hidden, for: .navigationBar)
-                    case .middleStoryScene(let storiesType):
-                        MiddleStoryView(
-                            coordinator: coordinator,
-                            storiesType: storiesType
-                        )
                     case .stageThreeScene:
                         StageThreeView(
                             coordinator: coordinator,
@@ -57,6 +52,11 @@ struct RootView: View {
                     case .stageFourScene:
                         StageFourGameView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
+                    case .middleStoryScene(let storiesType):
+                        MiddleStoryView(
+                            coordinator: coordinator,
+                            storiesType: storiesType
+                        )
                     }
                 }
         }
