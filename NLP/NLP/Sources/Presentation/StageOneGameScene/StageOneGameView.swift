@@ -53,6 +53,15 @@ struct StageOneGameView: View {
                 .zIndex(100)
             }
             
+            if viewModel.state.isQuizChatting {
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isQuizChatting
+                )
+                .background(Color.black.opacity(0.8))
+                .zIndex(100)
+            }
+            
             DialogView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isOxygenChatting
@@ -161,9 +170,9 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isMachineChatting
             )
-                .opacity(viewModel.state.isMachineChatting ? 1 : 0)
-                .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
+            .opacity(viewModel.state.isMachineChatting ? 1 : 0)
+            .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
         }
         .overlay(
             Color.black
@@ -256,19 +265,41 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
                 )
             }
         }
-        .onChange(of: viewModel.state.isChatting) { isChatting in
+        .onChange(of: viewModel.state.isQuizChatting) { _, isQuizChatting in
+            if isQuizChatting {
+                Text("기본 안내 메시지입니다") // 기본 문자열 출력
+                dialogManager.initConversation(
+                    dialogPartner: .quiz,
+                    instructions: DialogPartnerType.quiz.instructions,
+                    tools: [
+                        QuizTool(callAction: { number in
+                            print("number is \(number)")
+                            guard let partner = dialogManager.currentPartner else { return }
+                            print("partner: \(partner)")
+
+                            switch number {
+                            case ..<10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Down", sender: .partner, fromToolCalling: true))
+                            case 10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
+                            case 11...:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "UP", sender: .partner, fromToolCalling: true))
+                            default:
+                                break
+                            }
+                            
+                        })
+                    ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isChatting) { _, isChatting in
             if isChatting {
                 dialogManager.initConversation(
                     dialogPartner: .computer,
                     instructions: DialogPartnerType.computer.instructions,
                     tools: [
-                        UnlockTool(rightPasswordAction: {
-                            dialogManager.initializeSession(
-                                dialogPartner: .computer,
-                                instructions: ConstantInstructions.computerOnboarding,
-                                tools: []
-                            )
-                        })
+                        // tool 추가 필요
                     ]
                 )
             }
@@ -289,13 +320,7 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
                 dialogPartner: .computer,
                 instructions: DialogPartnerType.computer.instructions,
                 tools: [
-                    UnlockTool(rightPasswordAction: {
-                        dialogManager.initializeSession(
-                            dialogPartner: .computer,
-                            instructions: ConstantInstructions.computerOnboarding,
-                            tools: []
-                        )
-                    })
+                    // tool 추가 필요
                 ]
             )
         }

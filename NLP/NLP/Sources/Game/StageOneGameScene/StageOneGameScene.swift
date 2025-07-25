@@ -15,6 +15,7 @@ class StageOneGameScene: GameScene {
     var note: NoteSprite?
     var doorLock: DoorLockSprite?
     var oxygen: OxygenSprite?
+    var quiz: QuizSprite?
     var chatBot: ChatBotSprite? // 추가
     var noLight: NoLightSprite?
     var turnOnFlashlight: TurnOnFlashlightSprite?
@@ -87,6 +88,10 @@ class StageOneGameScene: GameScene {
             if let machine = child as? MachineSprite {
                 machine.configurePhysics()
             }
+            if let quiz = child as? QuizSprite {
+                quiz.configurePhysics()
+                
+            }
         }
         
         viewModel?.$state
@@ -108,6 +113,11 @@ class StageOneGameScene: GameScene {
                 } else {
                     self?.oxygenInteractionEnd()
                 }
+                if state.isQuizChatting {
+                    self?.quizInteractionStart()
+                } else {
+                    self?.quizInteractionEnd()
+                }
             }
             .store(in: &cancellables)
     }
@@ -122,7 +132,7 @@ class StageOneGameScene: GameScene {
             isJoystickTouchActive = true
             self.joyStick.startMove(touchLocation)
         } else {
-            if let gs = viewModel?.state, gs.isChatting || gs.isOxygenChatting { return }
+            if let gs = viewModel?.state, gs.isChatting || gs.isOxygenChatting || gs.isQuizChatting { return }
             // 조이스틱이 없거나 조이스틱 영역이 아닌 경우 새로운 조이스틱 생성
             self.joyStick.createDynamicJoystick(at: touchLocation, camera: camera)
             isJoystickTouchActive = true
@@ -181,6 +191,10 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.state.isMachineChatting = true
         } else if let _ = nodeB as? PlayerSprite, let _ = nodeA as? MachineSprite {
             viewModel?.state.isMachineChatting = true
+        }else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? QuizSprite {
+            viewModel?.state.isQuizChatting = true
+        } else if let _ = nodeA as? QuizSprite, let _ = nodeB as? PlayerSprite {
+            viewModel?.state.isQuizChatting = true
         }
         // DoorSprite와 PlayerSprite 충돌 시 효과음+흔들림 효과
         if (nodeA is PlayerSprite && nodeB is DoorSprite) || (nodeA is DoorSprite && nodeB is PlayerSprite) {
@@ -302,6 +316,49 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         camera.run(group)
     }
 
+    
+    func quizInteractionStart() {
+        guard let player, let quiz, let camera else { return }
+        
+        isJoystickTouchActive = false
+        
+        // 채팅시 플레이어와 조이스틱 가리기
+        setNodeVisibility(player, visibility: false)
+        // 조이스틱이 존재하는 경우에만 숨김
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: false)
+            setNodeVisibility(joyStick.joystickKnob, visibility: false)
+        }
+
+        // 카메라 애니메이션 이동 + 확대
+        let targetPosition = CGPoint(x: quiz.position.x, y: quiz.position.y-30)
+        let moveAction = SKAction.move(to: targetPosition, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 0.3, duration: 0.5)
+        let group = SKAction.group([moveAction, scaleAction])
+        camera.run(group)
+    }
+
+    func quizInteractionEnd() {
+        guard let player, let camera else { return }
+
+        setNodeVisibility(player, visibility: true)
+        // 조이스틱이 존재하는 경우에만 표시
+        if joyStick.joystickBase != nil {
+            setNodeVisibility(joyStick.joystickBase, visibility: true)
+            setNodeVisibility(joyStick.joystickKnob, visibility: true)
+        }
+
+        // 카메라 애니메이션 복귀
+        let moveAction = SKAction.move(to: player.position, duration: 0.5)
+        let scaleAction = SKAction.scale(to: 1.0, duration: 0.5)
+        let group = SKAction.group([moveAction, scaleAction])
+        camera.run(group)
+    }
+
+    
+    
+    
+    
     
     func changeLightMode(lightMode: LightMode) {
         guard let noLight, let turnOnFlashlight else { return }
