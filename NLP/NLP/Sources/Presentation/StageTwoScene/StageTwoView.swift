@@ -154,7 +154,7 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        // 아무것도 하지 않음(다음 phase로)
+                        viewModel.action(.goToNextPhase)
                     }
                 )
             ],

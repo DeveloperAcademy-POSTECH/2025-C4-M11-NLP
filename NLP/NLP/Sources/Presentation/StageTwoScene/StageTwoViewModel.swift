@@ -17,6 +17,8 @@ final class StageTwoViewModel: ViewModelable {
         var stageTwoPhase: StageTwoMonologuePhase = .stageArrived
         
         var isTouchDisabled: Bool = false
+        var hasMetBot: Bool = false // 로봇 최초 만남 여부
+        var talkFailCount: Int = 0 // 대화 실패 횟수
     }
     
     enum Action {
@@ -48,8 +50,14 @@ final class StageTwoViewModel: ViewModelable {
             }
             
         case .robotEncountered:
-            state.isMonologuePresented = true
-            state.stageTwoPhase = .meetBot
+            if !state.hasMetBot {
+                state.isMonologuePresented = true
+                state.stageTwoPhase = .meetBot
+                state.hasMetBot = true
+            } else {
+                state.isDialogPresented = true
+                state.isMonologuePresented = false
+            }
         case .activateDialog(let withNextPhase):
             state.isItemCollecting = false
             state.isMonologuePresented = false

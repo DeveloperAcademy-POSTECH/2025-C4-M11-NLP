@@ -36,9 +36,9 @@ enum StageTwoMonologuePhase: MonologuePhase {
         case .unexpectedBotReaction:
             return "이러려고 준 건 아닌데...\n어? 어디 가는거야??"
         case .unexpectedAffectionMoment:
-            return "이거 나한테 주려고 부른건가?\n귀엽네...\n근데 이게 뭐지?"
+            return "이거 나한테 주려고 가져온건가?\n귀엽네...\n근데 이게 뭐지?"
         case .botBehaviorShiftNoticed:
-            return "뭔가 표정이 바뀐 것 같기도 하고... 다시 말 걸어보면 되는건가??"
+            return "뭔가 표정이 바뀐 것 같기도 하고..."
         case .jtoProblemModeInactive:
             return "JTO: 저는 지금 문제해결 모드가 비활성화된 상태입니다. PDA 신호를 이용해 여기까지만 말씀드릴 수 .... 지지직"
         case .jtoProblemModeSad:
