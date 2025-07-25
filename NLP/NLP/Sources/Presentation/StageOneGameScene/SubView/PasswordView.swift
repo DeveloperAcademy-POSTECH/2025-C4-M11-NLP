@@ -85,6 +85,9 @@ struct PasswordView: View {
     
     private func handleTap(for label: String) {
         self.pressedButtonLabel = label
+        MusicManager.shared.playEffect(named: "button")
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
         self.buttonTapped(label)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             self.pressedButtonLabel = nil
@@ -100,7 +103,9 @@ struct PasswordView: View {
             if inputText == correctPassword {
                 print("성공!")
                 isDoorOpened = true
-                successAction?()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    successAction?()
+                }
             } else {
                 print("실패")
                 handleFailure()

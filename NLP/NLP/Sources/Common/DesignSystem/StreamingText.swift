@@ -37,38 +37,54 @@ struct StreamingText: View {
     @State var streamingCompleted: (() -> Void)?
     
     var body: some View {
-        Text(String(currentText + "_"))
-            .font(NLPFont.body)
-            .onAppear {
-                startTimer()
-            }
-            .onChange(of: fullDialog) { _, _ in
-                timer?.invalidate()
-                currentText = ""
-                index = 0
-                skip = false
-                
-                startTimer()
-            }
-            .onChange(of: skip) { _, newValue in
-                if newValue {
-                    timer?.invalidate()
-                    currentText = fullDialog
-                    index = fullDialog.count
-                    if !streamingEnd {
-                        streamingCompleted?()
-                        streamingEnd = true
-                    }
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(currentText.split(separator: "\n", omittingEmptySubsequences: false).map(String.init), id: \.self) { line in
+                if line.trimmingCharacters(in: .whitespaces).hasPrefix("[") {
+                    Text(line)
+                        .font(NLPFont.body)
+                        .foregroundColor(NLPColor.green)
                 } else {
-                    // skip이 false로 바뀌면(새로운 문장 등) 타이핑 재시작
-                    if currentText != fullDialog {
-                        timer?.invalidate()
-                        currentText = ""
-                        index = 0
-                        startTimer()
-                    }
+                    Text(line)
+                        .font(NLPFont.body)
+                        .foregroundColor(.white)
                 }
             }
+            // 커서 효과
+            if !streamingEnd {
+                Text("_")
+                    .font(NLPFont.body)
+                    .foregroundColor(.white)
+            }
+        }
+        .onAppear {
+            startTimer()
+        }
+        .onChange(of: fullDialog) { _, _ in
+            timer?.invalidate()
+            currentText = ""
+            index = 0
+            skip = false
+            startTimer()
+        }
+        .onChange(of: skip) { _, newValue in
+            if newValue {
+                timer?.invalidate()
+                currentText = fullDialog
+                index = fullDialog.count
+                if !streamingEnd {
+                    streamingCompleted?()
+                    streamingEnd = true
+                }
+            } else {
+                // skip이 false로 바뀌면(새로운 문장 등) 타이핑 재시작
+                if currentText != fullDialog {
+                    timer?.invalidate()
+                    currentText = ""
+                    index = 0
+                    startTimer()
+                }
+            }
+        }
     }
     
     private func startTimer() {
