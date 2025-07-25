@@ -131,49 +131,60 @@ struct StageThreeView: View {
                     }
                 ),
             ],
-            .airFinnTalk6: [
+            .airFinnTalk7: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        viewModel.state.isMonologuePresented = false
-                        viewModel.action(.goToNextPhase)
-                        scene.moveToSignalMachine()
+                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.action(.deactivateMonologue)
+                        Task {
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.changePositionPlayerToSignalMachine()
+                        }
                     }
                 )
             ],
-            .receiveSign3: [
+            .receiveSign2: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
                         viewModel.action(.deactivateMonologue)
                         scene.changeRobotToNew()
-                        scene.moveToSignalMachineRobot()
                         scene.moveToSignalMachineFinn {
                             viewModel.action(.activateMonologue(withNextPhase: true))
                         }
                     }
                 )
             ],
-            .receiveSign8: [
+            .receiveSign7: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        viewModel.state.isMonologuePresented = false
+                        viewModel.action(.deactivateMonologue)
                         scene.moveToSignalMachine()
                         viewModel.action(.goToNextPhase)
                     }
                 )
             ],
-            .receiveSign11: [
+            .receiveSign10: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
-                        Task {
-                            try? await Task.sleep(for: .seconds(1))
-                            scene.changePositionPlayerToPlazmaRoomDoor()
-                            scene.changePositionFinnToPlazmaRoomDoor()
-                            scene.changePositionRobotToPlazmaRoomDoor()
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveToPlazmaRoomDoor {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                        scene.moveFinnToPlazmaRoomDoor()
+                    }
+                )
+            ],
+            .lockedDoor1: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveRobotToPlazmaRoomDoor {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
                         }
                     }
                 )
