@@ -148,6 +148,13 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         }
     }
     
+    func changePositionPlayerToSignalMachine() {
+        guard let player else { return }
+        
+        let targetPosition = ConstantPositions.signalMachinePosition
+        player.position = targetPosition
+    }
+    
     func moveToSignalMachineFinn(completion: @escaping () -> Void) {
         isAutoMoving = true
         let finnMoveAction = SKAction.move(to: ConstantPositions.signalMachineFinnPosition, duration: 3.0)
@@ -219,6 +226,36 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         
         let targetPosition = ConstantPositions.plazmaRoomDoorRobotPosition
         robot.position = targetPosition
+    }
+    
+    func moveToPlazmaRoomDoor(completion: @escaping () -> Void) {
+        guard let player else { return }
+        
+        isAutoMoving = true
+        let targetPosition = ConstantPositions.plazmaRoomDoorPlayerPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 3)
+        player.run(moveAction) { [weak self] in
+            DispatchQueue.main.async {
+                self?.isAutoMoving = false
+                completion()
+            }
+        }
+    }
+    
+    func moveFinnToPlazmaRoomDoor() {
+        guard let finn else { return }
+        
+        let targetPosition = ConstantPositions.plazmaRoomDoorFinnPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 3)
+        finn.run(moveAction)
+    }
+    
+    func moveRobotToPlazmaRoomDoor() {
+        guard let robot else { return }
+        
+        let targetPosition = ConstantPositions.plazmaRoomDoorRobotPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 3)
+        robot.run(moveAction)
     }
     
     func movePlayerToAnalyzeDoor() {
