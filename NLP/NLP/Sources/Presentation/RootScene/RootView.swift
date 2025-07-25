@@ -57,6 +57,7 @@ struct RootView: View {
                             coordinator: coordinator,
                             storiesType: storiesType
                         )
+                        .toolbar(.hidden, for: .navigationBar)
                     }
                 }
         }
