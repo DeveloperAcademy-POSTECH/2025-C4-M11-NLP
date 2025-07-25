@@ -148,6 +148,13 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         }
     }
     
+    func changePositionPlayerToSignalMachine() {
+        guard let player else { return }
+        
+        let targetPosition = ConstantPositions.signalMachinePosition
+        player.position = targetPosition
+    }
+    
     func moveToSignalMachineFinn(completion: @escaping () -> Void) {
         isAutoMoving = true
         let finnMoveAction = SKAction.move(to: ConstantPositions.signalMachineFinnPosition, duration: 3.0)
@@ -200,25 +207,39 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         camera.run(group)
     }
     
-    func changePositionPlayerToPlazmaRoomDoor() {
+    func moveToPlazmaRoomDoor(completion: @escaping () -> Void) {
         guard let player else { return }
         
+        isAutoMoving = true
         let targetPosition = ConstantPositions.plazmaRoomDoorPlayerPosition
-        player.position = targetPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 3)
+        player.run(moveAction) { [weak self] in
+            DispatchQueue.main.async {
+                self?.isAutoMoving = false
+                completion()
+            }
+        }
     }
     
-    func changePositionFinnToPlazmaRoomDoor() {
+    func moveFinnToPlazmaRoomDoor() {
         guard let finn else { return }
         
         let targetPosition = ConstantPositions.plazmaRoomDoorFinnPosition
-        finn.position = targetPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 3)
+        finn.run(moveAction)
     }
     
-    func changePositionRobotToPlazmaRoomDoor() {
+    func moveRobotToPlazmaRoomDoor(completion: @escaping () -> Void) {
         guard let robot else { return }
         
         let targetPosition = ConstantPositions.plazmaRoomDoorRobotPosition
-        robot.position = targetPosition
+        let moveAction = SKAction.move(to: targetPosition, duration: 3)
+        robot.run(moveAction) { [weak self] in
+            DispatchQueue.main.async {
+                self?.isAutoMoving = false
+                completion()
+            }
+        }
     }
     
     func movePlayerToAnalyzeDoor() {

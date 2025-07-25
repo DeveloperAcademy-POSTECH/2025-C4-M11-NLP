@@ -13,6 +13,7 @@ struct DialogChatView: View {
     @Binding var isPresented: Bool
     @State var inputText: String = ""
     @State private var skipStreaming: Bool = false
+    var onSend: (() -> Void)? = nil
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -93,6 +94,7 @@ struct DialogChatView: View {
                         )
                         print("dialogManager.currentPartner is \(dialogManager.currentPartner)")
                         inputText = ""
+                        onSend?()
                     }
                 )
             }

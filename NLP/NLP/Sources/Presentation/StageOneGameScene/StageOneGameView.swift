@@ -82,6 +82,7 @@ struct StageOneGameView: View {
                         }
                     },
                     successAction: {
+                        MusicManager.shared.playMusic(named: "bgm_4")
                         viewModel.action(.hidePasswordView)
                         viewModel.coordinator.push(.middleStoryScene(.stageOneTwo))
                     },
@@ -98,17 +99,32 @@ struct StageOneGameView: View {
             }
             
             if viewModel.state.isNoteFoundPresented {
-                ItemCollectionView(
-                    isPresented: $viewModel.state.isNoteFoundPresented,
-                    item: GameItems.note, // ⭐ 직접 참조
-                    backButtonTapAction: {
-                        viewModel.action(.hideNoteFoundPresented)
-                    },
-                    nextButtonTapAction: {
-                        viewModel.action(.hideNoteFoundPresented)
-                        viewModel.action(.showDialog)
-                    }
-                )
+                if viewModel.state.isNoteStreamingText {
+                    ItemStreamingTextView(
+                        isPresented: $viewModel.state.isNoteFoundPresented,
+                        text: """
+컴퓨터는 우리 말을 끝내 못 알아듣지 못한다. 규칙을 따라 명령할 때 따를 뿐이다.
+나는 규칙을 따라 이곳까지 도달했고, 이제 화성으로 떠나겠지.
+help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언신 help만 입력하고 했었지..
+키리듐이 인류 구원이라는 말은 믿지 못하겠다. 나는 컴퓨터 말고는 더 이상 믿지 못하겠다.
+""",
+                        onClose: {
+                            viewModel.state.isNoteStreamingText = false
+                            viewModel.action(.hideNoteFoundPresented)
+                        }
+                    )
+                } else {
+                    ItemCollectionView(
+                        isPresented: $viewModel.state.isNoteFoundPresented,
+                        item: GameItems.note,
+                        backButtonTapAction: {
+                            viewModel.action(.hideNoteFoundPresented)
+                        },
+                        nextButtonTapAction: {
+                            viewModel.state.isNoteStreamingText = true
+                        }
+                    )
+                }
             }
             
             if viewModel.state.isFlashlightFoundPresented {
@@ -204,10 +220,10 @@ struct StageOneGameView: View {
                 viewModel.state.isOxygenResolved = true
             }
         }
-        .onChange(of: viewModel.state.isOxygenDecreasingStarted) { isStarted in
-            if isStarted {
+        .onChange(of: viewModel.state.oxygenGuageValue) { newValue in
+            if newValue <= 32 {
                 MusicManager.shared.playMusic(named: "bgm_oxygen")
-            } else {
+            } else if newValue > 32 {
                 MusicManager.shared.playMusic(named: "bgm_3")
             }
         }
@@ -236,10 +252,10 @@ struct StageOneGameView: View {
                                 dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많은 상태입니다. 산소를 채우지 않겠습니다.", sender: .partner, fromToolCalling: true))
                             case "middle":
                                 dialogManager.conversationLogs[partner]?.append(Dialog(content: "적당한 산소양을 가지고 있습니다. 조금 채워드리겠습니다.", sender: .partner, fromToolCalling: true))
-                                viewModel.state.oxygenGuageValue += 10
+                                viewModel.state.oxygenGuageValue = min(viewModel.state.oxygenGuageValue + 10, 100)
                             case "low":
                                 dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많이 부족한 상황입니다. 산소를 채우겠습니다.", sender: .partner, fromToolCalling: true))
-                                viewModel.state.oxygenGuageValue += 30
+                                viewModel.state.oxygenGuageValue = min(viewModel.state.oxygenGuageValue + 30, 100)
                             default:
                                 break
                             }

@@ -40,10 +40,12 @@ struct MiddleStoryView: View {
                     .frame(width: 270, height: 208)
             }
             Spacer().frame(height: 20)
-            Text(stories[viewModel.state.storyIndex].storyTitle)
-                .font(NLPFont.headline)
-                .padding(.bottom, 30)
-                .padding(.horizontal, 24)
+            if let storyTitle = stories[viewModel.state.storyIndex].storyTitle {
+                Text(storyTitle)
+                    .font(NLPFont.headline)
+                    .padding(.bottom, 30)
+                    .padding(.horizontal, 24)
+            }
             Text(stories[viewModel.state.storyIndex].storyDescription)
                 .font(NLPFont.body)
                 .padding(.horizontal, 24)
@@ -67,6 +69,7 @@ struct MiddleStoryView: View {
 enum StoriesType {
     case stageOneTwo
     case stageTwoThree
+    case stageThreeFour
     
     var stories: [GameStory] {
         switch self {
@@ -74,6 +77,8 @@ enum StoriesType {
             return ConstantMiddleStories.stageOneTwo
         case .stageTwoThree:
             return ConstantMiddleStories.stageTwoThree
+        case .stageThreeFour:
+            return ConstantMiddleStories.stageThreeFour
         }
     }
 }

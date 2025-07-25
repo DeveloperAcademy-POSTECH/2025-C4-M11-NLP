@@ -50,6 +50,11 @@ struct StageTwoView: View {
             DialogChatView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isDialogPresented
+                , onSend: {
+                    if viewModel.state.stageTwoPhase == .tryEmotionalApproach {
+                        viewModel.state.talkChatCount += 1
+                    }
+                }
             )
             .opacity(viewModel.state.isDialogPresented ? 1 : 0)
             .onChange(of: dialogManager.conversationLogs[.robot] ?? []) { oldValue, newValue in
@@ -74,8 +79,8 @@ struct StageTwoView: View {
                 instructions: "",
                 tools: []
             )
-            
             viewModel.action(.transitionComplete)
+            viewModel.action(.activateMonologue(withNextPhase: false))
         }
     }
     
@@ -95,15 +100,28 @@ struct StageTwoView: View {
                     }
                 ),
             ],
-            .tryEmotionalApproach: [
-                MonologueAction(
-                    monologue: "대화하기",
-                    action: {
-                        dialogManager.resetDialogLog()
-                        viewModel.action(.activateDialog(withNextPhase: false))
-                    }
-                )
-            ],
+            .tryEmotionalApproach: {
+                var actions: [MonologueAction] = [
+                    MonologueAction(
+                        monologue: "손전등 주기",
+                        action: {
+                            viewModel.action(.goToNextPhase)
+                        }
+                    )
+                ]
+                if viewModel.state.talkChatCount < 3 {
+                    actions.append(
+                        MonologueAction(
+                            monologue: "대화하기",
+                            action: {
+                                dialogManager.resetDialogLog()
+                                viewModel.action(.activateDialog(withNextPhase: false))
+                            }
+                        )
+                    )
+                }
+                return actions
+            }(),
             .giveOrTalkChoice: [
                 MonologueAction(
                     monologue: "손전등 주기",
@@ -148,7 +166,39 @@ struct StageTwoView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        
+                        viewModel.action(.goToNextPhase)
+                    }
+                )
+            ],
+            .jtoProblemModeInactive: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.goToNextPhase)
+                    }
+                )
+            ],
+            .jtoProblemModeSad: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.goToNextPhase)
+                    }
+                )
+            ],
+            .journeyContinues: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                    }
+                )
+            ],
+            .stageArrived: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
                     }
                 )
             ]
