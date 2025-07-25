@@ -45,6 +45,6 @@ struct ConstantMiddleStories {
 
 struct GameStory {
     var storyImage: UIImage?
-    var storyTitle: String
+    var storyTitle: String?
     var storyDescription: String
 }
