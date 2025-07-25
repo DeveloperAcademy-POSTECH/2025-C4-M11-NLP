@@ -101,9 +101,16 @@ struct StageThreeView: View {
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
                         Task {
+                            let dieHaptic = GradientHaptic()
+                            dieHaptic.setCurve([
+                                (0.0, 0.2),
+                                (1.0, 0.5),
+                                (2.0, 0.2)
+                            ])
                             try? await Task.sleep(for: .seconds(1))
                             scene.changeRobotToDead()
                             scene.showKillerRobot()
+                            dieHaptic.playHapticGradient(duration: 2.0)
                         }
                     }
                 )
