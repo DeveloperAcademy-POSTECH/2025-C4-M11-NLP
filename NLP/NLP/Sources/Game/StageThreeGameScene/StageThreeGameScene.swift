@@ -207,27 +207,6 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         camera.run(group)
     }
     
-    func changePositionPlayerToPlazmaRoomDoor() {
-        guard let player else { return }
-        
-        let targetPosition = ConstantPositions.plazmaRoomDoorPlayerPosition
-        player.position = targetPosition
-    }
-    
-    func changePositionFinnToPlazmaRoomDoor() {
-        guard let finn else { return }
-        
-        let targetPosition = ConstantPositions.plazmaRoomDoorFinnPosition
-        finn.position = targetPosition
-    }
-    
-    func changePositionRobotToPlazmaRoomDoor() {
-        guard let robot else { return }
-        
-        let targetPosition = ConstantPositions.plazmaRoomDoorRobotPosition
-        robot.position = targetPosition
-    }
-    
     func moveToPlazmaRoomDoor(completion: @escaping () -> Void) {
         guard let player else { return }
         
@@ -250,12 +229,17 @@ extension StageThreeGameScene: SKPhysicsContactDelegate {
         finn.run(moveAction)
     }
     
-    func moveRobotToPlazmaRoomDoor() {
+    func moveRobotToPlazmaRoomDoor(completion: @escaping () -> Void) {
         guard let robot else { return }
         
         let targetPosition = ConstantPositions.plazmaRoomDoorRobotPosition
         let moveAction = SKAction.move(to: targetPosition, duration: 3)
-        robot.run(moveAction)
+        robot.run(moveAction) { [weak self] in
+            DispatchQueue.main.async {
+                self?.isAutoMoving = false
+                completion()
+            }
+        }
     }
     
     func movePlayerToAnalyzeDoor() {

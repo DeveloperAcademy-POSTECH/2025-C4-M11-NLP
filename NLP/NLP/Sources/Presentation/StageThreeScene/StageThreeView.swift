@@ -150,7 +150,6 @@ struct StageThreeView: View {
                     action: {
                         viewModel.action(.deactivateMonologue)
                         scene.changeRobotToNew()
-                        scene.moveToSignalMachineRobot()
                         scene.moveToSignalMachineFinn {
                             viewModel.action(.activateMonologue(withNextPhase: true))
                         }
@@ -176,7 +175,17 @@ struct StageThreeView: View {
                             viewModel.action(.activateMonologue(withNextPhase: true))
                         }
                         scene.moveFinnToPlazmaRoomDoor()
-                        scene.moveRobotToPlazmaRoomDoor()
+                    }
+                )
+            ],
+            .lockedDoor1: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveRobotToPlazmaRoomDoor {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
                     }
                 )
             ],
