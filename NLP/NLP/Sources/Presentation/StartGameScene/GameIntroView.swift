@@ -16,6 +16,7 @@ struct GameIntroView: View {
     // 이미지가 필요한 페이지는 imageName, 아닌 곳은 nil
     private let stories: [(image: String?, title: String, description: String)] = [
         ("intro_1", "Chapter 1 - 키리듐", """
+        
         2045년, 인류는 스스로 신이라 착각하기에 충분한 기적의 원소를 손에 넣었다.
         이름은 키리듐(Kiridium).
 
@@ -74,7 +75,7 @@ struct GameIntroView: View {
         [통신 신호: 클리어]
 
         그 순간, 오로라 정거장으로부터 메시지가 날아왔다. 
-        「권한 오류. 도킹 거부. 즉시 회피 기동 실시.」
+        [권한 오류. 도킹 거부. 즉시 회피 기동 실시.]
 
         “뭐?”
         핀의 목소리가 처음으로 흔들렸다.
