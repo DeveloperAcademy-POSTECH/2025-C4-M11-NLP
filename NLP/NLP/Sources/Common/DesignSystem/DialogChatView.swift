@@ -1,6 +1,6 @@
 //
 //  DialogChatView.swift
-//  NLP
+//  SpriteKitExample
 //
 //  Created by 양시준 on 7/21/25.
 //
@@ -14,7 +14,8 @@ struct DialogChatView: View {
     @State var inputText: String = ""
     @State private var skipStreaming: Bool = false
     var onSend: (() -> Void)? = nil
-
+    var initialMessage: String? = nil // 초기 메시지 추가
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             Rectangle()
@@ -30,7 +31,30 @@ struct DialogChatView: View {
                             ZStack(alignment: .topTrailing) {
                                 ScrollView {
                                     VStack(alignment: .leading, spacing: 16) {
+
+                                        
                                         if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
+                                            if let initialMessage = initialMessage{
+                                                HStack(alignment: .center){
+                                                    StreamingText(fullDialog: initialMessage, streamingSpeed: 0.03, skip: $skipStreaming)
+                                                        .font(NLPFont.body)
+                                                        .foregroundStyle(.white)
+                                                        .padding(20)
+                                                    Spacer()
+                                                }
+                                                .background(
+                                                    UnevenRoundedRectangle(
+                                                        topLeadingRadius: 16,
+                                                        bottomLeadingRadius: 0,
+                                                        bottomTrailingRadius: 16,
+                                                        topTrailingRadius: 16
+                                                    )
+                                                    .fill(Color.black.opacity(0.6))
+                                                    .strokeBorder(NLPColor.green, lineWidth: 1)
+                                                )
+                                                .padding(.trailing, 16)
+                                            }
+                                            
                                             ForEach(Array(conversationLogs.enumerated()), id: \ .element) { idx, log in
                                                 if log.sender == .user {
                                                     HStack {

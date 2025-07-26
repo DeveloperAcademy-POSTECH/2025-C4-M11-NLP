@@ -26,7 +26,8 @@ class DialogManager: ObservableObject {
     func initConversation(
         dialogPartner: DialogPartnerType,
         instructions: String,
-        tools: [any Tool]
+        tools: [any Tool],
+        initialMessage: String? = nil
     ) {
         initializeSession(
             dialogPartner: dialogPartner,
@@ -35,7 +36,13 @@ class DialogManager: ObservableObject {
         )
         currentPartner = dialogPartner
         conversationLogs[dialogPartner] = []
-        if dialogPartner == .oxygen {
+        
+        // 초기 메시지가 있으면 설정, 없으면 기본값 사용
+        if let initialMessage = initialMessage {
+            conversationLogs[dialogPartner] = [
+                Dialog(content: initialMessage, sender: .partner)
+            ]
+        } else if dialogPartner == .oxygen {
             conversationLogs[.oxygen] = [
                 Dialog(content: "산소 발생기는 위급한 상황에서만 사용 가능합니다.\n작동해야 하는 사유를 말씀해주세요.", sender: .partner)
             ]
@@ -173,31 +180,7 @@ class DialogManager: ObservableObject {
                 schema: schema,
                 includeSchemaInPrompt: false
             )
-        case .quiz:
-            // TDialogManager의 동적 스키마 생성 로직
-            let quizScheme = DynamicGenerationSchema(
-                name: "Quiz",
-                properties: [
-                    DynamicGenerationSchema.Property(
-                        name: "NNumber",
-                        schema: DynamicGenerationSchema(
-                            name: "NNumber",
-                            anyOf: ["1", "2", "3", "4"]
-                        )
-                    )
-                ]
-            )
-            
-            let schema = try GenerationSchema(root: quizScheme, dependencies: [])
-            
-            print("😀 사용자: \(userInput)")
-            
-            // 도구 호출 시도 (TDialogManager 로직)
-            let _ = try await toolSession.respond(
-                to: userInput,
-                schema: schema,
-                includeSchemaInPrompt: false
-            )
+       
             
         default:
             break

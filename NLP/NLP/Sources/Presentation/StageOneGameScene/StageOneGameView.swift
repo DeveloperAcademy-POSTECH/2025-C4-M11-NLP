@@ -47,7 +47,8 @@ struct StageOneGameView: View {
             if viewModel.state.isChatBotChatting {
                 DialogChatView(
                     dialogManager: dialogManager,
-                    isPresented: $viewModel.state.isChatBotChatting
+                    isPresented: $viewModel.state.isChatBotChatting,
+                    initialMessage: "안녕하세요! 저는 AI 챗봇입니다. 무엇을 도와드릴까요?"
                 )
                 .background(Color.black.opacity(0.8))
                 .zIndex(100)
@@ -56,7 +57,8 @@ struct StageOneGameView: View {
             if viewModel.state.isQuizChatting {
                 DialogChatView(
                     dialogManager: dialogManager,
-                    isPresented: $viewModel.state.isQuizChatting
+                    isPresented: $viewModel.state.isQuizChatting,
+                    initialMessage: "퀴즈를 푸시겠어요?"
                 )
                 .background(Color.black.opacity(0.8))
                 .zIndex(100)
@@ -268,28 +270,10 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
         }
         .onChange(of: viewModel.state.isQuizChatting) { _, isQuizChatting in
             if isQuizChatting {
-                Text("기본 안내 메시지입니다") // 기본 문자열 출력
                 dialogManager.initConversation(
                     dialogPartner: .quiz,
                     instructions: DialogPartnerType.quiz.instructions,
                     tools: [
-                        QuizTool(callAction: { number in
-                            print("number is \(number)")
-                            guard let partner = dialogManager.currentPartner else { return }
-                            print("partner: \(partner)")
-
-                            switch number {
-                            case ..<10:
-                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Down", sender: .partner, fromToolCalling: true))
-                            case 10:
-                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
-                            case 11...:
-                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "UP", sender: .partner, fromToolCalling: true))
-                            default:
-                                break
-                            }
-                            
-                        })
                     ]
                 )
             }
