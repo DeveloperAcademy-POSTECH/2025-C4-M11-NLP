@@ -49,8 +49,8 @@ struct StageTwoView: View {
             
             DialogChatView(
                 dialogManager: dialogManager,
-                isPresented: $viewModel.state.isDialogPresented
-                , onSend: {
+                isPresented: $viewModel.state.isDialogPresented,
+                onSend: {
                     if viewModel.state.stageTwoPhase == .tryEmotionalApproach {
                         viewModel.state.talkChatCount += 1
                     }
@@ -61,7 +61,8 @@ struct StageTwoView: View {
                             viewModel.action(.goToMiddleStory)
                         }
                     }
-                }
+                },
+                initialMessage: "안녕하세요! 저는 로봇입니다. 무엇을 도와드릴까요?"
             )
             .opacity(viewModel.state.isDialogPresented ? 1 : 0)
             .onChange(of: dialogManager.conversationLogs[.robot] ?? []) { oldValue, newValue in
