@@ -56,14 +56,14 @@ final class StageFourGameViewModel: ViewModelable {
             state.isMonologuePresented = true
             
         case .saveEarthButtonTapped:
-            state.phase = .endingOnePartOne
+            state.phase = .endingTwoPartOne
             Task {
                 await startEpisodeTransitioning()
                 await endEpisodeTransitioning()
             }
             
         case .dontGiveupKiridiumButtonTapped:
-            state.phase = .endingTwoPartOne
+            state.phase = .endingOnePartOne
             Task {
                 await startEpisodeTransitioning()
                 await endEpisodeTransitioning()

@@ -70,9 +70,11 @@ final class MiddleStoryViewModel: ViewModelable {
                     coordinator.push(.stageFourScene)
                     
                 case .endingOne:
+                    MusicManager.shared.playMusic(named: "bgm_ending")
                     coordinator.push(.endingCreditScene)
                     break
                 case .endingTwo:
+                    MusicManager.shared.playMusic(named: "bgm_ending")
                     coordinator.pop()
                     break
                 }

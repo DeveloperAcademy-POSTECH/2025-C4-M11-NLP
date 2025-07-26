@@ -54,6 +54,13 @@ struct StageTwoView: View {
                     if viewModel.state.stageTwoPhase == .tryEmotionalApproach {
                         viewModel.state.talkChatCount += 1
                     }
+                    // "Finn" 대답 처리
+                    if let lastMessage = dialogManager.conversationLogs[.robot]?.last,
+                       lastMessage.content.lowercased().contains("finn") {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            viewModel.action(.goToMiddleStory)
+                        }
+                    }
                 }
             )
             .opacity(viewModel.state.isDialogPresented ? 1 : 0)

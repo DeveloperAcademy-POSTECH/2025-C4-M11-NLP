@@ -31,6 +31,7 @@ final class StageTwoViewModel: ViewModelable {
         case deactivateMonologue
         case activateItemCollecting
         case goToNextPhase
+        case goToMiddleStory
         
         case disableTouch
         case activateTouch
@@ -89,6 +90,15 @@ final class StageTwoViewModel: ViewModelable {
             state.isTouchDisabled = true
         case .activateTouch:
             state.isTouchDisabled = false
+        case .goToMiddleStory:
+            Task {
+                MusicManager.shared.playMusic(named: "bgm_5")
+                withAnimation(.linear(duration: 1)) {
+                    state.isTransitioning = true
+                }
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                coordinator.push(.middleStoryScene(.stageTwoThree))
+            }
         }
     }
 }
