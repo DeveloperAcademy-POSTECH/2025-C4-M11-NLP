@@ -12,10 +12,21 @@ class Coordinator: ObservableObject {
     
     
     func push(_ path: CoordinatorPath) {
-        self.paths.append(path)
+        paths.append(path)
     }
     
     func pop() {
-        _ = self.paths.popLast()
+        _ = paths.popLast()
+    }
+    
+    func popAll() {
+        paths.removeAll()
+    }
+    
+    func popToRoot() {
+        let root = paths.first
+        guard let root = root else { return }
+        paths.removeAll()
+        paths.append(root)
     }
 }
