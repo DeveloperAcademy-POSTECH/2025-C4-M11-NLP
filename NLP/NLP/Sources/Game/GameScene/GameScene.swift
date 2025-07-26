@@ -7,6 +7,8 @@ class GameScene: SKScene {
     var playerPhysicsType: PlayerPhysicsType = .normal
     var joyStick = JoyStick()
     var isJoystickTouchActive: Bool = false
+    
+    var cameraFocusedNode: SKSpriteNode?
 
     // 햅틱 트리거 함수
     func triggerHaptic() {
@@ -75,7 +77,8 @@ class GameScene: SKScene {
     
     // SpriteKit 내부에서 물리 엔진 충돌/힘 등을 계산할 때 호출 (플레이어의 움직임이 있을 때 등.. 카메라의 움직임을 위해 사용하면 좋음.)
     override func didSimulatePhysics() {
-        moveCamera(player?.position ?? .zero)
+        guard let cameraFocusedNode = cameraFocusedNode else { return }
+        moveCamera(cameraFocusedNode.position)
     }
 
     // MARK: Scene 이 뷰에 표시될 때 최초 한 번 호출되는 코드.
@@ -110,6 +113,7 @@ class GameScene: SKScene {
                 if let player = child as? PlayerSprite {
                     player.configurePhysics(playerPhysicsType: self.playerPhysicsType)
                     self.player = player
+                    self.cameraFocusedNode = player
                 }
             } else if let cam = child as? SKCameraNode {
                 scene?.camera = cam
