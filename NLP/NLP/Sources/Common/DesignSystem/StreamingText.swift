@@ -26,30 +26,50 @@ import SwiftUI
  - Note: 뷰가 화면에 나타나는 순간 자동으로 타이핑 효과가 시작됩니다.
 */
 struct StreamingText: View {
-    var fullDialog: String
+    var fullAttributedText: AttributedString
+    
     var streamingSpeed: Double
     
     @Binding var skip: Bool
     @State var streamingEnd: Bool = false
     @State var timer: Timer?
-    @State var currentText: String = ""
+    @State var currentText: AttributedString = ""
     @State var index: Int = 0
     @State var streamingCompleted: (() -> Void)?
     
+    init(fullDialog: String, streamingSpeed: Double, skip: Binding<Bool>, streamingCompleted: (() -> Void)? = nil) {
+        var fullDialog = AttributedString(fullDialog)
+        fullDialog.foregroundColor = .white
+        self.fullAttributedText = fullDialog
+        self.streamingSpeed = streamingSpeed
+        _skip = skip
+        self.streamingCompleted = streamingCompleted
+        initStreaming()
+    }
+    
+    init(fullAttributedText: AttributedString, streamingSpeed: Double, skip: Binding<Bool>, streamingCompleted: (() -> Void)? = nil) {
+        self.fullAttributedText = fullAttributedText
+        self.streamingSpeed = streamingSpeed
+        _skip = skip
+        self.streamingCompleted = streamingCompleted
+        initStreaming()
+    }
+    
+    init(coloredText: [(String, Color)], streamingSpeed: Double, skip: Binding<Bool>, streamingCompleted: (() -> Void)? = nil) {
+        self.fullAttributedText = ""
+        for (text, color) in coloredText {
+            let attrText = AttributedString(text, attributes: .init([.foregroundColor: UIColor(color)]))
+            fullAttributedText.append(attrText)
+        }
+        self.streamingSpeed = streamingSpeed
+        _skip = skip
+        self.streamingCompleted = streamingCompleted
+        initStreaming()
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ForEach(currentText.split(separator: "\n", omittingEmptySubsequences: false).map(String.init), id: \.self) { line in
-                if line.trimmingCharacters(in: .whitespaces).hasPrefix("[") {
-                    Text(line)
-                        .font(NLPFont.body)
-                        .foregroundColor(NLPColor.green)
-                } else {
-                    Text(line)
-                        .font(NLPFont.body)
-                        .foregroundColor(.white)
-                    
-                }
-            }
+            Text(currentText)
             // 커서 효과
             if !streamingEnd {
                 Text("_")
@@ -61,7 +81,7 @@ struct StreamingText: View {
         .onAppear {
             startTimer()
         }
-        .onChange(of: fullDialog) { _, _ in
+        .onChange(of: fullAttributedText) { _, _ in
             initStreaming()
             skip = false
             startTimer()
@@ -69,15 +89,15 @@ struct StreamingText: View {
         .onChange(of: skip) { _, newValue in
             if newValue {
                 timer?.invalidate()
-                currentText = fullDialog
-                index = fullDialog.count
+                currentText = fullAttributedText
+                index = fullAttributedText.characters.count
                 if !streamingEnd {
                     streamingCompleted?()
                     streamingEnd = true
                 }
             } else {
                 // skip이 false로 바뀌면(새로운 문장 등) 타이핑 재시작
-                if currentText != fullDialog {
+                if currentText != fullAttributedText {
                     initStreaming()
                     startTimer()
                 }
@@ -96,7 +116,7 @@ struct StreamingText: View {
             withTimeInterval: TimeInterval(floatLiteral: streamingSpeed),
             repeats: true
         ) { timer in
-            guard index < fullDialog.count else {
+            guard index < fullAttributedText.characters.count else {
                 guard let dialogCompleted = streamingCompleted else {
                     skip = true
                     timer.invalidate()
@@ -109,10 +129,28 @@ struct StreamingText: View {
                 return
             }
             
-            let nextIndex = fullDialog.index(fullDialog.startIndex, offsetBy: index)
-            
-            currentText += String(fullDialog[nextIndex])
+            typeNextCharacter()
             index += 1
         }
     }
+    
+    private func typeNextCharacter() {
+        let characterIndex = fullAttributedText.characters.index(fullAttributedText.startIndex, offsetBy: index)
+        let attributedCharacter = fullAttributedText[characterIndex...characterIndex]
+        
+        currentText.append(attributedCharacter)
+    }
+}
+
+#Preview {
+    StreamingText(
+        coloredText: [
+            ("제인 너 어디야\n\n", .white),
+            ("회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.", NLPColor.green)
+        ],
+        streamingSpeed: 0.03,
+        skip: .constant(false)
+    )
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .background(Color.gray)
 }
