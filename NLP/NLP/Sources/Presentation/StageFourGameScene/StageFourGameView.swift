@@ -49,7 +49,33 @@ struct StageFourGameView: View {
                             MonologueAction(
                                 monologue: "다음",
                                 action: {
-                                    //
+                                    viewModel.action(.robotExplodeStart)
+                                    Task {
+                                        await scene.moveRobotToPlasma()
+                                        await scene.fleeAllExceptRobot()
+                                        await scene.explode()
+                                        viewModel.action(.goToEndingTwoScene)
+                                        scene.setCameraFocusToAir()
+                                    }
+                                }
+                            )
+                        ],
+                        .endingTwoPartSix: [
+                            MonologueAction(
+                                monologue: "다음",
+                                action: {
+                                    Task {
+                                        viewModel.action(.goToNextPhase)
+                                        await scene.robotComeBack()
+                                    }
+                                }
+                            )
+                        ],
+                        .endingTwoPartEight: [
+                            MonologueAction(
+                                monologue: "다음",
+                                action: {
+                                    viewModel.action(.goToEndingCreditScene)
                                 }
                             )
                         ]
@@ -64,7 +90,7 @@ struct StageFourGameView: View {
         }
         .onAppear {
             initializeScene()
-            viewModel.action(.activateMonologue)
+            viewModel.action(.viewAppeared)
         }
         .allowsHitTesting(!viewModel.state.blockViewTapAction)
     }

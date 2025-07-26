@@ -27,17 +27,20 @@ enum StageFourMonologuePhase: MonologuePhase {
     case endingTwoPartThree
     case endingTwoPartFour
     case endingTwoPartFive
+    case endingTwoPartSix
+    case endingTwoPartSeven
+    case endingTwoPartEight
     
     
     // TODO: 비밀번호로 문 여는 것까지 구현 시 수정
-    static let lastPhase: Self = .pinnMonologueFour
+    static let lastPhase: Self = .endingTwoPartEight
     
     var monologue: String {
         switch self {
         case .recognizeSignalFromFuture:
             "핀: 지금 미래에서 또 신호가 온 것 같아. 중요한 것 같으니까 같이 확인해보자."
         case .signalFromFutureOne:
-            "[SIGNAL ID] 43-FWD-RET\n[JANE] 지구가 멸망했다. 지금은 충돌 후 22시간 경과한 시간. 나의 미래는 이미 희망을 잃었다.\n\n하지만 과거의 너희는 지구를 지킬 수 있을지도 모른다."
+            "[SIGNAL ID] 43-FWD-RET\n[JANE] 지구가 멸망했다. 지금은 충돌 후 22시간 경과한 시간. 나의 미래는 이미 희망을 잃었다. 하지만 과거의 너희는 지구를 지킬 수 있을지도 모른다."
         case .caseCommCheckWithJane:
             "...우리가 가만히만 있으면 지구는 1시간 후 멸망하게 되겠군. 먼저 지구에 신호를 보내야 하는데.. 제인, 통신장비는 어떻게 됐어?"
         case .jainMonologueOne:
@@ -47,7 +50,7 @@ enum StageFourMonologuePhase: MonologuePhase {
         case .ponderAboutMethod:
             "우리가 아무리 대단한 걸 만들었다고 해도...지구가 멸망한다면 의미가 없을 거야.\n\n방법을 찾아내야만 해."
         case .signalFromFutureTwo:
-            "[SIGNAL ID] 43-FWD-RET\n[JANE] 긴급. 아마도 이게 마지막 메시지가 될 듯 하다. 키리던스 현상을 막는 방법을 발견했어.\n\n지금 가지고 있는 키리듐을 최대 강도 플라즈마로 연소시키면, 우주의 모든 키리듐이 비활성화돼.\n\n모든 키리듐은 연결되어 있어.\n\n그렇기에 내가 신호를 과거로 보낼 수 있는거야. \n\n미래에서는 실험을 통해... ... ...."
+            "[SIGNAL ID] 43-FWD-RET\n[JANE] 긴급. 아마도 이게 마지막 메시지가 될 듯 하다. 키리던스 현상을 막는 방법을 발견했어. 지금 가지고 있는 키리듐을 최대 강도 플라즈마로 연소시키면, 우주의 모든 키리듐이 비활성화돼. 모든 키리듐은 연결되어 있어. 그렇기에 내가 신호를 과거로 보낼 수 있는거야. 미래에서는 실험을 통해... ... ...."
         case .pinnMonologueTwo:
             "핀: 하지만... 키리듐을 비활성화 한다면... 우리의 노벨상은..."
         case .jainMonologueTwo:
@@ -70,6 +73,12 @@ enum StageFourMonologuePhase: MonologuePhase {
             "JTO: 수많은 미래에서의 신호를 읽었어. 우리는 모두 영웅의 조각을 가지고 있어.\n\n꼭 지구를 지켜내야 한다."
         case .endingTwoPartFive:
             "...고마웠다 JTO.\n너를 절대로 잊지 않을거야.\n절대로."
+        case .endingTwoPartSix:
+            "그 재수없는 로봇 녀석이 그리워지는군.\n\n플라즈마실에서 완전히 가루가 됐겠지..."
+        case .endingTwoPartSeven:
+            "JTO: 웃기고 있네.\n\n공감 모드 실행해버린다?"
+        case .endingTwoPartEight:
+            "JTO!!! 죽지 않았구나!!!"
         }
     }
     
@@ -129,6 +138,12 @@ enum StageFourMonologuePhase: MonologuePhase {
             return .endingTwoPartThree
         case .endingTwoPartFive:
             return .endingTwoPartFour
+        case .endingTwoPartSix:
+            return .endingTwoPartFive
+        case .endingTwoPartSeven:
+            return .endingTwoPartSix
+        case .endingTwoPartEight:
+            return .endingTwoPartSeven
         }
     }
     
@@ -169,6 +184,12 @@ enum StageFourMonologuePhase: MonologuePhase {
         case .endingTwoPartFour:
             return .endingTwoPartFive
         case .endingTwoPartFive:
+            return .endingTwoPartSix
+        case .endingTwoPartSix:
+            return .endingTwoPartSeven
+        case .endingTwoPartSeven:
+            return .endingTwoPartEight
+        case .endingTwoPartEight:
             return nil
         }
     }
