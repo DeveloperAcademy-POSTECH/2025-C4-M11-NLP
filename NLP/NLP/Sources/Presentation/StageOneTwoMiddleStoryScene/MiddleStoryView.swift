@@ -1,5 +1,5 @@
 //
-//  StageOneTwoMiddleStoryView.swift
+//  MiddleStoryView.swift
 //  NLP
 //
 //  Created by Ted on 7/18/25.
@@ -27,7 +27,7 @@ struct MiddleStoryView: View {
             }
             let stories = viewModel.state.storiesType.stories
             
-            Spacer().frame(height: 60)
+            Spacer().frame(height: 80)
             
             if let image = stories[viewModel.state.storyIndex].storyImage {
                 Image(uiImage: image)
@@ -42,20 +42,42 @@ struct MiddleStoryView: View {
             Spacer().frame(height: 20)
             Text(stories[viewModel.state.storyIndex].storyTitle)
                 .font(NLPFont.headline)
+                .foregroundStyle(.white)
                 .padding(.bottom, 30)
                 .padding(.horizontal, 24)
             Text(stories[viewModel.state.storyIndex].storyDescription)
                 .font(NLPFont.body)
+                .foregroundStyle(.white)
                 .padding(.horizontal, 24)
             Spacer()
-            GameButton(buttonText: "다음") {
-                viewModel.action(.goToNextStory)
+            
+            HStack {
+                Button(isClickSoundAvailable: true, action: {
+                    viewModel.action(.goToPreviousStory)
+                }) {
+                    Image(viewModel.state.isPreviousAvailable ? "previous-available" : "previous-unavailable")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 50)
+                }
+                .disabled(!viewModel.state.isPreviousAvailable)
+                
+                Spacer()
+                Button(isClickSoundAvailable: true, action: {
+                    viewModel.action(.goToNextStory)
+                }) {
+                    Image(viewModel.state.isNextAvailable ? "next-available" : "next-unavailable")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 50)
+                }
+                .disabled(!viewModel.state.isNextAvailable)
             }
             .padding(.bottom, 40)
             .padding(.horizontal, 24)
         }
         .ignoresSafeArea()
-        .background(Color.gray)
+        .background(Color(NLPColor.gray1))
         .overlay(
             Color.black
                 .opacity(viewModel.state.isTransitioning ? 1 : 0)
@@ -67,6 +89,8 @@ struct MiddleStoryView: View {
 enum StoriesType {
     case stageOneTwo
     case stageTwoThree
+    case endingOne
+    case endingTwo
     
     var stories: [GameStory] {
         switch self {
@@ -74,6 +98,15 @@ enum StoriesType {
             return ConstantMiddleStories.stageOneTwo
         case .stageTwoThree:
             return ConstantMiddleStories.stageTwoThree
+        case .endingOne:
+            return ConstantMiddleStories.endingOne
+        case .endingTwo:
+            return ConstantMiddleStories.endingTwo
         }
     }
+}
+
+#Preview {
+    @Previewable @StateObject var coordinator = Coordinator()
+    MiddleStoryView(coordinator: coordinator, storiesType: .stageOneTwo)
 }
