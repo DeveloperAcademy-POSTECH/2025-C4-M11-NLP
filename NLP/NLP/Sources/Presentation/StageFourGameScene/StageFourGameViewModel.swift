@@ -21,6 +21,9 @@ final class StageFourGameViewModel: ViewModelable {
         case activateMonologue
         case saveEarthButtonTapped
         case dontGiveupKiridiumButtonTapped
+        
+        case goToEndingOneScene
+        case goToEndingTwoScene
     }
     
     @Published var state: State = State()
@@ -37,33 +40,55 @@ final class StageFourGameViewModel: ViewModelable {
             
         case .saveEarthButtonTapped:
             state.phase = .endingOnePartOne
-            startEpisodeTransitioning()
+            Task {
+                await startEpisodeTransitioning()
+                await endEpisodeTransitioning()
+            }
             
         case .dontGiveupKiridiumButtonTapped:
             state.phase = .endingTwoPartOne
-            startEpisodeTransitioning()
+            Task {
+                await startEpisodeTransitioning()
+                await endEpisodeTransitioning()
+            }
+            
+        case .goToEndingOneScene:
+            Task {
+                await startEpisodeTransitioning()
+                await MainActor.run {
+                    coordinator.push(.middleStoryScene(.endingOne))
+                }
+            }
+            
+        case .goToEndingTwoScene:
+            Task {
+                await startEpisodeTransitioning()
+                await MainActor.run {
+                    coordinator.push(.middleStoryScene(.endingTwo))
+                }
+            }
         }
     }
     
-    func startEpisodeTransitioning() {
+    func startEpisodeTransitioning() async {
         state.isMonologuePresented = false
         state.blockViewTapAction = true
         
-        Task {
-            withAnimation(.linear(duration: 2)) {
-                state.isTransitioning = true
-            }
-            try? await Task.sleep(for: .seconds(2))
-            
-            withAnimation(.linear(duration: 2)) {
-                state.isTransitioning = false
-            }
-            try? await Task.sleep(for: .seconds(2))
-            
-            await MainActor.run {
-                state.isMonologuePresented = true
-                state.blockViewTapAction = false
-            }
+        withAnimation(.linear(duration: 2)) {
+            state.isTransitioning = true
+        }
+        try? await Task.sleep(for: .seconds(2))
+    }
+    
+    func endEpisodeTransitioning() async {
+        withAnimation(.linear(duration: 2)) {
+            state.isTransitioning = false
+        }
+        try? await Task.sleep(for: .seconds(2))
+        
+        await MainActor.run {
+            state.isMonologuePresented = true
+            state.blockViewTapAction = false
         }
     }
 }
