@@ -41,7 +41,7 @@ enum ConstantMiddleStories {
     static let stageTwoThree: [GameStory] = [
         // MARK: 임시
         GameStory(
-            storyTitle: "키리던스 현상",
+            storyTitle: "시간의 비대칭성",
             storyDescription:
                 """
                 시간은 루프가 아닌, 깨진 유리처럼 갈라진 채로 병렬로 존재한다. “우리는 다시 돌아가는 것이 아니다. 다른 선택으로 새로운 현실을 부여하는 것 뿐이다.”
