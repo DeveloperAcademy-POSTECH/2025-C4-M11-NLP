@@ -15,8 +15,11 @@ enum StageTwoMonologuePhase: MonologuePhase {
     case unexpectedBotReaction
     case unexpectedAffectionMoment
     case botBehaviorShiftNoticed
+    case jtoProblemModeInactive      // JTO 문제해결 모드 비활성 대사
+    case jtoProblemModeSad           // JTO 슬픔 대사
+    case journeyContinues            // 주인공 각오 대사
     
-    static let lastPhase: Self = .botBehaviorShiftNoticed
+    static let lastPhase: Self = .journeyContinues
     
     var monologue: String {
         switch self {
@@ -33,9 +36,15 @@ enum StageTwoMonologuePhase: MonologuePhase {
         case .unexpectedBotReaction:
             return "이러려고 준 건 아닌데...\n어? 어디 가는거야??"
         case .unexpectedAffectionMoment:
-            return "이거 나한테 주려고 부른건가?\n귀엽네...\n근데 이게 뭐지?"
+            return "이거 나한테 주려고 가져온건가?\n귀엽네...\n근데 이게 뭐지?"
         case .botBehaviorShiftNoticed:
-            return "뭔가 표정이 바뀐 것 같기도 하고... 다시 말 걸어보면 되는건가??"
+            return "뭔가 표정이 바뀐 것 같기도 하고..."
+        case .jtoProblemModeInactive:
+            return "JTO: 저는 지금 문제해결 모드가 비활성화된 상태입니다. PDA 신호를 이용해 여기까지만 말씀드릴 수 .... 지지직"
+        case .jtoProblemModeSad:
+            return "JTO: 문제 해결 모드를 켜면 통신을 복구할... 저는 JTO 너무 슬퍼요. 슬퍼요. 슬퍼요."
+        case .journeyContinues:
+            return "산 넘어 산이군... 그래. 주변에 뭔가가 있겠지!"
         }
     }
     
@@ -57,6 +66,12 @@ enum StageTwoMonologuePhase: MonologuePhase {
             return .unexpectedBotReaction
         case .botBehaviorShiftNoticed:
             return .unexpectedAffectionMoment
+        case .jtoProblemModeInactive:
+            return .botBehaviorShiftNoticed
+        case .jtoProblemModeSad:
+            return .jtoProblemModeInactive
+        case .journeyContinues:
+            return .jtoProblemModeSad
         }
     }
     
@@ -77,6 +92,12 @@ enum StageTwoMonologuePhase: MonologuePhase {
         case .unexpectedAffectionMoment:
             return .botBehaviorShiftNoticed
         case .botBehaviorShiftNoticed:
+            return .jtoProblemModeInactive
+        case .jtoProblemModeInactive:
+            return .jtoProblemModeSad
+        case .jtoProblemModeSad:
+            return .journeyContinues
+        case .journeyContinues:
             return nil
         }
     }

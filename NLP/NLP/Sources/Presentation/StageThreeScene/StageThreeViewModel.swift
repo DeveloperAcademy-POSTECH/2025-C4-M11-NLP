@@ -14,7 +14,9 @@ final class StageThreeViewModel: ViewModelable {
         var isMonologuePresented: Bool = false
         var isItemCollecting: Bool = false
         var isDialogPresented: Bool = false
-        var stageThreePhase: StageThreeMonologuePhase = .findFinn1
+        var isSignalMachinePresented: Bool = false
+        var stageThreePhase: StageThreeMonologuePhase = .stageArrived
+        var signalMachinePhase: SignalMachinePhase = .signal1
         
         var isTouchDisabled: Bool = false
     }
@@ -23,8 +25,10 @@ final class StageThreeViewModel: ViewModelable {
         case transitionComplete
         case activateDialog(withNextPhase: Bool)
         case activateMonologue(withNextPhase: Bool)
+        case activateSignalMachine(withNextPhase: Bool)
         case deactivateDialog
         case deactivateMonologue
+        case deactivateSignalMachine
         case activateItemCollecting
         case goToNextPhase
         case goToPhase(to: StageThreeMonologuePhase)
@@ -60,10 +64,17 @@ final class StageThreeViewModel: ViewModelable {
             if withNextPhase {
                 state.stageThreePhase = state.stageThreePhase.nextPhase ?? .lastPhase
             }
+        case .activateSignalMachine(let withNextPhase):
+            state.isSignalMachinePresented = true
+            if withNextPhase {
+                state.signalMachinePhase = state.signalMachinePhase.nextPhase ?? .lastPhase
+            }
         case .deactivateDialog:
             state.isDialogPresented = false
         case .deactivateMonologue:
             state.isMonologuePresented = false
+        case .deactivateSignalMachine:
+            state.isSignalMachinePresented = false
         case .activateItemCollecting:
             state.isDialogPresented = false
             state.isMonologuePresented = false
@@ -78,18 +89,18 @@ final class StageThreeViewModel: ViewModelable {
             Task {
                 await MainActor.run {
                     withAnimation(.linear(duration: 1)) {
-                        state.isTransitioning = true
+                        self.state.isTransitioning = true
                     }
                 }
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
                 await MainActor.run {
                     withAnimation(.linear(duration: 1)) {
-                        state.isTransitioning = false
+                        self.state.isTransitioning = false
                     }
                 }
-            }
-            if withNextPhase {
-                state.stageThreePhase = state.stageThreePhase.nextPhase ?? .lastPhase
+                if withNextPhase {
+                    state.stageThreePhase = state.stageThreePhase.nextPhase ?? .lastPhase
+                }
             }
             
         case .disableTouch:
@@ -98,5 +109,6 @@ final class StageThreeViewModel: ViewModelable {
         case .activateTouch:
             state.isTouchDisabled = false
         }
+        
     }
 }

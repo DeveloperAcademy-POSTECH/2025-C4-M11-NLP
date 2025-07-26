@@ -59,6 +59,9 @@ struct RootView: View {
                     case .endingCreditScene:
                         EndingCreditView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
+                    case .stageFourScene:
+                        StageFourGameView(coordinator: coordinator)
+                            .toolbar(.hidden, for: .navigationBar)
                     }
                 }
         }

@@ -5,9 +5,8 @@
 //  Created by 양시준 on 7/14/25.
 //
 
-import SwiftUI
 import SpriteKit
-
+import SwiftUI
 
 struct StageOneGameView: View {
     @StateObject var viewModel: StageOneGameViewModel
@@ -19,7 +18,7 @@ struct StageOneGameView: View {
         self.dialogManager = dialogManager
     }
     
-    @State var scene: StageOneGameScene = StageOneGameScene(fileNamed: "StageOneGameScene")!
+    @State var scene: StageOneGameScene = .init(fileNamed: "StageOneGameScene")!
     @State private var isDoorOpened: Bool = false
     @State private var isOxygenDecreasingStarted: Bool = false
     @State private var explorationTimer: Timer? = nil
@@ -41,17 +40,35 @@ struct StageOneGameView: View {
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isChatting
             )
-                .opacity(viewModel.state.isChatting ? 1 : 0)
-                .offset(y: viewModel.state.isChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
+            .opacity(viewModel.state.isChatting ? 1 : 0)
+            .offset(y: viewModel.state.isChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isChatting)
+            
+            if viewModel.state.isChatBotChatting {
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isChatBotChatting
+                )
+                .background(Color.black.opacity(0.8))
+                .zIndex(100)
+            }
+            
+            if viewModel.state.isQuizChatting {
+                DialogChatView(
+                    dialogManager: dialogManager,
+                    isPresented: $viewModel.state.isQuizChatting
+                )
+                .background(Color.black.opacity(0.8))
+                .zIndex(100)
+            }
             
             DialogView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isOxygenChatting
             )
-                .opacity(viewModel.state.isOxygenChatting ? 1 : 0)
-                .offset(y: viewModel.state.isOxygenChatting ? 0 : 100)
-                .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isOxygenChatting)
+            .opacity(viewModel.state.isOxygenChatting ? 1 : 0)
+            .offset(y: viewModel.state.isOxygenChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isOxygenChatting)
             
             if viewModel.state.isPasswordViewPresented {
                 PasswordView(
@@ -65,6 +82,7 @@ struct StageOneGameView: View {
                         }
                     },
                     successAction: {
+                        MusicManager.shared.playMusic(named: "bgm_4")
                         viewModel.action(.hidePasswordView)
                         viewModel.coordinator.push(.middleStoryScene(.stageOneTwo))
                     },
@@ -81,23 +99,38 @@ struct StageOneGameView: View {
             }
             
             if viewModel.state.isNoteFoundPresented {
-                ItemCollectionView(
-                    isPresented: $viewModel.state.isNoteFoundPresented,
-                    item: GameItems.note,  // ⭐ 직접 참조
-                    backButtonTapAction: {
-                        viewModel.action(.hideNoteFoundPresented)
-                    },
-                    nextButtonTapAction: {
-                        viewModel.action(.hideNoteFoundPresented)
-                        viewModel.action(.showDialog)
-                    }
-                )
+                if viewModel.state.isNoteStreamingText {
+                    ItemStreamingTextView(
+                        isPresented: $viewModel.state.isNoteFoundPresented,
+                        text: """
+컴퓨터는 우리 말을 끝내 못 알아듣지 못한다. 규칙을 따라 명령할 때 따를 뿐이다.
+나는 규칙을 따라 이곳까지 도달했고, 이제 화성으로 떠나겠지.
+help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언신 help만 입력하고 했었지..
+키리듐이 인류 구원이라는 말은 믿지 못하겠다. 나는 컴퓨터 말고는 더 이상 믿지 못하겠다.
+""",
+                        onClose: {
+                            viewModel.state.isNoteStreamingText = false
+                            viewModel.action(.hideNoteFoundPresented)
+                        }
+                    )
+                } else {
+                    ItemCollectionView(
+                        isPresented: $viewModel.state.isNoteFoundPresented,
+                        item: GameItems.note,
+                        backButtonTapAction: {
+                            viewModel.action(.hideNoteFoundPresented)
+                        },
+                        nextButtonTapAction: {
+                            viewModel.state.isNoteStreamingText = true
+                        }
+                    )
+                }
             }
             
             if viewModel.state.isFlashlightFoundPresented {
                 ItemCollectionView(
                     isPresented: $viewModel.state.isFlashlightFoundPresented,
-                    item: GameItems.flashLight,  // ⭐ 직접 참조
+                    item: GameItems.flashLight, // ⭐ 직접 참조
                     backButtonTapAction: {
                         viewModel.action(.hideFlashlightFoundPresented)
                     },
@@ -115,7 +148,7 @@ struct StageOneGameView: View {
             
             if viewModel.state.isOxygenDecreasingStarted && !isDoorOpened {
                 VStack {
-                    OxygenGaugeView(initialOxygen: 30) {
+                    OxygenGaugeView(initialOxygen: $viewModel.state.oxygenGuageValue) {
                         withAnimation(.linear(duration: 1)) {
                             viewModel.state.isTransitioning = true
                         }
@@ -123,9 +156,23 @@ struct StageOneGameView: View {
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 32)
+                .padding(.top, 16)
             }
 
+            if viewModel.state.isChatBotSettingPresented {
+                ChatBotInstructionInputView(
+                    isPresented: $viewModel.state.isChatBotSettingPresented,
+                    instruction: $viewModel.state.chatBotInstruction
+                )
+            }
+
+            DialogView(
+                dialogManager: dialogManager,
+                isPresented: $viewModel.state.isMachineChatting
+            )
+            .opacity(viewModel.state.isMachineChatting ? 1 : 0)
+            .offset(y: viewModel.state.isMachineChatting ? 0 : 100)
+            .animation(.spring(duration: 0.5, bounce: 0.1), value: viewModel.state.isMachineChatting)
         }
         .overlay(
             Color.black
@@ -150,6 +197,7 @@ struct StageOneGameView: View {
         }
         .onChange(of: viewModel.state.stageOnePhase) { newPhase in
             if newPhase == .decreaseOxygen && !viewModel.state.isOxygenResolved {
+                MusicManager.shared.playMusic(named: "bgm_oxygen")
                 viewModel.state.isOxygenDecreasingStarted = true
             }
         }
@@ -173,34 +221,107 @@ struct StageOneGameView: View {
                 viewModel.state.isOxygenResolved = true
             }
         }
+        .onChange(of: viewModel.state.oxygenGuageValue) { newValue in
+            if newValue <= 32 {
+                MusicManager.shared.playMusic(named: "bgm_oxygen")
+            } else if newValue > 32 {
+                MusicManager.shared.playMusic(named: "bgm_3")
+            }
+        }
+        .onChange(of: viewModel.state.isChatBotChatting) { isChatBotChatting in
+            if isChatBotChatting {
+                dialogManager.currentPartner = .chatBot
+                dialogManager.initConversation(
+                    dialogPartner: .chatBot,
+                    instructions: viewModel.state.chatBotInstruction.isEmpty ? DialogPartnerType.chatBot.instructions : viewModel.state.chatBotInstruction,
+                    tools: []
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isOxygenChatting) { isOxygenChatting in
+            if isOxygenChatting {
+                dialogManager.initConversation(
+                    dialogPartner: .oxygen,
+                    instructions: DialogPartnerType.oxygen.instructions,
+                    tools: [
+                        OxygenTool(callAction: { oxygen, degreeOfOxygen in
+                            print("oxygen: \(oxygen), degreeOfOxygen: \(degreeOfOxygen)")
+                            guard let partner = dialogManager.currentPartner else { return }
+                            print("partner: \(partner)")
+                            switch degreeOfOxygen {
+                            case "high":
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많은 상태입니다. 산소를 채우지 않겠습니다.", sender: .partner, fromToolCalling: true))
+                            case "middle":
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "적당한 산소양을 가지고 있습니다. 조금 채워드리겠습니다.", sender: .partner, fromToolCalling: true))
+                                viewModel.state.oxygenGuageValue = min(viewModel.state.oxygenGuageValue + 10, 100)
+                            case "low":
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "산소가 많이 부족한 상황입니다. 산소를 채우겠습니다.", sender: .partner, fromToolCalling: true))
+                                viewModel.state.oxygenGuageValue = min(viewModel.state.oxygenGuageValue + 30, 100)
+                            default:
+                                break
+                            }
+                            
+                        })
+                    ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isQuizChatting) { _, isQuizChatting in
+            if isQuizChatting {
+                Text("기본 안내 메시지입니다") // 기본 문자열 출력
+                dialogManager.initConversation(
+                    dialogPartner: .quiz,
+                    instructions: DialogPartnerType.quiz.instructions,
+                    tools: [
+                        QuizTool(callAction: { number in
+                            print("number is \(number)")
+                            guard let partner = dialogManager.currentPartner else { return }
+                            print("partner: \(partner)")
+
+                            switch number {
+                            case ..<10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Down", sender: .partner, fromToolCalling: true))
+                            case 10:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "Correct", sender: .partner, fromToolCalling: true))
+                            case 11...:
+                                dialogManager.conversationLogs[partner]?.append(Dialog(content: "UP", sender: .partner, fromToolCalling: true))
+                            default:
+                                break
+                            }
+                            
+                        })
+                    ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isChatting) { _, isChatting in
+            if isChatting {
+                dialogManager.initConversation(
+                    dialogPartner: .computer,
+                    instructions: DialogPartnerType.computer.instructions,
+                    tools: [
+                        // tool 추가 필요
+                    ]
+                )
+            }
+        }
+        .onChange(of: viewModel.state.isMachineChatting) { isMachineChatting in
+            if isMachineChatting {
+                dialogManager.initConversation(
+                    dialogPartner: .machine,
+                    instructions: DialogPartnerType.machine.instructions,
+                    tools: []
+                )
+            }
+        }
         .onAppear {
             initializeScene()
+            MusicManager.shared.playMusic(named: "bgm_3")
             dialogManager.initConversation(
                 dialogPartner: .computer,
                 instructions: DialogPartnerType.computer.instructions,
                 tools: [
-                    UnlockTool(rightPasswordAction: {
-                        dialogManager.initializeSession(
-                            dialogPartner: .computer,
-                            instructions: ConstantInstructions.computerOnboarding,
-                            tools: []
-                        )
-                    })
-                ]
-            )
-            
-            // Oxygen 채팅 초기화
-            dialogManager.initConversation(
-                dialogPartner: .oxygen,
-                instructions: DialogPartnerType.oxygen.instructions,
-                tools: [
-                    UnlockTool(rightPasswordAction: {
-                        dialogManager.initializeSession(
-                            dialogPartner: .oxygen,
-                            instructions: ConstantInstructions.computerOnboarding,
-                            tools: []
-                        )
-                    })
+                    // tool 추가 필요
                 ]
             )
         }

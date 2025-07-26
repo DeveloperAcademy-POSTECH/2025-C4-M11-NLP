@@ -10,6 +10,7 @@ struct IntroDialogEndView: View {
     @State var isStartButtonEnabled: Bool = false
     var startButtonTapped: (() -> Void)?
     @State private var skipStreaming: Bool = false
+    @State private var isFadingOut: Bool = false
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -36,8 +37,11 @@ struct IntroDialogEndView: View {
                     buttonWidth: 154
                 ) {
                     MusicManager.shared.stopMusic()
-                    guard let startButtonTapped = startButtonTapped else { return }
-                    startButtonTapped()
+                    isFadingOut = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        guard let startButtonTapped = startButtonTapped else { return }
+                        startButtonTapped()
+                    }
                 }
                 .padding(.bottom, 70)
                 Spacer()
@@ -52,6 +56,12 @@ struct IntroDialogEndView: View {
         .padding(.horizontal, 24)
         .ignoresSafeArea()
         .background(.black)
+        .overlay(
+            Color.black
+                .opacity(isFadingOut ? 1 : 0)
+                .animation(.linear(duration: 1), value: isFadingOut)
+                .ignoresSafeArea()
+        )
         .onAppear {
             print("[IntroDialogEndView] onAppear - beat.mp3 재생 시도")
             MusicManager.shared.playMusic(named: "beat")

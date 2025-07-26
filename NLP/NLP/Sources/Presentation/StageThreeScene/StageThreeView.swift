@@ -18,7 +18,7 @@ struct StageThreeView: View {
         self.dialogManager = dialogManager
     }
     
-    @State var scene: StageThreeGameScene = StageThreeGameScene(fileNamed: "StageTwoGameScene")!
+    @State var scene: StageThreeGameScene = StageThreeGameScene(fileNamed: "StageThreeGameScene")!
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -46,11 +46,30 @@ struct StageThreeView: View {
                     }
                 )
             }
+            
+            if viewModel.state.isSignalMachinePresented {
+                SignalMachineDetailView(
+                    action: configureSignalMachineActions(),
+                    phase: $viewModel.state.signalMachinePhase,
+                    skip: $skipStreaming
+                )
+            }
         }
         .onAppear {
             initScene()
             viewModel.action(.transitionComplete)
             viewModel.state.isMonologuePresented = true
+        }
+        .task {
+            scene.hideKillerRobot()
+            scene.hideFlame()
+        }
+        .onChange(of: viewModel.state.isSignalMachinePresented) { _, newValue in
+            if newValue {
+                scene.signalMachineInteractionStart()
+            } else {
+                scene.signalMachineInteractionEnd()
+            }
         }
         .overlay(
             Color.black
@@ -65,11 +84,34 @@ struct StageThreeView: View {
     
     private func configureMonologueActions() -> [StageThreeMonologuePhase: [MonologueAction]] {
         return [
+            .stageArrived: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveToFinn {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
             .findFinn2: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        Task {
+                            let dieHaptic = GradientHaptic()
+                            dieHaptic.setCurve([
+                                (0.0, 0.2),
+                                (1.0, 0.5),
+                                (2.0, 0.2)
+                            ])
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.changeRobotToDead()
+                            scene.showKillerRobot()
+                            dieHaptic.playHapticGradient(duration: 2.0)
+                        }
                     }
                 )
             ],
@@ -78,6 +120,7 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.activateItemCollecting)
+                        scene.standUpFinn()
                     }
                 )
             ],
@@ -95,27 +138,103 @@ struct StageThreeView: View {
                     }
                 ),
             ],
-            .airFinnTalk6: [
+            .airFinnTalk7: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
                         viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.action(.deactivateMonologue)
+                        Task {
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.changePositionPlayerToSignalMachine()
+                        }
                     }
                 )
             ],
-            .receiveSign11: [
+            .receiveSign2: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.action(.deactivateMonologue)
+                        scene.changeRobotToNew()
+                        scene.moveToSignalMachineFinn {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
                     }
                 )
             ],
-            .lockedDoor8: [
+            .receiveSign7: [
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        viewModel.action(.fadeOutAndIn(withNextPhase: true))
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveToSignalMachine()
+                        viewModel.action(.goToNextPhase)
+                    }
+                )
+            ],
+            .receiveSign10: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveToPlazmaRoomDoor {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                        scene.moveFinnToPlazmaRoomDoor()
+                    }
+                )
+            ],
+            .lockedDoor1: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        scene.moveRobotToPlazmaRoomDoor {
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
+            .lockedDoor5: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.goToNextPhase)
+                        Task {
+                            scene.moveRobotToAnalyzeDoor()
+                            scene.movePlayerToAnalyzeDoor()
+                            scene.moveFinnToAnalyzeDoor()
+                        }
+                    }
+                )
+            ],
+            .lockedDoor7: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        viewModel.action(.deactivateMonologue)
+                        Task {
+                            try? await Task.sleep(for: .seconds(1))
+                            scene.showFlame()
+                            scene.explodeAnimation()
+                        }
+                        Task {
+                            try? await Task.sleep(for: .seconds(4))
+                            scene.hideFlame()
+                            scene.hideDoor()
+                            scene.moveRobotToAfterExplosion()
+                            viewModel.action(.activateMonologue(withNextPhase: true))
+                        }
+                    }
+                )
+            ],
+            .explosion2: [
+                MonologueAction(
+                    monologue: "다음",
+                    action: {
+                        scene.moveAfterExplosionJanePosition()
+                        viewModel.action(.goToNextPhase)
                     }
                 )
             ],
@@ -123,10 +242,23 @@ struct StageThreeView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        
+                        viewModel.coordinator.push(.middleStoryScene(.stageThreeFour))
                     }
                 )
             ]
+        ]
+    }
+    
+    private func configureSignalMachineActions() -> [SignalMachinePhase: () -> Void] {
+        return [
+            .signal4: {
+                viewModel.action(.deactivateSignalMachine)
+                viewModel.action(.activateMonologue(withNextPhase: true))
+            },
+            .signalAgain: {
+                viewModel.action(.deactivateSignalMachine)
+                viewModel.action(.activateMonologue(withNextPhase: false))
+            }
         ]
     }
 }

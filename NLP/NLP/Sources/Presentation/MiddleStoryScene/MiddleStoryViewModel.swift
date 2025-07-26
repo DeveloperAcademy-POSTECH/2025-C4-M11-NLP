@@ -65,7 +65,10 @@ final class MiddleStoryViewModel: ViewModelable {
                 case .stageOneTwo:
                     coordinator.push(.stageTwoScene)
                 case .stageTwoThree:
-                    coordinator.push(.stageTwoScene)
+                    coordinator.push(.stageThreeScene)
+                case .stageThreeFour:
+                    coordinator.push(.stageFourScene)
+                    
                 case .endingOne:
                     coordinator.push(.endingCreditScene)
                     break

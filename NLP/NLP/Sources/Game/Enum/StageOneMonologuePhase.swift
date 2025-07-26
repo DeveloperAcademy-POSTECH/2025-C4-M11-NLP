@@ -18,9 +18,7 @@ enum StageOneMonologuePhase: MonologuePhase {
     case firstDialog
     case afterFirstDialog
     
-    
-    // TODO: 비밀번호로 문 여는 것까지 구현 시 수정
-    static let lastPhase: Self = .startFinding
+    static let lastPhase: Self = .findNote
     
     var monologue: String {
         switch self {

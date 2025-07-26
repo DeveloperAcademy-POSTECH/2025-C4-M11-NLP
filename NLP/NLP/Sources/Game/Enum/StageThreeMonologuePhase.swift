@@ -7,6 +7,7 @@
 
 enum StageThreeMonologuePhase: MonologuePhase {
     
+    case stageArrived
     case findFinn1
     case findFinn2
     case jtoDie1
@@ -19,6 +20,7 @@ enum StageThreeMonologuePhase: MonologuePhase {
     case airFinnTalk5_1
     case airFinnTalk5_2
     case airFinnTalk6
+    case airFinnTalk7
     case receiveSign1
     case receiveSign2
     case receiveSign3
@@ -29,7 +31,6 @@ enum StageThreeMonologuePhase: MonologuePhase {
     case receiveSign8
     case receiveSign9
     case receiveSign10
-    case receiveSign11
     case lockedDoor1
     case lockedDoor2
     case lockedDoor3
@@ -37,7 +38,6 @@ enum StageThreeMonologuePhase: MonologuePhase {
     case lockedDoor5
     case lockedDoor6
     case lockedDoor7
-    case lockedDoor8
     case explosion1
     case explosion2
     case explosion3
@@ -49,6 +49,10 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var monologue: String {
         switch self {
+        case .stageArrived:
+            return """
+            여기는 도킹베이... 기계장치에 문제가 생기지는 않았을지...
+            """
         case .findFinn1:
             return """
             핀이 여기에 있다니...말도 안돼... 야, 너 괜찮아?? 왜 여기 혼자 쓰러져 있는거야...
@@ -108,50 +112,50 @@ enum StageThreeMonologuePhase: MonologuePhase {
 
             다른 이야기는 나중에 해도 늦지 않아.
             """
-        case .receiveSign1:
+        case .airFinnTalk7:
             return """
             핀: JTO와 로봇 잔해는 내가 챙겼어. 내가 수리를 해볼게.
 
             에어: 그럼 내가 신호를 수신하고 있을게.
             """
-        case .receiveSign2:
+        case .receiveSign1:
             return """
             이게 무슨 신호지...제인과 내 시간이 다르다고? 시간여행이라도 한다는 건가...
             """
-        case .receiveSign3:
+        case .receiveSign2:
             return """
             핀! 제인이 지금 플라즈마실에 있다는 신호가 왔어. 근데 좀 이상한게, 시간이 뒤죽박죽이야.
             """
-        case .receiveSign4:
+        case .receiveSign3:
             return """
             핀: 어쩌면...미래에서 온 메시지일지도 몰라.
             """
-        case .receiveSign5:
+        case .receiveSign4:
             return """
             그게 말이 돼? 미래에서 신호를 보낸다고? 그것도 제인이?
             """
-        case .receiveSign6:
+        case .receiveSign5:
             return """
             핀: 응. 최근에 있었던 폭발, 보통 일이 아니야. 키리듐이랑 플라즈마가 반응하면서 기기들 시간이 전부 뒤틀렸었어.
             """
-        case .receiveSign7:
+        case .receiveSign6:
             return """
             핀: 정확히 기억은 안나지만... 그래서 비밀번호를 바꾸고 도망치려 했던 것 같다.
             """
-        case .receiveSign8:
+        case .receiveSign7:
             return """
             어...신호가 하나 더 온다. 확인해보자!
             """
-        case .receiveSign9:
+        case .receiveSign8:
             return """
             핀...너 지금 장난하는거 아니지? 이게 뭐야...?
             """
-        case .receiveSign10:
+        case .receiveSign9:
             return """
             핀: 아니. 너가 날 구하지 않았다면 나는 저렇게 행동했을거야. 우리와는 다른 미래에서 온 신호인 셈이지.
             시간이 없다. 빨리 가보자.
             """
-        case .receiveSign11:
+        case .receiveSign10:
             return """
             그래. 이해는 되지 않아도, 제인을 구하러 가보자!
             """
@@ -179,17 +183,13 @@ enum StageThreeMonologuePhase: MonologuePhase {
             """
         case .lockedDoor6:
             return """
-            생긴건 정말 재수가 없군. JTO가 아니라 JOT이라 불러야겠어.
-            """
-        case .lockedDoor7:
-            return """
             JTO: 공감 모드를 재실행합...
 
             미안!!! 농담이었어!!!
 
             JTO: 나도 농담이었어.
             """
-        case .lockedDoor8:
+        case .lockedDoor7:
             return """
             JTO: 이 문은 대폭발을 방지하게 위해 존재해. 플라즈마실에는 뭔가 숨겨진 비밀이 있는 듯 하다. 잠시 몸을 숨기고 있으면 내가 문을 열어볼게.
             """
@@ -225,8 +225,10 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var previousPhase: Self? {
         switch self {
-        case .findFinn1:
+        case .stageArrived:
             return nil
+        case .findFinn1:
+            return .stageArrived
         case .findFinn2:
             return .findFinn1
         case .jtoDie1:
@@ -249,8 +251,10 @@ enum StageThreeMonologuePhase: MonologuePhase {
             return .airFinnTalk4
         case .airFinnTalk6:
             return .airFinnTalk5_1
-        case .receiveSign1:
+        case .airFinnTalk7:
             return .airFinnTalk6
+        case .receiveSign1:
+            return .airFinnTalk7
         case .receiveSign2:
             return .receiveSign1
         case .receiveSign3:
@@ -269,10 +273,8 @@ enum StageThreeMonologuePhase: MonologuePhase {
             return .receiveSign8
         case .receiveSign10:
             return .receiveSign9
-        case .receiveSign11:
-            return .receiveSign10
         case .lockedDoor1:
-            return .receiveSign11
+            return .receiveSign10
         case .lockedDoor2:
             return .lockedDoor1
         case .lockedDoor3:
@@ -285,10 +287,8 @@ enum StageThreeMonologuePhase: MonologuePhase {
             return .lockedDoor5
         case .lockedDoor7:
             return .lockedDoor6
-        case .lockedDoor8:
-            return .lockedDoor7
         case .explosion1:
-            return .lockedDoor8
+            return .lockedDoor7
         case .explosion2:
             return .explosion1
         case .explosion3:
@@ -304,6 +304,8 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     var nextPhase: Self? {
         switch self {
+        case .stageArrived:
+            return .findFinn1
         case .findFinn1:
             return .findFinn2
         case .findFinn2:
@@ -327,6 +329,8 @@ enum StageThreeMonologuePhase: MonologuePhase {
         case .airFinnTalk5_2:
             return .airFinnTalk6
         case .airFinnTalk6:
+            return .airFinnTalk7
+        case .airFinnTalk7:
             return .receiveSign1
         case .receiveSign1:
             return .receiveSign2
@@ -347,8 +351,6 @@ enum StageThreeMonologuePhase: MonologuePhase {
         case .receiveSign9:
             return .receiveSign10
         case .receiveSign10:
-            return .receiveSign11
-        case .receiveSign11:
             return .lockedDoor1
         case .lockedDoor1:
             return .lockedDoor2
@@ -363,8 +365,6 @@ enum StageThreeMonologuePhase: MonologuePhase {
         case .lockedDoor6:
             return .lockedDoor7
         case .lockedDoor7:
-            return .lockedDoor8
-        case .lockedDoor8:
             return .explosion1
         case .explosion1:
             return .explosion2

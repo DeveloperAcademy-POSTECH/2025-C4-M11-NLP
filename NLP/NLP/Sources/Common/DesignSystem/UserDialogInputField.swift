@@ -10,7 +10,6 @@ import SwiftUI
 struct UserDialogInputField: View {
     @Binding var inputText: String
     @Binding var showCursor: Bool
-    @FocusState var isFocused: Bool // 사용하지 않음(커스텀 키보드)
     let submitAction: () -> Void
     
     var body: some View {

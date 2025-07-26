@@ -11,6 +11,7 @@ struct StartGameView: View {
     @StateObject var viewModel: StartGameViewModel
     @State private var showKeyboardTest: Bool = false
     @State private var keyboardTestText: String = ""
+    @State private var isFadingOut: Bool = false
     
     init(coordinator: Coordinator) {
         self._viewModel = StateObject(wrappedValue: StartGameViewModel(coordinator: coordinator))
@@ -35,7 +36,10 @@ struct StartGameView: View {
                 Spacer()
                 // 시작 버튼
                 Button(isClickSoundAvailable: true, action: {
-                    viewModel.action(.startButtonTapped)
+                    isFadingOut = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        viewModel.action(.startButtonTapped)
+                    }
                 }) {
                     Text("Start")
                         .font(.custom("Galmuri11-Bold", size: 24))
@@ -55,7 +59,7 @@ struct StartGameView: View {
                     Button(isClickSoundAvailable: true, action: {
                         viewModel.action(.goStage1)
                     }) {
-                        Text("Stage 1")
+                        Text("1")
                             .font(.custom("Galmuri11-Bold", size: 24))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -69,7 +73,7 @@ struct StartGameView: View {
                     Button(isClickSoundAvailable: true, action: {
                         viewModel.action(.goStage2)
                     }) {
-                        Text("Stage 2")
+                        Text("2")
                             .font(.custom("Galmuri11-Bold", size: 24))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -83,7 +87,21 @@ struct StartGameView: View {
                     Button(isClickSoundAvailable: true, action: {
                         viewModel.action(.goStage3)
                     }) {
-                        Text("Stage 3")
+                        Text("3")
+                            .font(.custom("Galmuri11-Bold", size: 24))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                Rectangle()
+                                    .stroke(Color.white, lineWidth: 4)
+                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                            )
+                    }
+                    Button(isClickSoundAvailable: true, action: {
+                        viewModel.action(.goStage4)
+                    }) {
+                        Text("4")
                             .font(.custom("Galmuri11-Bold", size: 24))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -158,6 +176,12 @@ struct StartGameView: View {
                 .transition(.move(edge: .bottom))
             }
         }
+        .overlay(
+            Color.black
+                .opacity(isFadingOut ? 1 : 0)
+                .animation(.linear(duration: 1), value: isFadingOut)
+                .ignoresSafeArea()
+        )
         .onAppear {
             MusicManager.shared.playMusic(named: "bgm_1")
         }

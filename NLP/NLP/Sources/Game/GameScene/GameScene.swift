@@ -8,6 +8,12 @@ class GameScene: SKScene {
     var joyStick = JoyStick()
     var isJoystickTouchActive: Bool = false
 
+    // 햅틱 트리거 함수
+    func triggerHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+    }
+
     // MARK: 매 프레임마다 호출. scene.isPaused == false 여야 호출됨.
     override func update(_ currentTime: TimeInterval) {
         if self.joyStick.isTracking, let player {
@@ -17,6 +23,7 @@ class GameScene: SKScene {
             let norm = sqrt(moveVector.x * moveVector.x + moveVector.y * moveVector.y)
             let direction = norm > 0 ? CGVector(dx: moveVector.x / norm, dy: moveVector.y / norm) : .zero
             player.movePlayer(direction: direction, strength: strength, maxSpeed: maxSpeed)
+            triggerHaptic() // 조이스틱이 생성되어 있고, 터치가 유지되는 동안 계속 진동
         }
     }
 
@@ -41,6 +48,7 @@ class GameScene: SKScene {
         guard let touchLocation = touches.first?.location(in: camera) else { return }
         guard isJoystickTouchActive else { return }
         self.joyStick.startMove(touchLocation)
+        // 진동은 update에서 처리
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -114,7 +122,6 @@ class GameScene: SKScene {
 extension GameScene {
     // MARK: 사용자의 움직임 이후 사용자의 위치로 카메라를 함께 옮겨주기 위함
     private func moveCamera(_ playerLocation: CGPoint) {
-        guard isJoystickTouchActive else { return }
         let stride = 0.25
         self.camera?.position.x.interpolate(
             towards: playerLocation.x,
