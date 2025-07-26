@@ -47,7 +47,8 @@ struct StageOneGameView: View {
             if viewModel.state.isChatBotChatting {
                 DialogChatView(
                     dialogManager: dialogManager,
-                    isPresented: $viewModel.state.isChatBotChatting
+                    isPresented: $viewModel.state.isChatBotChatting,
+                    initialMessage: "안녕하세요! 저는 AI 챗봇입니다. 무엇을 도와드릴까요?"
                 )
                 .background(Color.black.opacity(0.8))
                 .zIndex(100)
@@ -56,7 +57,8 @@ struct StageOneGameView: View {
             if viewModel.state.isQuizChatting {
                 DialogChatView(
                     dialogManager: dialogManager,
-                    isPresented: $viewModel.state.isQuizChatting
+                    isPresented: $viewModel.state.isQuizChatting,
+                    initialMessage: "퀴즈를 푸시겠어요?"
                 )
                 .background(Color.black.opacity(0.8))
                 .zIndex(100)
