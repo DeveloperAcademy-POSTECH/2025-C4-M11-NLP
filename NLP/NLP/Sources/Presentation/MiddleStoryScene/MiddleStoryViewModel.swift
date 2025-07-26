@@ -52,6 +52,7 @@ final class MiddleStoryViewModel: ViewModelable {
                 return
             }
             
+            // 스토리의 마지막이라면
             Task {
                 await MainActor.run {
                     withAnimation(.linear(duration: 1)) {
@@ -59,8 +60,7 @@ final class MiddleStoryViewModel: ViewModelable {
                     }
                 }
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
-                
-                // 스토리의 마지막이라면
+
                 switch state.storiesType {
                 case .stageOneTwo:
                     coordinator.push(.stageTwoScene)
@@ -73,6 +73,7 @@ final class MiddleStoryViewModel: ViewModelable {
                     coordinator.push(.endingCreditScene)
                     break
                 case .endingTwo:
+                    coordinator.pop()
                     break
                 }
             }

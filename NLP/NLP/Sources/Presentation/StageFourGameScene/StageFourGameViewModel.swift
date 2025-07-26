@@ -18,12 +18,19 @@ final class StageFourGameViewModel: ViewModelable {
     }
     
     enum Action {
+        case viewAppeared
+        
+        case goToNextPhase
         case activateMonologue
         case saveEarthButtonTapped
         case dontGiveupKiridiumButtonTapped
         
         case goToEndingOneScene
         case goToEndingTwoScene
+        case goToEndingCreditScene
+        
+        case robotExplodeStart
+        
     }
     
     @Published var state: State = State()
@@ -35,6 +42,16 @@ final class StageFourGameViewModel: ViewModelable {
     
     func action(_ action: Action) {
         switch action {
+        case .viewAppeared:
+            self.action(.activateMonologue)
+            Task {
+                await endEpisodeTransitioning()
+            }
+            
+        case .goToNextPhase:
+            guard let nextPhase = state.phase.nextPhase else { return }
+            state.phase = nextPhase
+            
         case .activateMonologue:
             state.isMonologuePresented = true
             
@@ -64,9 +81,24 @@ final class StageFourGameViewModel: ViewModelable {
             Task {
                 await startEpisodeTransitioning()
                 await MainActor.run {
+                    guard let nextPhase = state.phase.nextPhase else { return }
+                    state.phase = nextPhase
                     coordinator.push(.middleStoryScene(.endingTwo))
                 }
             }
+            
+        case .goToEndingCreditScene:
+            Task {
+                await startEpisodeTransitioning()
+                await MainActor.run {
+                    coordinator.push(.endingCreditScene)
+                }
+            }
+            
+        case .robotExplodeStart:
+            state.isMonologuePresented = false
+            state.blockViewTapAction = true
+            
         }
     }
     
