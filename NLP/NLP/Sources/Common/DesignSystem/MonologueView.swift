@@ -30,7 +30,8 @@ struct MonologueView<T: MonologuePhase>: View {
                                     skip.toggle()
                                     return
                                 }
-                                phase = phase.nextPhase ?? .lastPhase
+                                guard let nextPhase = phase.nextPhase else { return }
+                                phase = nextPhase
                             }) {
                                 Text("다음 >")
                                     .font(NLPFont.body)
