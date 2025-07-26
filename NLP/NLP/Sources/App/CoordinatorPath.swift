@@ -21,4 +21,7 @@ enum CoordinatorPath: Hashable {
     
     /// Stage 넘어가는 사이의 스토리 전개 화면입니다.
     case middleStoryScene(StoriesType)
+    
+    /// Ending, Credit 화면입니다.
+    case endingCreditScene
 }

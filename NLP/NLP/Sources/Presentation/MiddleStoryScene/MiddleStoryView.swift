@@ -1,5 +1,5 @@
 //
-//  StageOneTwoMiddleStoryView.swift
+//  MiddleStoryView.swift
 //  NLP
 //
 //  Created by Ted on 7/18/25.
@@ -62,14 +62,35 @@ struct MiddleStoryView: View {
                     skipStreaming = false
                 }
                 Spacer()
-                GameButton(buttonText: "다음") {
-                    if !isStreamingCompleted {
-                        skipStreaming = true
-                    } else {
-                        viewModel.action(.goToNextStory)
-                        isStreamingCompleted = false
-                        skipStreaming = false
+                HStack {
+                    Button(isClickSoundAvailable: true, action: {
+                        if !skipStreaming {
+                            skipStreaming.toggle()
+                            return
+                        }
+                        viewModel.action(.goToPreviousStory)
+                    }) {
+                        Image(viewModel.state.isPreviousAvailable ? "previous-available" : "previous-unavailable")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 50)
                     }
+                    .disabled(!viewModel.state.isPreviousAvailable)
+                    
+                    Spacer()
+                    Button(isClickSoundAvailable: true, action: {
+                        if !skipStreaming {
+                            skipStreaming.toggle()
+                            return
+                        }
+                        viewModel.action(.goToNextStory)
+                    }) {
+                        Image(viewModel.state.isNextAvailable ? "next-available" : "next-unavailable")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 50)
+                    }
+                    .disabled(!viewModel.state.isNextAvailable)
                 }
                 .padding(.bottom, 40)
                 .padding(.horizontal, 24)
@@ -86,6 +107,8 @@ struct MiddleStoryView: View {
 enum StoriesType {
     case stageOneTwo
     case stageTwoThree
+    case endingOne
+    case endingTwo
     case stageThreeFour
     
     var stories: [GameStory] {
@@ -96,6 +119,15 @@ enum StoriesType {
             return ConstantMiddleStories.stageTwoThree
         case .stageThreeFour:
             return ConstantMiddleStories.stageThreeFour
+        case .endingOne:
+            return ConstantMiddleStories.endingOne
+        case .endingTwo:
+            return ConstantMiddleStories.endingTwo
         }
     }
+}
+
+#Preview {
+    @Previewable @StateObject var coordinator = Coordinator()
+    MiddleStoryView(coordinator: coordinator, storiesType: .stageOneTwo)
 }

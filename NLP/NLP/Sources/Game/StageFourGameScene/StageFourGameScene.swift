@@ -11,6 +11,7 @@ import SpriteKit
 class StageFourGameScene: GameScene {
     
     weak var viewModel: StageFourGameViewModel?
+    var robot: RobotSprite?
     
     override func setUpScene() {
         super.setUpScene()
@@ -18,7 +19,10 @@ class StageFourGameScene: GameScene {
         physicsWorld.contactDelegate = self
         
         for child in self.children {
-            
+            if let robot = child as? RobotSprite {
+                self.robot = robot
+                robot.configurePhysics()
+            }
         }
     }
 }

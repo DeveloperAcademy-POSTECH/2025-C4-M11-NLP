@@ -10,4 +10,5 @@ protocol MonologuePhase: Hashable {
     var monologue: String { get }
     var previousPhase: Self? { get }
     var nextPhase: Self? { get }
+    var isSystemMonologue: Bool { get }
 }

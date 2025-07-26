@@ -41,15 +41,15 @@ struct StageFourGameView: View {
                             MonologueAction(
                                 monologue: "다음",
                                 action: {
-                                    
+                                    viewModel.action(.goToEndingOneScene)
                                 }
                             )
                         ],
-                        .endingTwoPartFive: [
+                        .endingTwoPartFive: [ /// ...고마웠다 JTO. 너를 절대로 잊지 않을거야. 절대로.
                             MonologueAction(
                                 monologue: "다음",
                                 action: {
-                                    
+                                    //
                                 }
                             )
                         ]

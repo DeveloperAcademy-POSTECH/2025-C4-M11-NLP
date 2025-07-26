@@ -43,21 +43,25 @@ struct RootView: View {
                             dialogManager: dialogManager
                         )
                             .toolbar(.hidden, for: .navigationBar)
-                    case .stageThreeScene:
-                        StageThreeView(
-                            coordinator: coordinator,
-                            dialogManager: dialogManager
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
-                    case .stageFourScene:
-                        StageFourGameView(coordinator: coordinator)
-                            .toolbar(.hidden, for: .navigationBar)
                     case .middleStoryScene(let storiesType):
                         MiddleStoryView(
                             coordinator: coordinator,
                             storiesType: storiesType
                         )
                         .toolbar(.hidden, for: .navigationBar)
+                    case .stageThreeScene:
+                        StageThreeView(
+                            coordinator: coordinator,
+                            dialogManager: dialogManager
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .endingCreditScene:
+                        EndingCreditView(coordinator: coordinator)
+                            .toolbar(.hidden, for: .navigationBar)
+                    case .stageFourScene:
+                        StageFourGameView(coordinator: coordinator)
+                            .toolbar(.hidden, for: .navigationBar)
                     }
                 }
         }

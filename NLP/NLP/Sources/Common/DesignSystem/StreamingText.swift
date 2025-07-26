@@ -47,6 +47,7 @@ struct StreamingText: View {
                     Text(line)
                         .font(NLPFont.body)
                         .foregroundColor(.white)
+                    
                 }
             }
             // 커서 효과
@@ -56,13 +57,12 @@ struct StreamingText: View {
                     .foregroundColor(.white)
             }
         }
+        .font(NLPFont.body)
         .onAppear {
             startTimer()
         }
         .onChange(of: fullDialog) { _, _ in
-            timer?.invalidate()
-            currentText = ""
-            index = 0
+            initStreaming()
             skip = false
             startTimer()
         }
@@ -78,13 +78,17 @@ struct StreamingText: View {
             } else {
                 // skip이 false로 바뀌면(새로운 문장 등) 타이핑 재시작
                 if currentText != fullDialog {
-                    timer?.invalidate()
-                    currentText = ""
-                    index = 0
+                    initStreaming()
                     startTimer()
                 }
             }
         }
+    }
+    
+    private func initStreaming() {
+        timer?.invalidate()
+        currentText = ""
+        index = 0
     }
     
     private func startTimer() {

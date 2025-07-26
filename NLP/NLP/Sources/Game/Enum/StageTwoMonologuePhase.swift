@@ -101,5 +101,12 @@ enum StageTwoMonologuePhase: MonologuePhase {
             return nil
         }
     }
+    
+    var isSystemMonologue: Bool {
+        switch self {
+        default:
+            return false
+        }
+    }
 }
 

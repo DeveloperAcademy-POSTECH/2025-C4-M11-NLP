@@ -6,7 +6,6 @@
 //
 
 enum StageFourMonologuePhase: MonologuePhase {
-    
     case recognizeSignalFromFuture
     case signalFromFutureOne
     case caseCommCheckWithJane
@@ -71,6 +70,15 @@ enum StageFourMonologuePhase: MonologuePhase {
             "JTO: 수많은 미래에서의 신호를 읽었어. 우리는 모두 영웅의 조각을 가지고 있어.\n\n꼭 지구를 지켜내야 한다."
         case .endingTwoPartFive:
             "...고마웠다 JTO.\n너를 절대로 잊지 않을거야.\n절대로."
+        }
+    }
+    
+    var isSystemMonologue: Bool {
+        switch self {
+        case .signalFromFutureOne, .signalFromFutureTwo:
+            return true
+        default:
+            return false
         }
     }
     

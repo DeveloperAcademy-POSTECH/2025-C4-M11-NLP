@@ -46,6 +46,13 @@ enum StageOneMonologuePhase: MonologuePhase {
         
     }
     
+    var isSystemMonologue: Bool {
+        switch self {
+        default:
+            return false
+        }
+    }
+    
     var buttonTexts: [String] {
         switch self {
         case .startFinding:

@@ -19,7 +19,7 @@ struct MonologueView<T: MonologuePhase>: View {
                 VStack(alignment: .leading) {
                     StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03, skip: $skip)
                         .font(NLPFont.body)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(phase.isSystemMonologue ? .green : .white)
                     Spacer()
                     
                     HStack {

@@ -12,9 +12,13 @@ final class MiddleStoryViewModel: ViewModelable {
         var isTransitioning: Bool = false
         var storiesType: StoriesType
         var storyIndex: Int = 0
+        
+        var isPreviousAvailable: Bool = false
+        var isNextAvailable: Bool = true
     }
     
     enum Action {
+        case goToPreviousStory
         case goToNextStory
     }
     
@@ -31,10 +35,20 @@ final class MiddleStoryViewModel: ViewModelable {
     
     func action(_ action: Action) {
         switch action {
+        case .goToPreviousStory:
+            if state.storyIndex > 0 {
+                state.storyIndex -= 1
+                state.isNextAvailable = true
+            }
+            if state.storyIndex == 0 {
+                state.isPreviousAvailable = false
+            }
+            
         case .goToNextStory:
             // 뒤에 스토리가 더 있다면
             if state.storyIndex < state.storiesType.stories.count - 1 {
                 state.storyIndex += 1
+                state.isPreviousAvailable = true
                 return
             }
             
@@ -54,6 +68,12 @@ final class MiddleStoryViewModel: ViewModelable {
                     coordinator.push(.stageThreeScene)
                 case .stageThreeFour:
                     coordinator.push(.stageFourScene)
+                    
+                case .endingOne:
+                    coordinator.push(.endingCreditScene)
+                    break
+                case .endingTwo:
+                    break
                 }
             }
         }
