@@ -19,14 +19,8 @@ struct SignalMachineDetailView: View {
             
             VStack(alignment: .leading) {
                 VStack(alignment: .leading, spacing: 24) {
-                    if phase.playerText != nil {
-                        StreamingText(fullDialog: phase.playerText!, streamingSpeed: 0.03, skip: $skip)
-                            .font(NLPFont.body)
-                            .foregroundStyle(.white)
-                    }
-                    StreamingText(fullDialog: phase.signalText, streamingSpeed: 0.03, skip: $skip)
+                    StreamingText(coloredText: phase.dialogText, streamingSpeed: 0.03, skip: $skip)
                         .font(NLPFont.body)
-                        .foregroundStyle(NLPColor.green)
                 }
                 Spacer()
                 
@@ -55,4 +49,11 @@ struct SignalMachineDetailView: View {
         }
         .ignoresSafeArea()
     }
+}
+
+#Preview {
+    SignalMachineDetailView(
+        action: [:],
+        phase: .constant(SignalMachinePhase.signal3),
+        skip: .constant(false))
 }
