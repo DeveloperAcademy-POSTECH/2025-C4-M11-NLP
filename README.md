@@ -4,9 +4,8 @@
 ![Xcode](https://img.shields.io/badge/Xcode-15.0+-blue.svg)
 ![SpriteKit](https://img.shields.io/badge/SpriteKit-2D%20Game%20Engine-green.svg)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-UI%20Framework-red.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-> **우주정거장에서 펼쳐지는 AI와 인간의 감정적 모험**  
+> **우주정거장에서 펼쳐지는 AI와 인간의 탈출일지**  
 > SwiftUI와 SpriteKit으로 구현된 iOS 어드벤처 게임
 
 ---
@@ -30,9 +29,9 @@
 **NLP**는 우주정거장을 배경으로 한 스토리 중심의 어드벤처 게임입니다. 플레이어는 정체불명의 사고로 인해 우주정거장에 고립된 상황에서, AI 로봇들과의 대화를 통해 진실을 파헤치게 됩니다.
 
 ### 🌟 핵심 특징
-- **감정적 스토리텔링**: AI와 인간의 감정적 교감을 중심으로 한 깊이 있는 스토리
+- **스토리텔링**: AI와 인간의 대화를 중심으로 한 깊이 있는 스토리
 - **다중 엔딩**: 플레이어의 선택에 따라 달라지는 다양한 엔딩
-- **실시간 대화 시스템**: OpenAI API를 활용한 자연스러운 AI 대화
+- **실시간 대화 시스템**: Foundation Model을 활용한 자연스러운 AI 대화
 - **몰입감 있는 환경**: 우주정거장을 재현한 2D 게임 환경
 
 ---
@@ -60,21 +59,13 @@
 ## 🛠 기술 스택
 
 ### 📱 프레임워크 & 라이브러리
-- **SwiftUI**: 모던 iOS UI 개발
+- **SwiftUI**: UI 개발
 - **SpriteKit**: 2D 게임 엔진 및 물리 시스템
-- **Combine**: 반응형 프로그래밍
-- **Foundation**: 기본 iOS 프레임워크
+- **Foundation**: 애플에서 제공하는 LLM 모델
 
 ### 🏗 아키텍처
 - **MVVM**: Model-View-ViewModel 패턴
 - **Coordinator Pattern**: 화면 전환 관리
-- **Protocol-Oriented Programming**: Swift의 프로토콜 지향 설계
-
-### 🔧 개발 도구
-- **Xcode 15.0+**: iOS 개발 IDE
-- **Swift 5.9**: 프로그래밍 언어
-- **iOS 17.0+**: 최소 지원 버전
-- **Git**: 버전 관리
 
 ---
 
@@ -173,37 +164,10 @@
 ### 🎨 디자인 철학
 - **사용자 중심**: 직관적이고 접근하기 쉬운 인터페이스
 - **몰입감**: 스토리와 게임플레이의 자연스러운 융합
-- **성능**: 부드러운 60fps 게임플레이 보장
+- **성능**: 부드러운 게임플레이 보장
 
 ---
 
-## 🔧 설치 및 실행
-
-### 📋 요구사항
-- iOS 17.0 이상
-- Xcode 15.0 이상
-- Swift 5.9 이상
-
-### 🚀 설치 방법
-```bash
-# 1. 저장소 클론
-git clone https://github.com/your-username/NLP.git
-
-# 2. 프로젝트 디렉토리로 이동
-cd NLP
-
-# 3. Xcode에서 프로젝트 열기
-open NLP.xcodeproj
-
-# 4. 시뮬레이터 또는 실제 디바이스에서 실행
-```
-
-### ⚙️ 설정
-1. **API 키 설정**: OpenAI API 키를 `DialogManager.swift`에 설정
-2. **번들 ID**: 프로젝트 설정에서 적절한 번들 ID 설정
-3. **디바이스**: iOS 17.0 이상의 디바이스 또는 시뮬레이터
-
----
 
 ## 📖 게임 가이드
 
@@ -214,7 +178,7 @@ open NLP.xcodeproj
 
 ### 🎯 게임 팁
 1. **대화 활용**: AI와의 대화를 통해 힌트를 얻으세요
-2. **아이템 수집**: 모든 아이템을 수집하여 스토리를 완성하세요
+2. **아이템 수집**: 아이템을 수집하여 스토리를 완성하세요
 3. **선택의 중요성**: 각 선택이 엔딩에 영향을 줍니다
 4. **환경 탐험**: 우주정거장의 모든 구역을 탐험해보세요
 
@@ -227,29 +191,11 @@ open NLP.xcodeproj
 
 ## 🤝 기여하기
 
-### 🔧 개발 환경 설정
-1. 프로젝트를 포크합니다
-2. 기능 브랜치를 생성합니다 (`git checkout -b feature/AmazingFeature`)
-3. 변경사항을 커밋합니다 (`git commit -m 'Add some AmazingFeature'`)
-4. 브랜치에 푸시합니다 (`git push origin feature/AmazingFeature`)
-5. Pull Request를 생성합니다
-
-### 📝 코딩 컨벤션
-- **Swift**: Swift API Design Guidelines 준수
-- **네이밍**: 명확하고 의미있는 이름 사용
-- **주석**: 복잡한 로직에 대한 적절한 주석 작성
-- **테스트**: 새로운 기능에 대한 테스트 코드 작성
-
 ### 🐛 버그 리포트
 버그를 발견하셨다면 [Issues](https://github.com/your-username/NLP/issues)에 등록해주세요.
 
 ---
 
-## 📄 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
-
----
 
 ## 👥 Team NLP
 
