@@ -15,27 +15,22 @@ struct DialogChatView: View {
     @State private var skipStreaming: Bool = false
     var onSend: (() -> Void)? = nil
     var initialMessage: String? = nil // 초기 메시지 추가
-    
+
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Rectangle()
-                .foregroundStyle(Color.black.opacity(0.4))
-                .ignoresSafeArea(.all)
-            VStack {
+
+            VStack{
                 Spacer()
                 Rectangle()
-                    .foregroundStyle(Color.clear)
-                    .frame(maxWidth: ConstantScreenSize.screenWidth * 0.9, maxHeight: ConstantScreenSize.screenHeight * 0.8)
+                    .frame(width: ConstantScreenSize.screenWidth*0.9 ,height: ConstantScreenSize.screenHeight * 0.5)
+                    .opacity(0.4)
                     .overlay(
-                        GeometryReader { geometry in
+                        GeometryReader { _ in
                             ZStack(alignment: .topTrailing) {
                                 ScrollView {
                                     VStack(alignment: .leading, spacing: 16) {
-
-                                        
                                         if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
-                                            if let initialMessage = initialMessage{
-                                                HStack(alignment: .center){
+                                            if let initialMessage = initialMessage {
+                                                HStack(alignment: .center) {
                                                     StreamingText(fullDialog: initialMessage, streamingSpeed: 0.03, skip: $skipStreaming)
                                                         .font(NLPFont.body)
                                                         .foregroundStyle(.white)
@@ -55,7 +50,7 @@ struct DialogChatView: View {
                                                 .padding(.trailing, 16)
                                             }
                                             
-                                            ForEach(Array(conversationLogs.enumerated()), id: \ .element) { idx, log in
+                                            ForEach(Array(conversationLogs.enumerated()), id: \ .element) { _, log in
                                                 if log.sender == .user {
                                                     HStack {
                                                         Text(log.content)
@@ -100,34 +95,32 @@ struct DialogChatView: View {
                                     }
                                 }
                                 XButton(isPresented: $isPresented)
-                                    .padding([.top, .trailing], 16)
                             }
                         }
                     )
+                // 키보드는 화면 전체 너비로 하단에 고정
                 Spacer()
+                VStack{
+                    CustomKeyboardView(
+                        text: $inputText,
+                        onCommit: {
+                            dialogManager.respond(
+                                inputText,
+                                dialogPartnerType: dialogManager.currentPartner ?? .oxygen,
+                                isLogged: true
+                            )
+                            print("dialogManager.currentPartner is \(dialogManager.currentPartner)")
+                            inputText = ""
+                            onSend?()
+                        }
+                    )
+                }
+                .frame(maxWidth: .infinity)
+                .background(Color.black.opacity(0.4))
             }
-            // 키보드는 화면 전체 너비로 하단에 고정
-            VStack(spacing: 0) {
-                CustomKeyboardView(
-                    text: $inputText,
-                    onCommit: {
-                        dialogManager.respond(
-                            inputText,
-                            dialogPartnerType: dialogManager.currentPartner ?? .oxygen,
-                            isLogged: true
-                        )
-                        print("dialogManager.currentPartner is \(dialogManager.currentPartner)")
-                        inputText = ""
-                        onSend?()
-                    }
-                )
-            }
-            .frame(maxWidth: .infinity)
-            .background(Color.black.opacity(0.4))
-        }
+
     }
 }
-
 
 #Preview {
     DialogChatView(
