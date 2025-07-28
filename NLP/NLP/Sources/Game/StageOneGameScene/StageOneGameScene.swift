@@ -175,9 +175,13 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
         } else if let _ = nodeA as? FlashlightSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.showFlashlightFoundPresented)
         } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? NoteSprite {
-            viewModel?.action(.showNoteFoundPresented)
+            if let viewModel = viewModel {
+                viewModel.action(.showNoteFoundPresented)
+            }
         } else if let _ = nodeA as? NoteSprite, let _ = nodeB as? PlayerSprite {
-            viewModel?.action(.showNoteFoundPresented)
+            if let viewModel = viewModel {
+                viewModel.action(.showNoteFoundPresented)
+            }
         } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? NoteSpriteTwo {
             if viewModel != nil {
                 viewModel?.action(.showNoteTwoFoundPresented)
