@@ -168,7 +168,7 @@ struct StageThreeView: View {
                     monologue: "다음",
                     action: {
                         viewModel.action(.deactivateMonologue)
-                        scene.moveToSignalMachine()
+                        scene.changePositionPlayerToSignalMachine()
                         viewModel.action(.goToNextPhase)
                     }
                 )
