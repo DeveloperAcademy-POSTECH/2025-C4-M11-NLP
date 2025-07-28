@@ -49,7 +49,7 @@ struct StageOneGameView: View {
                 DialogChatView(
                     dialogManager: dialogManager,
                     isPresented: $viewModel.state.isChatBotChatting,
-                    initialMessage: "안녕하세요! 저는 AI 챗봇입니다. 무엇을 도와드릴까요?"
+                    initialMessage: "안녕하세요! 저는 실험용 JTO입니다. 옆의 콘솔로 저를 훈련해주세요."
                 )
                 .background(Color.black.opacity(0.8))
                 .zIndex(100)
