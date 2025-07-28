@@ -26,11 +26,17 @@ struct SignalMachineDetailView: View {
                 
                 HStack {
                     Spacer()
-                    Button(action: {
+                    Button(isClickSoundAvailable: true, action: {
+                        if !skip {
+                            skip.toggle()
+                            return
+                        }
+                        
                         if let action = action[phase] {
                             action()
                         }
-                        phase = phase.nextPhase ?? .lastPhase
+                        guard let nextPhase = phase.nextPhase else { return }
+                        phase = nextPhase
                     }) {
                         Text("다음 >")
                             .font(NLPFont.body)
@@ -48,6 +54,9 @@ struct SignalMachineDetailView: View {
             .frame(width: ConstantScreenSize.screenWidth, height: ConstantScreenSize.screenHeight*0.35)
         }
         .ignoresSafeArea()
+        .onAppear {
+            skip = false
+        }
     }
 }
 
