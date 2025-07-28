@@ -24,6 +24,12 @@ struct GameItems {
         itemImageName: "note"
     )
     
+    static let noteThree = GameItem(
+        itemName: "제인의 노트",
+        itemDescription: "제인이 작성한 노트. JTO에 대한 이야기가 담겨있다.",
+        itemImageName: "note"
+    )
+    
     static let flashLight = GameItem(
         itemName: "우주용 손전등",
         itemDescription: "일반 손전등과 큰 차이는 없지만, 흔들어서 발전이 가능하며 충전이 따로 필요 없다. 주위를 밝게 비춰준다.",

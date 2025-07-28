@@ -25,7 +25,10 @@ class PlayerSprite: SKSpriteNode {
             self.physicsBody?.restitution = 0 // 튕김 방지
             self.physicsBody?.usesPreciseCollisionDetection = true // 노드 간 충돌 감지를 더욱 명확하게 하기 위함.
             self.physicsBody?.categoryBitMask = PhysicsCategory.player.rawValue
-            self.physicsBody?.contactTestBitMask = PhysicsCategory.wall.rawValue | PhysicsCategory.box.rawValue | PhysicsCategory.computer.rawValue | PhysicsCategory.flashlight.rawValue | PhysicsCategory.robot.rawValue | PhysicsCategory.note.rawValue | PhysicsCategory.noteTwo.rawValue | PhysicsCategory.oxygen.rawValue | PhysicsCategory.machine.rawValue | PhysicsCategory.killerRobot.rawValue | PhysicsCategory.signalMachine.rawValue | PhysicsCategory.quizMachine.rawValue
+            let contactTestBitMask = PhysicsCategory.wall.rawValue | PhysicsCategory.box.rawValue | PhysicsCategory.computer.rawValue | PhysicsCategory.flashlight.rawValue | PhysicsCategory.robot.rawValue | PhysicsCategory.note.rawValue | PhysicsCategory.noteTwo.rawValue | PhysicsCategory.noteThree.rawValue | PhysicsCategory.oxygen.rawValue | PhysicsCategory.machine.rawValue | PhysicsCategory.killerRobot.rawValue | PhysicsCategory.signalMachine.rawValue | PhysicsCategory.quizMachine.rawValue
+            self.physicsBody?.contactTestBitMask = contactTestBitMask
+            print("PlayerSprite contactTestBitMask 설정: \(contactTestBitMask)")
+            print("noteThree 포함 여부: \((contactTestBitMask & PhysicsCategory.noteThree.rawValue) != 0)")
             self.physicsBody?.collisionBitMask = PhysicsCategory.wall.rawValue | PhysicsCategory.box.rawValue | PhysicsCategory.computer.rawValue | PhysicsCategory.flashlight.rawValue | PhysicsCategory.robot.rawValue | PhysicsCategory.note.rawValue | PhysicsCategory.noteTwo.rawValue | PhysicsCategory.oxygen.rawValue | PhysicsCategory.killerRobot.rawValue | PhysicsCategory.signalMachine.rawValue | PhysicsCategory.quizMachine.rawValue
             self.physicsBody?.affectedByGravity = false
             self.physicsBody?.allowsRotation = false

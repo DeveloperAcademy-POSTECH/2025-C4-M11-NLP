@@ -48,6 +48,35 @@ struct StageTwoView: View {
                 )
             }
             
+            if viewModel.state.isNoteThreeFoundPresented {
+                if viewModel.state.isNoteThreeStreamingText {
+                    ItemStreamingTextView(
+                        isPresented: $viewModel.state.isNoteThreeFoundPresented,
+                        text: """
+                            사실 JTO는 나와 같아. 내가 가장 듣고 싶었던 그 말...
+
+                            하지만 한 번도 누구에게 하지 못했던 그 말을 들을때
+                            JTO도 문제 해결을 도와줄 힘을 얻을 거야. 외로운 나의 로봇.
+                            """,
+                        onClose: {
+                            viewModel.state.isNoteThreeStreamingText = false
+                            viewModel.action(.hideNoteThreeFoundPresented)
+                        }
+                    )
+                } else {
+                    ItemCollectionView(
+                        isPresented: $viewModel.state.isNoteThreeFoundPresented,
+                        item: GameItems.noteThree,
+                        backButtonTapAction: {
+                            viewModel.action(.hideNoteThreeFoundPresented)
+                        },
+                        nextButtonTapAction: {
+                            viewModel.state.isNoteThreeStreamingText = true
+                        }
+                    )
+                }
+            }
+            
             DialogChatView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isDialogPresented,

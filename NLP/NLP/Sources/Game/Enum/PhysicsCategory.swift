@@ -16,11 +16,11 @@ enum PhysicsCategory: UInt32 {
     case robot = 0b100000 // 32
     case note = 0b1000000  // 64
     case noteTwo = 0b10000000 // 128
-    case doorLock = 0b100000000 // 256
-    case oxygen = 0b1000000000 // 512
-    case machine = 0b10000000000 // 1024
-    case killerRobot = 0b100000000000 // 2048
-    case signalMachine = 0b1000000000000 // 4096
-    case quizMachine = 0b10000000000000 // 8192
-
+    case noteThree = 0b100000000 // 256
+    case doorLock = 0b1000000000 // 512
+    case oxygen = 0b10000000000 // 1024
+    case machine = 0b100000000000 // 2048
+    case killerRobot = 0b1000000000000 // 4096
+    case signalMachine = 0b10000000000000 // 8192
+    case quizMachine = 0b100000000000000 // 16384
 }
