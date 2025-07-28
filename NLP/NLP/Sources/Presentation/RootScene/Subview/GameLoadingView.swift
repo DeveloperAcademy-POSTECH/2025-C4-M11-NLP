@@ -31,7 +31,7 @@ struct GameLoadingView: View {
                         .font(NLPFont.headline)
                         .padding(.bottom, 30)
                     RoundedRectangle(cornerRadius: 999)
-                        .fill(NLPColor.gray1)
+                        .fill(NLPColor.background)
                         .frame(
                             width: ConstantScreenSize.screenWidth - 100,
                             height: 5
