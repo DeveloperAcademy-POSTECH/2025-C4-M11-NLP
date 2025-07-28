@@ -34,7 +34,7 @@ struct IntroDialogView: View {
                         lineNumber += 1
                     }
                 }
-                .foregroundStyle(.white)
+                .foregroundStyle(NLPColor.label)
             }
             Spacer()
         }

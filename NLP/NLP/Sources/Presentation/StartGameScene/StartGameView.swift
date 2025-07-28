@@ -30,7 +30,7 @@ struct StartGameView: View {
                 // 타이틀 (Galmuri11-Bold 폰트 적용)
                 Text("S i l e n c e")
                     .font(.custom("Galmuri11-Bold", size: 56))
-                    .foregroundColor(.white)
+                    .foregroundColor(NLPColor.label)
                     .shadow(color: .black.opacity(0.7), radius: 4, x: 2, y: 2)
                     .padding(.bottom, 180)
                 Spacer()
@@ -43,12 +43,12 @@ struct StartGameView: View {
                 }) {
                     Text("Start")
                         .font(.custom("Galmuri11-Bold", size: 24))
-                        .foregroundColor(.white)
+                        .foregroundColor(NLPColor.label)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
                             Rectangle()
-                                .stroke(Color.white, lineWidth: 4)
+                                .stroke(NLPColor.white, lineWidth: 4)
                                 .background(Color.black.opacity(0.5).cornerRadius(6))
                         )
                 }
@@ -61,13 +61,13 @@ struct StartGameView: View {
                     }) {
                         Text("1")
                             .font(.custom("Galmuri11-Bold", size: 24))
-                            .foregroundColor(.white)
+                            .foregroundColor(NLPColor.label)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 Rectangle()
-                                    .stroke(Color.white, lineWidth: 4)
-                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                                    .stroke(NLPColor.white, lineWidth: 4)
+                                    .background(NLPColor.background.cornerRadius(6))
                             )
                     }
                     Button(isClickSoundAvailable: true, action: {
@@ -75,13 +75,13 @@ struct StartGameView: View {
                     }) {
                         Text("2")
                             .font(.custom("Galmuri11-Bold", size: 24))
-                            .foregroundColor(.white)
+                            .foregroundColor(NLPColor.label)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 Rectangle()
-                                    .stroke(Color.white, lineWidth: 4)
-                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                                    .stroke(NLPColor.white, lineWidth: 4)
+                                    .background(NLPColor.background.cornerRadius(6))
                             )
                     }
                     Button(isClickSoundAvailable: true, action: {
@@ -89,13 +89,13 @@ struct StartGameView: View {
                     }) {
                         Text("3")
                             .font(.custom("Galmuri11-Bold", size: 24))
-                            .foregroundColor(.white)
+                            .foregroundColor(NLPColor.label)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 Rectangle()
-                                    .stroke(Color.white, lineWidth: 4)
-                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                                    .stroke(NLPColor.white, lineWidth: 4)
+                                    .background(NLPColor.background.cornerRadius(6))
                             )
                     }
                     Button(isClickSoundAvailable: true, action: {
@@ -103,13 +103,13 @@ struct StartGameView: View {
                     }) {
                         Text("4")
                             .font(.custom("Galmuri11-Bold", size: 24))
-                            .foregroundColor(.white)
+                            .foregroundColor(NLPColor.label)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 Rectangle()
-                                    .stroke(Color.white, lineWidth: 4)
-                                    .background(Color.black.opacity(0.5).cornerRadius(6))
+                                    .stroke(NLPColor.white, lineWidth: 4)
+                                    .background(NLPColor.background.cornerRadius(6))
                             )
                     }
                 }
@@ -123,13 +123,13 @@ struct StartGameView: View {
                 }) {
                     Text("Keyboard Test")
                         .font(.custom("Galmuri11-Bold", size: 22))
-                        .foregroundColor(.white)
+                        .foregroundColor(NLPColor.label)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(
                             Rectangle()
-                                .stroke(Color.green, lineWidth: 3)
-                                .background(Color.black.opacity(0.5).cornerRadius(6))
+                                .stroke(NLPColor.primary, lineWidth: 3)
+                                .background(NLPColor.background.cornerRadius(6))
                         )
                 }
                 .padding(.horizontal, 80)
@@ -146,12 +146,12 @@ struct StartGameView: View {
                             HStack {
                                 Text("Keyboard Test")
                                     .font(.custom("Galmuri11-Bold", size: 18))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(NLPColor.label)
                                 Spacer()
                                 Button(action: { withAnimation { showKeyboardTest = false } }) {
                                     Image(systemName: "xmark.circle.fill")
                                         .font(.title2)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(NLPColor.label)
                                 }
                             }
                             .padding(.horizontal)
@@ -160,10 +160,10 @@ struct StartGameView: View {
                             // 입력 결과 표시
                             Text(keyboardTestText)
                                 .font(.custom("Galmuri11-Bold", size: 22))
-                                .foregroundColor(.green)
+                                .foregroundColor(NLPColor.primary)
                                 .padding(.vertical, 8)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.black.opacity(0.5))
+                                .background(NLPColor.background)
                                 .cornerRadius(8)
                                 .padding(.horizontal)
                             // 커스텀 키보드

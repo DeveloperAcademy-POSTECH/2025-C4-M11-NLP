@@ -33,7 +33,7 @@ struct DialogChatView: View {
                                                 HStack(alignment: .center) {
                                                     StreamingText(fullDialog: initialMessage, streamingSpeed: 0.03, skip: $skipStreaming)
                                                         .font(NLPFont.body)
-                                                        .foregroundStyle(.white)
+                                                        .foregroundStyle(NLPColor.label)
                                                         .padding(20)
                                                     Spacer()
                                                 }
@@ -44,8 +44,8 @@ struct DialogChatView: View {
                                                         bottomTrailingRadius: 16,
                                                         topTrailingRadius: 16
                                                     )
-                                                    .fill(Color.black.opacity(0.6))
-                                                    .strokeBorder(NLPColor.green, lineWidth: 1)
+                                                    .fill(NLPColor.background)
+                                                    .strokeBorder(NLPColor.primary, lineWidth: 1)
                                                 )
                                                 .padding(.trailing, 16)
                                             }
@@ -55,7 +55,7 @@ struct DialogChatView: View {
                                                     HStack {
                                                         Text(log.content)
                                                             .font(NLPFont.body)
-                                                            .foregroundStyle(.white)
+                                                            .foregroundStyle(NLPColor.label)
                                                             .padding(16)
                                                         Spacer()
                                                     }
@@ -66,15 +66,15 @@ struct DialogChatView: View {
                                                             bottomTrailingRadius: 0,
                                                             topTrailingRadius: 16
                                                         )
-                                                        .fill(Color.black.opacity(0.6))
-                                                        .strokeBorder(Color.white, lineWidth: 1)
+                                                        .fill(NLPColor.background)
+                                                        .strokeBorder(NLPColor.white, lineWidth: 1)
                                                     )
                                                     .padding(.leading, 20)
                                                 } else {
                                                     HStack(alignment: .center) {
                                                         StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
                                                             .font(NLPFont.body)
-                                                            .foregroundStyle(.white)
+                                                            .foregroundStyle(NLPColor.label)
                                                             .padding(20)
                                                         Spacer()
                                                     }
@@ -85,8 +85,8 @@ struct DialogChatView: View {
                                                             bottomTrailingRadius: 16,
                                                             topTrailingRadius: 16
                                                         )
-                                                        .fill(Color.black.opacity(0.6))
-                                                        .strokeBorder(NLPColor.green, lineWidth: 1)
+                                                        .fill(NLPColor.background)
+                                                        .strokeBorder(NLPColor.primary, lineWidth: 1)
                                                     )
                                                     .padding(.trailing, 16)
                                                 }
@@ -116,7 +116,7 @@ struct DialogChatView: View {
                     )
                 }
                 .frame(maxWidth: .infinity)
-                .background(Color.black.opacity(0.4))
+                .background(NLPColor.background)
             }
 
     }

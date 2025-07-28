@@ -58,8 +58,8 @@ struct PasswordView: View {
                         backButtonTapAction?()
                     }) {
                         Text("< 이전")
-                            .font(NLPFont.body)
-                            .foregroundStyle(.white)
+                            .font(NLPFont.gameOption)
+                            .foregroundStyle(NLPColor.gameOption)
                     }
                     .padding(.vertical, 16)
                 }

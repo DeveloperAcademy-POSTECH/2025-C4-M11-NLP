@@ -26,7 +26,7 @@ enum SignalMachinePhase {
                     [SIGNAL ID] 19-FWD-RET 
                     [JANE] 플라즈마실에 있을거다. 제인.
                     """,
-                    NLPColor.green
+                    NLPColor.primary
                 )
             ]
         case .signal2:
@@ -36,29 +36,29 @@ enum SignalMachinePhase {
                     [SIGNAL ID] 18-FWD-RET 
                     [JANE] 플라즈마실에 있을거다. 제인.
                     """,
-                    NLPColor.green
+                    NLPColor.primary
                 )
             ]
         case .signal3:
             return [
-                ("제인 너 어디야\n\n", .white),
+                ("제인 너 어디야\n\n", NLPColor.label),
                 (
                     """
                     회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.
                     """,
-                    NLPColor.green
+                    NLPColor.primary
                 )
             ]
         case .signal4:
             return [
-                ("제인 너 어디야\n\n", .white),
+                ("제인 너 어디야\n\n", NLPColor.label),
                 (
                     """
                     회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.
                     [SIGNAL ID] 20-FWD-RET 
                     [JANE] 플라즈마실에 있을거다. 제인
                     """,
-                    NLPColor.green
+                    NLPColor.primary
                 )
             ]
         case .signalAgain:
@@ -68,7 +68,7 @@ enum SignalMachinePhase {
                     [SIGNAL ID] 32-FWD-RET 
                     [FINN] TEST TEST 미래에서 보내는 신호다.
                     """,
-                    NLPColor.green
+                    NLPColor.primary
                 )
             ]
         }

@@ -40,12 +40,12 @@ struct ItemCollectionView: View {
             
             Text(item.itemName)
                 .font(NLPFont.body)
-                .foregroundStyle(.white)
+                .foregroundStyle(NLPColor.label)
                 .padding(.bottom, 30)
             
             Text(item.itemDescription)
                 .font(NLPFont.body)
-                .foregroundStyle(.white)
+                .foregroundStyle(NLPColor.label)
                 .multilineTextAlignment(.leading)
                 .padding(.horizontal, 30)
             

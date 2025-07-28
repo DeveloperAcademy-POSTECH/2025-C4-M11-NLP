@@ -27,13 +27,14 @@ struct OxygenGaugeView: View {
                     .frame(width: gaugeWidth, height: gaugeHeight)
                 Rectangle()
                     .frame(width: gaugeWidth * CGFloat(oxygen) / 100, height: gaugeHeight * 0.7)
-                    .foregroundColor(.green)
+                    .foregroundColor(NLPColor.primary)
                     .animation(.linear(duration: 0.3), value: oxygen)
                     .padding(4)
             }
             Text("산소: \(oxygen)%")
-                .font(.custom("Galmuri9", size: gaugeHeight * 0.7))
-                .foregroundColor(.white)
+//                .font(.custom("Galmuri9", size: gaugeHeight * 0.7))
+                .font(NLPFont.o2Gauge)
+                .foregroundColor(NLPColor.label)
         }
         .onAppear {
             Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in

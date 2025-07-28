@@ -36,14 +36,14 @@ struct MiddleStoryView: View {
                         .frame(width: 270, height: 208)
                 } else {
                     Rectangle()
-                        .fill(.white)
+                        .fill(NLPColor.white)
                         .frame(width: 270, height: 208)
                 }
                 Spacer().frame(height: 20)
                 if let storyTitle = stories[viewModel.state.storyIndex].storyTitle {
                     Text(storyTitle)
                         .font(NLPFont.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(NLPColor.label)
                         .padding(.bottom, 30)
                         .padding(.horizontal, 24)
                 }
@@ -54,7 +54,7 @@ struct MiddleStoryView: View {
                     streamingCompleted: { isStreamingCompleted = true }
                 )
                 .font(NLPFont.body)
-                .foregroundColor(.white)
+                .foregroundColor(NLPColor.label)
                 .multilineTextAlignment(.leading)
                 .padding(.horizontal, 24)
                 .onAppear {

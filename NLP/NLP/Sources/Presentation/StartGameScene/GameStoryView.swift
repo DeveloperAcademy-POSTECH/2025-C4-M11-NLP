@@ -14,7 +14,7 @@ struct GameStoryView: View {
                 // 타이틀
                 Text(title)
                     .font(.custom("Galmuri11-Bold", size: 28))
-                    .foregroundColor(.white)
+                    .foregroundColor(NLPColor.label)
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 24)
                 // 본문 (StreamingText)
@@ -25,7 +25,7 @@ struct GameStoryView: View {
                     streamingCompleted: { isStreamingCompleted = true }
                 )
                 .font(.custom("Galmuri11", size: 18))
-                .foregroundColor(.white)
+                .foregroundColor(NLPColor.label)
                 .multilineTextAlignment(.leading)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
@@ -46,7 +46,7 @@ struct GameStoryView: View {
                         Text("다음")
                         Image(systemName: "chevron.right")
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(NLPColor.gameOption)
                     .font(.custom("Galmuri11-Bold", size: 20))
                 }
                 .padding(.horizontal, 32)
