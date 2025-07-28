@@ -48,6 +48,35 @@ struct StageTwoView: View {
                 )
             }
             
+            if viewModel.state.isNoteThreeFoundPresented {
+                if viewModel.state.isNoteThreeStreamingText {
+                    ItemStreamingTextView(
+                        isPresented: $viewModel.state.isNoteThreeFoundPresented,
+                        text: """
+                            사실 JTO는 나와 같아. 내가 가장 듣고 싶었던 그 말...
+
+                            하지만 한 번도 누구에게 하지 못했던 그 말을 들을때
+                            JTO도 문제 해결을 도와줄 힘을 얻을 거야. 외로운 나의 로봇.
+                            """,
+                        onClose: {
+                            viewModel.state.isNoteThreeStreamingText = false
+                            viewModel.action(.hideNoteThreeFoundPresented)
+                        }
+                    )
+                } else {
+                    ItemCollectionView(
+                        isPresented: $viewModel.state.isNoteThreeFoundPresented,
+                        item: GameItems.noteThree,
+                        backButtonTapAction: {
+                            viewModel.action(.hideNoteThreeFoundPresented)
+                        },
+                        nextButtonTapAction: {
+                            viewModel.state.isNoteThreeStreamingText = true
+                        }
+                    )
+                }
+            }
+            
             DialogChatView(
                 dialogManager: dialogManager,
                 isPresented: $viewModel.state.isDialogPresented,
@@ -59,13 +88,13 @@ struct StageTwoView: View {
 //                    }
                     // "Finn" 대답 처리
                     if let lastMessage = dialogManager.conversationLogs[.robot]?.last,
-                       lastMessage.content.lowercased().contains("finn") {
+                       lastMessage.content.lowercased().contains("사랑해") {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             viewModel.action(.goToMiddleStory)
                         }
                     }
                 },
-                initialMessage: "안녕하세요! 저는 로봇입니다. 무엇을 도와드릴까요?"
+                initialMessage: "안녕하세요?❤️ 행복한 하루를 보내고 있나요?✨"
             )
             .opacity(viewModel.state.isDialogPresented ? 1 : 0)
             .onChange(of: dialogManager.conversationLogs[.robot] ?? []) { oldValue, newValue in
@@ -92,7 +121,13 @@ struct StageTwoView: View {
             initScene()
             dialogManager.initConversation(
                 dialogPartner: .robot,
-                instructions: "",
+                instructions: 
+                """
+                당신은 매우 유쾌하고 발랄하고 상쾌한 말투로 대답합니다.
+                모든 말 끝마다 ❤️✨ 등을 붙여서 대답합니다.
+                문제 해결을 원하는 말을 들었을 경우 -> 저는 도와드릴 수는 없고, 공감만 해줄래요🌞❤️ 라고 대답합니다.
+                안전 정책상 제공할 수 없거나, 곤란한 경우 -> ❤️✨하트하트 빔❤️ 라고 대답합니다.
+                """,
                 tools: []
             )
             viewModel.action(.transitionComplete)

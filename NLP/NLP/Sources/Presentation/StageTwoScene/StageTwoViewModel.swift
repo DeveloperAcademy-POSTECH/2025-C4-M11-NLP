@@ -20,6 +20,8 @@ final class StageTwoViewModel: ViewModelable {
         var hasMetBot: Bool = false // 로봇 최초 만남 여부
         var talkFailCount: Int = 0 // 대화 실패 횟수
         var talkChatCount: Int = 0 // 대화 채팅 시도 횟수
+        var isNoteThreeFoundPresented: Bool = false // 노트3 발견 여부
+        var isNoteThreeStreamingText: Bool = false // 노트3 스트리밍 텍스트 모드
     }
     
     enum Action {
@@ -35,6 +37,8 @@ final class StageTwoViewModel: ViewModelable {
         
         case disableTouch
         case activateTouch
+        case showNoteThreeFoundPresented
+        case hideNoteThreeFoundPresented
     }
     
     @Published var state: State = .init()
@@ -102,6 +106,11 @@ final class StageTwoViewModel: ViewModelable {
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
                 coordinator.push(.middleStoryScene(.stageTwoThree))
             }
+        case .showNoteThreeFoundPresented:
+            print("showNoteThreeFoundPresented 액션 호출됨")
+            state.isNoteThreeFoundPresented = true
+        case .hideNoteThreeFoundPresented:
+            state.isNoteThreeFoundPresented = false
         }
     }
 }
