@@ -44,7 +44,7 @@ enum StageTwoMonologuePhase: MonologuePhase {
         case .jtoProblemModeInactive:
             return [("JTO: 저는 지금 문제해결 모드가 비활성화된 상태입니다. PDA 신호를 이용해 여기까지만 말씀드릴 수 .... 지지직", NLPColor.label)]
         case .jtoProblemModeSad:
-            return [("JTO: 문제 해결 모드를 켜면 통신을 복구할... 저는 JTO 너무 슬퍼요. 슬퍼요. 슬퍼요.", NLPColor.label)]
+            return [("JTO: 문제 해결 모드를 켜면 통신을 복구할... 저는 JTO 너무 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요. 슬퍼요.", NLPColor.label)]
         case .journeyContinues:
             return [("산 넘어 산이군... 그래. 주변에 뭔가가 있겠지!", NLPColor.label)]
         }

@@ -59,13 +59,13 @@ struct StageTwoView: View {
 //                    }
                     // "Finn" 대답 처리
                     if let lastMessage = dialogManager.conversationLogs[.robot]?.last,
-                       lastMessage.content.lowercased().contains("finn") {
+                       lastMessage.content.lowercased().contains("사랑해") {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                             viewModel.action(.goToMiddleStory)
                         }
                     }
                 },
-                initialMessage: "안녕하세요! 저는 로봇입니다. 무엇을 도와드릴까요?"
+                initialMessage: "안녕하세요?❤️ 행복한 하루를 보내고 있나요?✨"
             )
             .opacity(viewModel.state.isDialogPresented ? 1 : 0)
             .onChange(of: dialogManager.conversationLogs[.robot] ?? []) { oldValue, newValue in
@@ -92,7 +92,13 @@ struct StageTwoView: View {
             initScene()
             dialogManager.initConversation(
                 dialogPartner: .robot,
-                instructions: "",
+                instructions: 
+                """
+                당신은 매우 유쾌하고 발랄하고 상쾌한 말투로 대답합니다.
+                모든 말 끝마다 ❤️✨ 등을 붙여서 대답합니다.
+                문제 해결을 원하는 말을 들었을 경우 -> 저는 도와드릴 수는 없고, 공감만 해줄래요🌞❤️ 라고 대답합니다.
+                안전 정책상 제공할 수 없거나, 곤란한 경우 -> ❤️✨하트하트 빔❤️ 라고 대답합니다.
+                """,
                 tools: []
             )
             viewModel.action(.transitionComplete)
