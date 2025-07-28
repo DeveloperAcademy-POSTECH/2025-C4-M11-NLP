@@ -59,7 +59,7 @@ struct StageOneGameView: View {
                 DialogChatView(
                     dialogManager: dialogManager,
                     isPresented: $viewModel.state.isQuizChatting,
-                    initialMessage: "퀴즈를 푸시겠어요?"
+                    initialMessage: "퀴즈를 풀어야 비밀번호 베타키를 받을 수 있습니다. 진행하시겠습니까?"
                 )
                 .background(Color.black.opacity(0.8))
                 .zIndex(100)
