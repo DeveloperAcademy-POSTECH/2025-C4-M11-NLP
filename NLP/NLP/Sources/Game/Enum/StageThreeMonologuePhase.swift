@@ -5,6 +5,8 @@
 //  Created by 양시준 on 7/22/25.
 //
 
+import SwiftUI
+
 enum StageThreeMonologuePhase: MonologuePhase {
     
     case stageArrived
@@ -47,179 +49,179 @@ enum StageThreeMonologuePhase: MonologuePhase {
     
     static let lastPhase: Self = .explosion6
     
-    var monologue: String {
+    var monologue: [(String, Color)] {
         switch self {
         case .stageArrived:
-            return """
+            return [("""
             여기는 도킹베이... 기계장치에 문제가 생기지는 않았을지...
-            """
+            """, NLPColor.label)]
         case .findFinn1:
-            return """
+            return [("""
             핀이 여기에 있다니...말도 안돼... 야, 너 괜찮아?? 왜 여기 혼자 쓰러져 있는거야...
 
             설마 뭐라도 해결해보려고...?
-            """
+            """, NLPColor.label)]
         case .findFinn2:
-            return """
+            return [("""
             JTO: 잠깐...뭔가 소리가 들리는데...
 
             조심하세요!
-            """
+            """, NLPColor.label)]
         case .jtoDie1:
-            return """
+            return [("""
             JTO: L국의 사살 로봇이에요. 제가 제압했으니 걱정마세...
-            """
+            """, NLPColor.label)]
         case .jtoDie2:
-            return """
+            return [("""
             JTO: "공감할 수 있어서 즐거웠어...요"
-            """
+            """, NLPColor.label)]
         case .jtoDie3:
-            return """
+            return [("""
             JTO!!! 정신 차려!! 아아악!!
             이제 정에 들 참이었는데...
             내가 꼭 복수해줄게.
             다행히 적국 로봇은 거의 망가진 것 같다.
-            """
+            """, NLPColor.label)]
         case .airFinnTalk1:
-            return """
+            return [("""
             핀: 미안하다. 로봇을 피하려고 죽은 척 하고 있었어.
-            """
+            """, NLPColor.label)]
         case .airFinnTalk2:
-            return """
+            return [("""
             너가 비밀번호 바꾼거 맞아? 그것때문에 죽을 뻔 했는데, 너가 정말 그런거야?
-            """
+            """, NLPColor.label)]
         case .airFinnTalk3:
-            return """
+            return [("""
             핀: 기억이 잘... 나질 않아. 하지만 내가 맞는 것 같아. 나 혼자라도 살고 싶어서...
 
             정말 미안하다...
-            """
+            """, NLPColor.label)]
         case .airFinnTalk4:
-            return """
+            return [("""
             널 정말 믿었는데...
-            """
+            """, NLPColor.label)]
         case .airFinnTalk5_1:
-            return """
+            return [("""
             핀: 흑...고마워. 우리 꼭 귀환할 수 있도록 최선을 다해보자.
-            """
+            """, NLPColor.label)]
         case .airFinnTalk5_2:
-            return """
+            return [("""
             핀: 정말 미안해...지금부터 최선을 다해볼게.
-            """
+            """, NLPColor.label)]
         case .airFinnTalk6:
-            return """
+            return [("""
             일단 신호를 수신해야 하니까 중앙통제실로 돌아가자.
 
             다른 이야기는 나중에 해도 늦지 않아.
-            """
+            """, NLPColor.label)]
         case .airFinnTalk7:
-            return """
+            return [("""
             핀: JTO와 로봇 잔해는 내가 챙겼어. 내가 수리를 해볼게.
 
             에어: 그럼 내가 신호를 수신하고 있을게.
-            """
+            """, NLPColor.label)]
         case .receiveSign1:
-            return """
+            return [("""
             이게 무슨 신호지...제인과 내 시간이 다르다고? 시간여행이라도 한다는 건가...
-            """
+            """, NLPColor.label)]
         case .receiveSign2:
-            return """
+            return [("""
             핀! 제인이 지금 플라즈마실에 있다는 신호가 왔어. 근데 좀 이상한게, 시간이 뒤죽박죽이야.
-            """
+            """, NLPColor.label)]
         case .receiveSign3:
-            return """
+            return [("""
             핀: 어쩌면...미래에서 온 메시지일지도 몰라.
-            """
+            """, NLPColor.label)]
         case .receiveSign4:
-            return """
+            return [("""
             그게 말이 돼? 미래에서 신호를 보낸다고? 그것도 제인이?
-            """
+            """, NLPColor.label)]
         case .receiveSign5:
-            return """
+            return [("""
             핀: 응. 최근에 있었던 폭발, 보통 일이 아니야. 키리듐이랑 플라즈마가 반응하면서 기기들 시간이 전부 뒤틀렸었어.
-            """
+            """, NLPColor.label)]
         case .receiveSign6:
-            return """
+            return [("""
             핀: 정확히 기억은 안나지만... 그래서 비밀번호를 바꾸고 도망치려 했던 것 같다.
-            """
+            """, NLPColor.label)]
         case .receiveSign7:
-            return """
+            return [("""
             어...신호가 하나 더 온다. 확인해보자!
-            """
+            """, NLPColor.label)]
         case .receiveSign8:
-            return """
+            return [("""
             핀...너 지금 장난하는거 아니지? 이게 뭐야...?
-            """
+            """, NLPColor.label)]
         case .receiveSign9:
-            return """
+            return [("""
             핀: 아니. 너가 날 구하지 않았다면 나는 저렇게 행동했을거야. 우리와는 다른 미래에서 온 신호인 셈이지.
             시간이 없다. 빨리 가보자.
-            """
+            """, NLPColor.label)]
         case .receiveSign10:
-            return """
+            return [("""
             그래. 이해는 되지 않아도, 제인을 구하러 가보자!
-            """
+            """, NLPColor.label)]
         case .lockedDoor1:
-            return """
+            return [("""
             젠장, 문이 또 잠겨있어. 심지어 열기 버튼도 작동을 안하는데...?
-            """
+            """, NLPColor.label)]
         case .lockedDoor2:
-            return """
+            return [("""
             JTO: 내가 분석해볼게.
-            """
+            """, NLPColor.label)]
         case .lockedDoor3:
-            return """
+            return [("""
             ??? 너 누구야?
-            """
+            """, NLPColor.label)]
         case .lockedDoor4:
-            return """
+            return [("""
             핀: 내가 고쳤어. 사살용 로봇 부품을 써서 비주얼은 좀 그렇지만... JTO가 맞아.
-            """
+            """, NLPColor.label)]
         case .lockedDoor5:
-            return """
+            return [("""
             생긴건 정말 재수가 없군. JTO가 아니라 JOT이라 불러야겠어.
 
             분석 부탁해, JOT!
-            """
+            """, NLPColor.label)]
         case .lockedDoor6:
-            return """
+            return [("""
             JTO: 공감 모드를 재실행합...
 
             미안!!! 농담이었어!!!
 
             JTO: 나도 농담이었어.
-            """
+            """, NLPColor.label)]
         case .lockedDoor7:
-            return """
+            return [("""
             JTO: 이 문은 대폭발을 방지하게 위해 존재해. 플라즈마실에는 뭔가 숨겨진 비밀이 있는 듯 하다. 잠시 몸을 숨기고 있으면 내가 문을 열어볼게.
-            """
+            """, NLPColor.label)]
         case .explosion1:
-            return """
+            return [("""
             JTO 괜찮아???
-            """
+            """, NLPColor.label)]
         case .explosion2:
-            return """
+            return [("""
             JTO: 응..충격이 크긴 하지만 사살용 로봇이 튼튼하긴 하네.
             이제 괜찮을거야.
-            """
+            """, NLPColor.label)]
         case .explosion3:
-            return """
+            return [("""
             제인: 어떻게 알고 찾아왔지?
-            """
+            """, NLPColor.label)]
         case .explosion4:
-            return """
+            return [("""
             그게 무슨 소리야? 너가 우리에게 신호를 보냈잖아! 
-            """
+            """, NLPColor.label)]
         case .explosion5:
-            return """
+            return [("""
             제인: 아...내 이론이 정확히 맞았군.
-            """
+            """, NLPColor.label)]
         case .explosion6:
-            return """
+            return [("""
             제인: 나는 폭발 이후에 우연히 이곳에 들어왔어. 문이 갑자기 닫혀버려서 안에 갇혀있었고.
 
             안으로 들어가서 설명해줄게.
-            """
+            """, NLPColor.label)]
         }
     }
     
