@@ -11,7 +11,7 @@ enum StageTwoMonologuePhase: MonologuePhase {
     case meetBot
     case botUselessThought
     case tryEmotionalApproach
-    case giveOrTalkChoice
+//    case giveOrTalkChoice
     case unexpectedBotReaction
     case unexpectedAffectionMoment
     case botBehaviorShiftNoticed
@@ -31,8 +31,8 @@ enum StageTwoMonologuePhase: MonologuePhase {
             return "하등 도움이 안된다. 제인이 공감모드였나 실험한다고 만든건데, 충돌때 맛이 간 것 같네...\n\n어떻게 해야 할까..."
         case .tryEmotionalApproach:
             return "공감밖에 하지 못하는 로봇이니까 감정을 건드려볼까? 아니면 뭔가 감동을 줄 만한게 있을까?"
-        case .giveOrTalkChoice:
-            return "이건 아닌 것 같아. 줄 만한게 없는데...손전등이라도 줘볼까?"
+//        case .giveOrTalkChoice:
+//            return "이건 아닌 것 같아. 줄 만한게 없는데...손전등이라도 줘볼까?"
         case .unexpectedBotReaction:
             return "이러려고 준 건 아닌데...\n어? 어디 가는거야??"
         case .unexpectedAffectionMoment:
@@ -58,10 +58,10 @@ enum StageTwoMonologuePhase: MonologuePhase {
             return .meetBot
         case .tryEmotionalApproach:
             return .botUselessThought
-        case .giveOrTalkChoice:
-            return .tryEmotionalApproach
+//        case .giveOrTalkChoice:
+//            return .tryEmotionalApproach
         case .unexpectedBotReaction:
-            return .giveOrTalkChoice
+            return .tryEmotionalApproach
         case .unexpectedAffectionMoment:
             return .unexpectedBotReaction
         case .botBehaviorShiftNoticed:
@@ -84,9 +84,9 @@ enum StageTwoMonologuePhase: MonologuePhase {
         case .botUselessThought:
             return .tryEmotionalApproach
         case .tryEmotionalApproach:
-            return .giveOrTalkChoice
-        case .giveOrTalkChoice:
             return .unexpectedBotReaction
+//        case .giveOrTalkChoice:
+//            return .unexpectedBotReaction
         case .unexpectedBotReaction:
             return .unexpectedAffectionMoment
         case .unexpectedAffectionMoment:

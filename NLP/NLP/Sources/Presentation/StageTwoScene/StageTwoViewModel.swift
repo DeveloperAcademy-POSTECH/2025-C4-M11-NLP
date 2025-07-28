@@ -64,7 +64,9 @@ final class StageTwoViewModel: ViewModelable {
             state.isItemCollecting = false
             state.isMonologuePresented = false
             state.isDialogPresented = true
+            print("withNextPhase: \(withNextPhase)")
             if withNextPhase {
+                print("withNextPhase가 참입니다.")
                 state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
             }
         case .activateMonologue(let withNextPhase):
@@ -85,6 +87,7 @@ final class StageTwoViewModel: ViewModelable {
             state.isMonologuePresented = false
             state.isItemCollecting = true
         case .goToNextPhase:
+            print("goToNext")
             state.stageTwoPhase = state.stageTwoPhase.nextPhase ?? .lastPhase
         case .disableTouch:
             state.isTouchDisabled = true
