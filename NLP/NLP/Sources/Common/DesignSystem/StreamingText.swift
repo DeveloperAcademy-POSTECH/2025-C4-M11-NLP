@@ -79,6 +79,7 @@ struct StreamingText: View {
         }
         .font(NLPFont.body)
         .onAppear {
+            skip = false
             startTimer()
         }
         .onChange(of: fullAttributedText) { _, _ in
