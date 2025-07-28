@@ -145,8 +145,8 @@ class DialogManager: ObservableObject {
         isLogged: Bool
     ) async throws {
         do {
-            guard var toolSession = toolSessions[dialogPartnerType], let tools = conversationTools[dialogPartnerType] else { return }
-            toolSession = LanguageModelSession(model: .default, tools: tools, instructions: "")
+            guard var toolSession = toolSessions[dialogPartnerType], let tools = conversationTools[dialogPartnerType], let toolInstruction = dialogPartnerType.toolInstruction else { return }
+            toolSession = LanguageModelSession(model: .default, tools: tools, instructions: toolInstruction)
             try await toolSession.respond(
                 to: userInput
             )
