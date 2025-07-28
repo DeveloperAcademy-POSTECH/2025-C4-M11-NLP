@@ -5,6 +5,8 @@
 //  Created by 양시준 on 7/16/25.
 //
 
+import SwiftUI
+
 enum StageOneMonologuePhase: MonologuePhase {
     
     case stageArrived
@@ -20,28 +22,28 @@ enum StageOneMonologuePhase: MonologuePhase {
     
     static let lastPhase: Self = .findNote
     
-    var monologue: String {
+    var monologue: [(String, Color)] {
         switch self {
         case .stageArrived:
-            return "너무 어두워. 뭐라도 찾아봐야겠어.\n\n돌아다녀 볼까?"
+            return [("너무 어두워. 뭐라도 찾아봐야겠어.\n\n돌아다녀 볼까?", NLPColor.label)]
         case .findFlashlight:
-            return "손전등을 찾았어! 주변이 좀 더 잘 보이는 군...\n\n이제 뭘 해야 하지?"
+            return [("손전등을 찾았어! 주변이 좀 더 잘 보이는 군...\n\n이제 뭘 해야 하지?", NLPColor.label)]
         case .goToCenteralControlRoom:
-            return "아 맞다, 구조 신호를 보내려면 통신 시스템부터 손봐야지. 중앙통제실로 가봐야겠어."
+            return [("아 맞다, 구조 신호를 보내려면 통신 시스템부터 손봐야지. 중앙통제실로 가봐야겠어.", NLPColor.label)]
         case .lockedDoor:
-            return "중앙통제실에 들어가면 통신모드를 켤 수 있을거야. \n\n비밀번호는 내 생일이었어!\n문을 열어보자."
+            return [("중앙통제실에 들어가면 통신모드를 켤 수 있을거야. \n\n비밀번호는 내 생일이었어!\n문을 열어보자.", NLPColor.label)]
         case .wrongPassword:
-            return "분명 비밀번호가 내 생일이었는데, 누군가 바꾼 것 같네... 핀, 제인... 날 버린거야? 아니면 누가 날 죽이려고...?"
+            return [("분명 비밀번호가 내 생일이었는데, 누군가 바꾼 것 같네... 핀, 제인... 날 버린거야? 아니면 누가 날 죽이려고...?", NLPColor.label)]
         case .decreaseOxygen:
-            return "크헉... 숨은 또 왜...\n산소가 거의 남지 않았구나.\n\n빨리 산소 발생기를 켜야해..."
+            return [("크헉... 숨은 또 왜...\n산소가 거의 남지 않았구나.\n\n빨리 산소 발생기를 켜야해...", NLPColor.label)]
         case .startFinding:
-            return "그래, 근처에 단서가 될만한 무언가가 있을거야.\n\n일단 주위를 둘러보자."
+            return [("그래, 근처에 단서가 될만한 무언가가 있을거야.\n\n일단 주위를 둘러보자.", NLPColor.label)]
         case .findNote:
-            return "앗? 뭔가 여기 있는데?. \n\n 수첩인가? 이거 핀이 쓰던 것 같은데... 열어보자."
+            return [("앗? 뭔가 여기 있는데?. \n\n 수첩인가? 이거 핀이 쓰던 것 같은데... 열어보자.", NLPColor.label)]
         case .firstDialog:
-            return "핀이 쓰던 컴퓨터다! 조종실에서 종종 만지는 걸 봤어. \n\n 여기에 뭔가 힌트가 있지 않을까?"
+            return [("핀이 쓰던 컴퓨터다! 조종실에서 종종 만지는 걸 봤어. \n\n 여기에 뭔가 힌트가 있지 않을까?", NLPColor.label)]
         case .afterFirstDialog:
-            return "이 컴퓨터는 도대체 어떻게 쓰는거야... 아무것도 못 알아듣네. ㅠ \n\n 주변을 좀 더 찾아보자."
+            return [("이 컴퓨터는 도대체 어떻게 쓰는거야... 아무것도 못 알아듣네. ㅠ \n\n 주변을 좀 더 찾아보자.", NLPColor.label)]
         }
         
     }
