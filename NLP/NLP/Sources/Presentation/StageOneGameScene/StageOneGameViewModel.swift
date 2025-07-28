@@ -10,6 +10,7 @@ import SwiftUI
 @MainActor
 class StageOneGameViewModel: ViewModelable {
     struct State {
+        var isViewLoading: Bool = true
         var isChatting: Bool = false
         var isDialogPresented: Bool = true
         var stageOnePhase: StageOneMonologuePhase = .stageArrived

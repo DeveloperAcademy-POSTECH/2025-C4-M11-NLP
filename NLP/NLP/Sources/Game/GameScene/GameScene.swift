@@ -1,7 +1,7 @@
 import SwiftUI
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, ObservableObject {
     var player: PlayerSprite?
     var touchLocation: CGPoint?
     var playerPhysicsType: PlayerPhysicsType = .normal
@@ -9,7 +9,29 @@ class GameScene: SKScene {
     var isJoystickTouchActive: Bool = false
     
     var cameraFocusedNode: SKSpriteNode?
-
+    
+    func preInitialize() async -> Self {
+        setUpScene()
+        guard let _ = player, let _ = camera else {
+            fatalError(
+                """
+                    Game Scene: Player, Camera doesn't initiated. please initialize player, camera instance. 🙏 
+                    In most cases, the issue can be resolved by calling super.setUpScene() from within your overridden setUpScene() method.
+                """
+            )
+        }
+        
+        for node in self.children {
+            if (node.name == ConstantNodes.tileNodes) {
+                if let someTileMap: SKTileMapNode = node as? SKTileMapNode {
+                    await someTileMap.giveTileMapPhysicsBody(parentScene: self)
+                }
+            }
+        }
+        
+        return self
+    }
+    
     // 햅틱 트리거 함수
     func triggerHaptic() {
         let generator = UIImpactFeedbackGenerator(style: .light)
@@ -83,23 +105,7 @@ class GameScene: SKScene {
 
     // MARK: Scene 이 뷰에 표시될 때 최초 한 번 호출되는 코드.
     override func didMove(to view: SKView) {
-        setUpScene()
-        guard let _ = player, let _ = camera else {
-            fatalError(
-                """
-                    Game Scene: Player, Camera doesn't initiated. please initialize player, camera instance. 🙏 
-                    In most cases, the issue can be resolved by calling super.setUpScene() from within your overridden setUpScene() method.
-                """
-            )
-        }
         
-        for node in self.children {
-            if (node.name == ConstantNodes.tileNodes) {
-                if let someTileMap: SKTileMapNode = node as? SKTileMapNode {
-                    someTileMap.giveTileMapPhysicsBody(parentScene: self)
-                }
-            }
-        }
     }
     
     // 상속 받는 게임 Scene에서 override.

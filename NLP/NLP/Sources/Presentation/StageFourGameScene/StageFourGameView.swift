@@ -10,10 +10,11 @@ import SpriteKit
 
 struct StageFourGameView: View {
     @StateObject var viewModel: StageFourGameViewModel
-    @State var scene: StageFourGameScene = StageFourGameScene(fileNamed: "StageFourGameScene")!
+    @ObservedObject var scene: StageFourGameScene
         
     init(coordinator: Coordinator) {
         _viewModel = StateObject(wrappedValue: StageFourGameViewModel(coordinator: coordinator))
+        scene = NLPDIContainer.shared.resolve(StageFourGameScene.self)!
     }
     
     var body: some View {

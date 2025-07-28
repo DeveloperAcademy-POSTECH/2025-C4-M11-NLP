@@ -13,15 +13,16 @@ struct StageOneGameView: View {
     @ObservedObject var dialogManager = DialogManager()
     @State private var skipStreaming: Bool = false
     
-    init(coordinator: Coordinator, dialogManager: DialogManager) {
-        self._viewModel = StateObject(wrappedValue: StageOneGameViewModel(coordinator: coordinator))
-        self.dialogManager = dialogManager
-    }
-    
-    @State var scene: StageOneGameScene = .init(fileNamed: "StageOneGameScene")!
+    @ObservedObject var scene: StageOneGameScene
     @State private var isDoorOpened: Bool = false
     @State private var isOxygenDecreasingStarted: Bool = false
     @State private var explorationTimer: Timer? = nil
+    
+    init(coordinator: Coordinator, dialogManager: DialogManager) {
+        _viewModel = StateObject(wrappedValue: StageOneGameViewModel(coordinator: coordinator))
+        self.dialogManager = dialogManager
+        scene = NLPDIContainer.shared.resolve(StageOneGameScene.self)!
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
