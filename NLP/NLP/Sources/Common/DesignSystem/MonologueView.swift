@@ -16,8 +16,8 @@ struct MonologueView<T: MonologuePhase>: View {
             Rectangle()
                 .fill(.black.opacity(0.1))
             
-            VStack(alignment: .leading) {
-                    StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03, skip: $skip)
+                VStack(alignment: .leading) {
+                    StreamingText(coloredText: phase.monologue, streamingSpeed: 0.03, skip: $skip)
                         .font(NLPFont.body)
                         .foregroundStyle(phase.isSystemMonologue ? NLPColor.primary : NLPColor.label)
                     Spacer()
