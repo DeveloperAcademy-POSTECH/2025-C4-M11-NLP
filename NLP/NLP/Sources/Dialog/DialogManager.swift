@@ -44,7 +44,7 @@ class DialogManager: ObservableObject {
             ]
         } else if dialogPartner == .oxygen {
             conversationLogs[dialogPartner] = [
-                Dialog(content: "산소 발생기는 위급한 상황에서만 사용 가능합니다.\n작동해야 하는 사유를 말씀해주세요.", sender: .partner)
+                Dialog(content: "산소 발생기는 위급한 상황에서만 사용 가능합니다.\n작동해야 하는 상황이나 사유를 말씀해주세요.", sender: .partner)
             ]
         } else if dialogPartner == .machine {
             conversationLogs[dialogPartner] = [

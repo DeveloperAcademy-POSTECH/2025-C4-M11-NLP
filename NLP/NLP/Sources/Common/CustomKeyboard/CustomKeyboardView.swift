@@ -213,6 +213,9 @@ public struct CustomKeyboardView: View {
             .frame(height: 45)
         }
         .offset(y: -20)
+        .onDisappear {
+            commitBuffer()
+        }
     }
 
     // 키패드 행별 배열
@@ -304,6 +307,7 @@ public struct CustomKeyboardView: View {
         if key == "Enter" || key == "↵" || key == " ↵ " {
             commitBuffer()
             onCommit?()
+            print("text is \(text)")
             return
         }
         if inputMode == .korean {
