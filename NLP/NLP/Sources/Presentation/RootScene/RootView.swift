@@ -40,10 +40,16 @@ struct RootView: View {
                         StageOneIntroView(coordinator: coordinator)
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageOneScene:
-                        StageOneGameView(coordinator: coordinator, dialogManager: dialogManager)
+                        StageOneGameView(
+                            coordinator: coordinator,
+                            dialogManager: dialogManager
+                        )
                             .toolbar(.hidden, for: .navigationBar)
                     case .stageTwoScene:
-                        StageTwoView(coordinator: coordinator, dialogManager: dialogManager)
+                        StageTwoView(
+                            coordinator: coordinator,
+                            dialogManager: dialogManager
+                        )
                             .toolbar(.hidden, for: .navigationBar)
                     case .middleStoryScene(let storiesType):
                         MiddleStoryView(
@@ -69,35 +75,21 @@ struct RootView: View {
         }
         .onAppear {
             Task {
-                var elapsed: Double = 0
-                let startTime = Date()
                 let stageOneGameScene = await StageOneGameScene(fileNamed: "StageOneGameScene")!.preInitialize()
                 NLPDIContainer.shared.register(type: StageOneGameScene.self, dependency: stageOneGameScene)
                 loadedStageCount += 1
-                let stageOneEndTime = Date()
-                elapsed = stageOneEndTime.timeIntervalSince(startTime)
-                print("stageOneEndTime", elapsed)
                 
                 let stageTwoGameScene = await StageTwoGameScene(fileNamed: "StageTwoGameScene")!.preInitialize()
                 NLPDIContainer.shared.register(type: StageTwoGameScene.self, dependency: stageTwoGameScene)
                 loadedStageCount += 1
-                let stageTwoEndTime = Date()
-                elapsed = stageTwoEndTime.timeIntervalSince(stageOneEndTime)
-                print("stageTwoEndTime",elapsed)
                 
                 let stageThreeGameScene = await StageThreeGameScene(fileNamed: "StageThreeGameScene")!.preInitialize()
                 NLPDIContainer.shared.register(type: StageThreeGameScene.self, dependency: stageThreeGameScene)
                 loadedStageCount += 1
-                let stageThreeEndTime = Date()
-                elapsed = stageThreeEndTime.timeIntervalSince(stageTwoEndTime)
-                print("stageThreeEndTime",elapsed)
                 
                 let stageFourGameScene = await StageFourGameScene(fileNamed: "StageFourGameScene")!.preInitialize()
                 NLPDIContainer.shared.register(type: StageFourGameScene.self, dependency: stageFourGameScene)
                 loadedStageCount += 1
-                let stageFourEndTime = Date()
-                elapsed = stageFourEndTime.timeIntervalSince(stageThreeEndTime)
-                print("stageFourEndTime",elapsed)
                 
                 stageAllLoaded = true
             }
