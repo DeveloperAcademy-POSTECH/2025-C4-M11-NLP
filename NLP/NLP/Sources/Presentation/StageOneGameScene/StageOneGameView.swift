@@ -130,16 +130,32 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
             }
             
             if viewModel.state.isNoteTwoFoundPresented {
-                ItemCollectionView(
-                    isPresented: $viewModel.state.isNoteTwoFoundPresented,
-                    item: GameItems.noteTwo,
-                    backButtonTapAction: {
-                        viewModel.action(.hideNoteTwoFoundPresented)
-                    },
-                    nextButtonTapAction: {
-                        viewModel.action(.hideNoteTwoFoundPresented)
-                    }
-                )
+                if viewModel.state.isNoteTwoStreamingText {
+                    ItemStreamingTextView(
+                        isPresented: $viewModel.state.isNoteTwoFoundPresented,
+                        text: """
+알파 코드와 베타 코드를 조합하면, 비밀번호를 초기화할 수 있다.
+코드 조합 방식은 다음과 같다.
+세자리 숫자 코드 사이에 두자리 알파벳을 역순으로 넣는다.
+가령, 123과 AB를 조합하면, 1B2A3이 된다.
+""",
+                        onClose: {
+                            viewModel.state.isNoteTwoStreamingText = false
+                            viewModel.action(.hideNoteTwoFoundPresented)
+                        }
+                    )
+                } else {
+                    ItemCollectionView(
+                        isPresented: $viewModel.state.isNoteTwoFoundPresented,
+                        item: GameItems.noteTwo,
+                        backButtonTapAction: {
+                            viewModel.action(.hideNoteTwoFoundPresented)
+                        },
+                        nextButtonTapAction: {
+                            viewModel.state.isNoteTwoStreamingText = true
+                        }
+                    )
+                }
             }
             
             if viewModel.state.isFlashlightFoundPresented {

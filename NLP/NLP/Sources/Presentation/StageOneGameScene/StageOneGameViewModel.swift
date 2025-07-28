@@ -34,6 +34,7 @@ class StageOneGameViewModel: ViewModelable {
         var isChatBotSettingPresented: Bool = false // 챗봇 세팅 UI 표시 여부
         var chatBotInstruction: String = "" // 챗봇 instruction
         var isNoteTwoFoundPresented: Bool = false // 노트2 발견 여부
+        var isNoteTwoStreamingText: Bool = false // 노트2 스트리밍 텍스트 모드
     }
 
     enum Action {
