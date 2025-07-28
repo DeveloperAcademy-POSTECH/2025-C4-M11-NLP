@@ -58,6 +58,7 @@ struct DialogView: View {
                     inputText = ""
                 })
             }
+            .background(NLPColor.background)
             // XButton을 최상단에 오버레이로 배치
             VStack {
                 HStack {
