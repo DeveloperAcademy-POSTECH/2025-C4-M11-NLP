@@ -13,6 +13,15 @@ enum DialogPartnerType {
     case machine // MachineSprite와 대화용 추가
     case quiz
 
+    var toolInstruction: String? {
+        switch self {
+        case .oxygen:
+            return "산소 또는 생존과 관련되어 사용자의 입력이 들어올 때 툴을 호출해."
+        default:
+            return ""
+        }
+    }
+    
     var instructions: String {
         switch self {
         // 암호 일치 전 컴퓨터
