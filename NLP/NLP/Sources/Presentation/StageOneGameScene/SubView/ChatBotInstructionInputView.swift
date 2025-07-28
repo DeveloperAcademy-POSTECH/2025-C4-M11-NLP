@@ -11,21 +11,19 @@ struct ChatBotInstructionInputView: View {
                 .foregroundStyle(Color.black.opacity(0.4))
                 .ignoresSafeArea(.all)
             VStack {
-                Spacer()
                 Rectangle()
                     .foregroundStyle(Color.clear)
                     .frame(maxWidth: ConstantScreenSize.screenWidth * 0.9, maxHeight: ConstantScreenSize.screenHeight * 0.4)
                     .overlay(
                         ZStack(alignment: .topTrailing) {
-                            VStack(spacing: 0) {
+                            HStack(spacing: 0) {
                                 Text("챗봇 인스트럭션 입력")
                                     .font(.custom("Galmuri11-Bold", size: 22))
                                     .foregroundColor(NLPColor.label)
-                                    .padding(.top, 32)
-                                Spacer()
+                                XButton(isPresented: $isPresented)
                             }
-                            XButton(isPresented: $isPresented)
-                                .padding([.top, .trailing], 16)
+                            .padding(.top, 45)
+
                         }
                     )
                 Spacer()
