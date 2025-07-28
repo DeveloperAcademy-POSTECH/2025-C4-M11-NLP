@@ -13,12 +13,13 @@ struct StageThreeView: View {
     @ObservedObject var dialogManager: DialogManager
     @State private var skipStreaming: Bool = false
     
+    @ObservedObject var scene: StageThreeGameScene
+    
     init(coordinator: Coordinator, dialogManager: DialogManager) {
         _viewModel = StateObject(wrappedValue: StageThreeViewModel(coordinator: coordinator))
         self.dialogManager = dialogManager
+        scene = NLPDIContainer.shared.resolve(StageThreeGameScene.self)!
     }
-    
-    @State var scene: StageThreeGameScene = StageThreeGameScene(fileNamed: "StageThreeGameScene")!
     
     var body: some View {
         ZStack(alignment: .bottom) {
