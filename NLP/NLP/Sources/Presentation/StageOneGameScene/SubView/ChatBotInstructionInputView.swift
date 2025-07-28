@@ -20,7 +20,7 @@ struct ChatBotInstructionInputView: View {
                             VStack(spacing: 0) {
                                 Text("챗봇 인스트럭션 입력")
                                     .font(.custom("Galmuri11-Bold", size: 22))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(NLPColor.label)
                                     .padding(.top, 32)
                                 Spacer()
                             }
@@ -42,8 +42,8 @@ struct ChatBotInstructionInputView: View {
                 .font(.custom("Galmuri11-Bold", size: 18))
                 .padding(.vertical, 16)
                 .frame(maxWidth: .infinity)
-                .background(Color.green)
-                .foregroundColor(.white)
+                .background(NLPColor.primary)
+                .foregroundColor(NLPColor.label)
                 .cornerRadius(0)
             }
             .frame(maxWidth: .infinity)

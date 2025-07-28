@@ -32,11 +32,11 @@ struct DialogView: View {
                                     if log.sender == .user {
                                         Text(log.content)
                                             .font(NLPFont.body)
-                                            .foregroundStyle(.white)
+                                            .foregroundStyle(NLPColor.label)
                                     } else {
                                         StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
                                             .font(NLPFont.body)
-                                            .foregroundStyle(.white)
+                                            .foregroundStyle(NLPColor.label)
                                     }
                                 }
                             }

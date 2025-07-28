@@ -16,7 +16,7 @@ struct ItemStreamingTextView: View {
                 Spacer()
                 Text(text)
                     .font(NLPFont.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(NLPColor.label)
                     .padding()
                 Spacer()
                 GameButton(buttonText: "다음") {

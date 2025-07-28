@@ -27,7 +27,7 @@ struct IntroDialogEndView: View {
             }
             .multilineTextAlignment(.leading)
             .lineSpacing(35)
-            .foregroundStyle(.white)
+            .foregroundStyle(NLPColor.label)
             Spacer()
             
             HStack {

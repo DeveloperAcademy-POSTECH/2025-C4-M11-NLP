@@ -15,12 +15,12 @@ struct CreditView: View {
             Spacer().frame(height: 100)
             Text("Credits")
                 .font(NLPFont.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(NLPColor.label)
             Spacer()
             ForEach(creditNames, id: \.self) { name in
                 Text(name)
                     .font(NLPFont.body)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(NLPColor.label)
             }
             Spacer()
         }

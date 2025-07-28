@@ -39,7 +39,7 @@ struct StreamingText: View {
     
     init(fullDialog: String, streamingSpeed: Double, skip: Binding<Bool>, streamingCompleted: (() -> Void)? = nil) {
         var fullDialog = AttributedString(fullDialog)
-        fullDialog.foregroundColor = .white
+        fullDialog.foregroundColor = NLPColor.label
         self.fullAttributedText = fullDialog
         self.streamingSpeed = streamingSpeed
         _skip = skip
@@ -74,7 +74,7 @@ struct StreamingText: View {
             if !streamingEnd {
                 Text("_")
                     .font(NLPFont.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(NLPColor.label)
             }
         }
         .font(NLPFont.body)
@@ -146,8 +146,8 @@ struct StreamingText: View {
 #Preview {
     StreamingText(
         coloredText: [
-            ("제인 너 어디야\n\n", .white),
-            ("회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.", NLPColor.green)
+            ("제인 너 어디야\n\n", NLPColor.label),
+            ("회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.", NLPColor.primary)
         ],
         streamingSpeed: 0.03,
         skip: .constant(false)

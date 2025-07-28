@@ -39,8 +39,8 @@ struct SignalMachineDetailView: View {
                         phase = nextPhase
                     }) {
                         Text("다음 >")
-                            .font(NLPFont.body)
-                            .foregroundStyle(.white)
+                            .font(NLPFont.gameOption)
+                            .foregroundStyle(NLPColor.gameOption)
                     }
                 }
             }

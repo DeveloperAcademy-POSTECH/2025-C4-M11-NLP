@@ -15,8 +15,8 @@ struct PauseView: View {
                 .overlay {
                     Text("Paused")
                         .font(.system(size: 30, weight: .bold))
-                        .foregroundStyle(.white)
-                        .background(.white.opacity(0.2))
+                        .foregroundStyle(NLPColor.label)
+                        .background(NLPColor.disable)
                         .onTapGesture {
                             isPaused.toggle()
                         }

@@ -67,7 +67,7 @@ struct GameButton: View {
             VStack(spacing: 2) {
                 Text("\(buttonText) >")
                     .font(NLPFont.body)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(NLPColor.white)
                     .padding(.bottom, 2)
                     .underline()
 //                    .background(

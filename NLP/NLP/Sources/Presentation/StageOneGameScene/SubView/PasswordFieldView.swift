@@ -23,7 +23,7 @@ struct PasswordFieldView: View {
                     .padding(4)
             } else {
                 passwordText(inputText)
-                    .foregroundStyle(isPasswordIncorrect ? .red : .white)
+                    .foregroundStyle(isPasswordIncorrect ? NLPColor.error : NLPColor.label)
                     .frame(maxWidth: .infinity)
                     .background(.black.opacity(0.4))
                     .padding(4)

@@ -120,7 +120,7 @@ struct GameIntroView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 260, height: 200)
                         .clipped()
-                        .background(Color.white)
+                        .background(NLPColor.white)
                         .padding(.bottom, 32)
                 } else {
                     Spacer()
@@ -130,7 +130,7 @@ struct GameIntroView: View {
                 // 챕터 타이틀
                 Text(stories[pageIndex].title)
                     .font(.custom("Galmuri11-Bold", size: 28))
-                    .foregroundColor(.white)
+                    .foregroundColor(NLPColor.label)
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 24)
 
@@ -142,7 +142,7 @@ struct GameIntroView: View {
                     streamingCompleted: { isStreamingCompleted = true }
                 )
                 .font(.custom("Galmuri11", size: 18))
-                .foregroundColor(.white)
+                .foregroundColor(NLPColor.label)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
@@ -173,7 +173,7 @@ struct GameIntroView: View {
                             Image(systemName: "chevron.left")
                             Text("이전")
                         }
-                        .foregroundColor(pageIndex == 0 ? .gray : .white)
+                        .foregroundColor(pageIndex == 0 ? NLPColor.disable : NLPColor.gameOption)
                         .font(.custom("Galmuri11-Bold", size: 20))
                     }
                     .disabled(pageIndex == 0)
@@ -197,7 +197,7 @@ struct GameIntroView: View {
                             Text(pageIndex < stories.count - 1 ? "다음" : "시작")
                             Image(systemName: "chevron.right")
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(NLPColor.gameOption)
                         .font(.custom("Galmuri11-Bold", size: 20))
                     }
                     // 항상 활성화, 내부에서 분기

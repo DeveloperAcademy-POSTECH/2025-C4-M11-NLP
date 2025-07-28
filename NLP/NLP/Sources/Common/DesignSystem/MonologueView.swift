@@ -19,7 +19,7 @@ struct MonologueView<T: MonologuePhase>: View {
                 VStack(alignment: .leading) {
                     StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03, skip: $skip)
                         .font(NLPFont.body)
-                        .foregroundStyle(phase.isSystemMonologue ? .green : .white)
+                        .foregroundStyle(phase.isSystemMonologue ? NLPColor.primary : NLPColor.label)
                     Spacer()
                     
                     HStack {
@@ -35,7 +35,7 @@ struct MonologueView<T: MonologuePhase>: View {
                             }) {
                                 Text("다음 >")
                                     .font(NLPFont.body)
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(NLPColor.gameOption)
                             }
                         }
                         // 조건 분기: 선택지 없을 때

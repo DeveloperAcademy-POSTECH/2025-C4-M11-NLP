@@ -27,7 +27,7 @@ struct EndingCreditView: View {
             
             Text("The End")
                 .font(NLPFont.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(NLPColor.label)
                 .opacity(isTheEndShown ? 1 : 0)
                 .animation(.linear(duration: 1), value: isTheEndShown)
             
