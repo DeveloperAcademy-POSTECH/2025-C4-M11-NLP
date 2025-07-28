@@ -15,6 +15,7 @@ struct NLPApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .statusBarHidden(true)
         }
     }
 }
