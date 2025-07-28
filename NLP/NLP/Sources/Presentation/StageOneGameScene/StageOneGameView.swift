@@ -129,6 +129,19 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
                 }
             }
             
+            if viewModel.state.isNoteTwoFoundPresented {
+                ItemCollectionView(
+                    isPresented: $viewModel.state.isNoteTwoFoundPresented,
+                    item: GameItems.noteTwo,
+                    backButtonTapAction: {
+                        viewModel.action(.hideNoteTwoFoundPresented)
+                    },
+                    nextButtonTapAction: {
+                        viewModel.action(.hideNoteTwoFoundPresented)
+                    }
+                )
+            }
+            
             if viewModel.state.isFlashlightFoundPresented {
                 ItemCollectionView(
                     isPresented: $viewModel.state.isFlashlightFoundPresented,

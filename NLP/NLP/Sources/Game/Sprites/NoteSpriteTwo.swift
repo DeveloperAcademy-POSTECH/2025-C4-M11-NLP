@@ -1,14 +1,13 @@
 //
-//  note.swift
+//  NoteSpriteTwo.swift
 //  NLP
 //
 //  Created by 차원준 on 7/16/25.
 //
 
-
 import SpriteKit
 
-class NoteSprite: SKSpriteNode {
+class NoteSpriteTwo: SKSpriteNode {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -19,7 +18,7 @@ class NoteSprite: SKSpriteNode {
     func configurePhysics() {
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width - 20, height: self.size.height - 20))
         self.physicsBody?.usesPreciseCollisionDetection = true
-        self.physicsBody?.categoryBitMask = PhysicsCategory.note.rawValue
+        self.physicsBody?.categoryBitMask = PhysicsCategory.noteTwo.rawValue
         self.physicsBody?.contactTestBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.collisionBitMask = PhysicsCategory.player.rawValue
         self.physicsBody?.friction = 1
