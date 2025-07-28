@@ -144,6 +144,7 @@ struct GameIntroView: View {
                 .font(.custom("Galmuri11", size: 18))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
                 .onAppear {

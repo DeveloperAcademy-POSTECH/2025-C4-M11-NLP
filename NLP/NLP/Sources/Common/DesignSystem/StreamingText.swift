@@ -35,7 +35,7 @@ struct StreamingText: View {
     @State var timer: Timer?
     @State var currentText: AttributedString = ""
     @State var index: Int = 0
-    @State var streamingCompleted: (() -> Void)?
+    var streamingCompleted: (() -> Void)?
     
     init(fullDialog: String, streamingSpeed: Double, skip: Binding<Bool>, streamingCompleted: (() -> Void)? = nil) {
         var fullDialog = AttributedString(fullDialog)
@@ -79,6 +79,7 @@ struct StreamingText: View {
         }
         .font(NLPFont.body)
         .onAppear {
+            skip = false
             startTimer()
         }
         .onChange(of: fullAttributedText) { _, _ in

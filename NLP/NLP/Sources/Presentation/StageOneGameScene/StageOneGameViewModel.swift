@@ -34,6 +34,8 @@ class StageOneGameViewModel: ViewModelable {
         var isChatBotChatting: Bool = false // 챗봇과의 채팅 여부
         var isChatBotSettingPresented: Bool = false // 챗봇 세팅 UI 표시 여부
         var chatBotInstruction: String = "" // 챗봇 instruction
+        var isNoteTwoFoundPresented: Bool = false // 노트2 발견 여부
+        var isNoteTwoStreamingText: Bool = false // 노트2 스트리밍 텍스트 모드
     }
 
     enum Action {
@@ -45,6 +47,8 @@ class StageOneGameViewModel: ViewModelable {
         case hidePasswordView
         case showNoteFoundPresented
         case hideNoteFoundPresented
+        case showNoteTwoFoundPresented
+        case hideNoteTwoFoundPresented
         case arrivedAtCentralControlRoomDoor
         case startExploration
         case flashlightFound
@@ -77,6 +81,10 @@ class StageOneGameViewModel: ViewModelable {
             state.isNoteFoundPresented = true
         case .hideNoteFoundPresented:
             state.isNoteFoundPresented = false
+        case .showNoteTwoFoundPresented:
+            state.isNoteTwoFoundPresented = true
+        case .hideNoteTwoFoundPresented:
+            state.isNoteTwoFoundPresented = false
         case .arrivedAtCentralControlRoomDoor:
             state.isArrivedAtCentralControlRoomDoor = true
         case .startExploration:

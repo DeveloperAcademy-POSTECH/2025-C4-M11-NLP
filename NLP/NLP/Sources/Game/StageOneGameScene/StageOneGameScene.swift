@@ -13,6 +13,7 @@ class StageOneGameScene: GameScene {
     var computer: ChapOneComputerSprite?
     var flashlight: FlashlightSprite?
     var note: NoteSprite?
+    var noteTwo: NoteSpriteTwo?
     var doorLock: DoorLockSprite?
     var oxygen: OxygenSprite?
     var quiz: QuizSprite?
@@ -48,6 +49,14 @@ class StageOneGameScene: GameScene {
             if let note = child as? NoteSprite {
                 note.configurePhysics()
                 self.note = note
+            }
+            
+            if let noteTwo = child as? NoteSpriteTwo {
+                noteTwo.configurePhysics()
+                self.noteTwo = noteTwo
+                print("NoteSpriteTwo found and configured")
+            } else {
+                print("NoteSpriteTwo not found in scene")
             }
             
             if let doorLock = child as? DoorLockSprite {
@@ -169,6 +178,14 @@ extension StageOneGameScene: SKPhysicsContactDelegate {
             viewModel?.action(.showNoteFoundPresented)
         } else if let _ = nodeA as? NoteSprite, let _ = nodeB as? PlayerSprite {
             viewModel?.action(.showNoteFoundPresented)
+        } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? NoteSpriteTwo {
+            if viewModel != nil {
+                viewModel?.action(.showNoteTwoFoundPresented)
+            }
+        } else if let _ = nodeA as? NoteSpriteTwo, let _ = nodeB as? PlayerSprite {
+            if viewModel != nil {
+                viewModel?.action(.showNoteTwoFoundPresented)
+            }
         } else if let _ = nodeA as? PlayerSprite, let _ = nodeB as? DoorLockSprite {
             viewModel?.action(.showPasswordView)
         } else if let _ = nodeA as? DoorLockSprite, let _ = nodeB as? PlayerSprite {

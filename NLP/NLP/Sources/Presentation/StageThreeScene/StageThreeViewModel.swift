@@ -54,17 +54,21 @@ final class StageThreeViewModel: ViewModelable {
             }
         case .activateDialog(let withNextPhase):
             state.isMonologuePresented = false
+            state.isSignalMachinePresented = false
             state.isDialogPresented = true
             if withNextPhase {
                 state.stageThreePhase = state.stageThreePhase.nextPhase ?? .lastPhase
             }
         case .activateMonologue(let withNextPhase):
             state.isDialogPresented = false
+            state.isSignalMachinePresented = false
             state.isMonologuePresented = true
             if withNextPhase {
                 state.stageThreePhase = state.stageThreePhase.nextPhase ?? .lastPhase
             }
         case .activateSignalMachine(let withNextPhase):
+            state.isDialogPresented = false
+            state.isMonologuePresented = false
             state.isSignalMachinePresented = true
             if withNextPhase {
                 state.signalMachinePhase = state.signalMachinePhase.nextPhase ?? .lastPhase
