@@ -12,11 +12,11 @@ struct MonologueView<T: MonologuePhase>: View {
     @Binding var skip: Bool
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Rectangle()
                 .fill(.black.opacity(0.1))
             
-                VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
                     StreamingText(fullDialog: phase.monologue, streamingSpeed: 0.03, skip: $skip)
                         .font(NLPFont.body)
                         .foregroundStyle(phase.isSystemMonologue ? NLPColor.primary : NLPColor.label)
@@ -62,7 +62,7 @@ struct MonologueView<T: MonologuePhase>: View {
             .padding(.all, 15)
             .background(
                 Rectangle()
-                    .fill(.gray.opacity(0.5))
+                    .fill(.black.opacity(0.4))
             )
             .frame(width: ConstantScreenSize.screenWidth, height: ConstantScreenSize.screenHeight*0.35)
         }
