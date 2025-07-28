@@ -21,58 +21,18 @@ struct DialogChatView: View {
             VStack{
                 Spacer()
                 Rectangle()
-                    .frame(width: ConstantScreenSize.screenWidth*0.9 ,height: ConstantScreenSize.screenHeight * 0.5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .opacity(0.4)
                     .overlay(
                         GeometryReader { _ in
                             ZStack(alignment: .topTrailing) {
-                                ScrollView {
-                                    VStack(alignment: .leading, spacing: 16) {
-                                        if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
-                                            if let initialMessage = initialMessage {
-                                                HStack(alignment: .center) {
-                                                    StreamingText(fullDialog: initialMessage, streamingSpeed: 0.03, skip: $skipStreaming)
-                                                        .font(NLPFont.body)
-                                                        .foregroundStyle(NLPColor.label)
-                                                        .padding(20)
-                                                    Spacer()
-                                                }
-                                                .background(
-                                                    UnevenRoundedRectangle(
-                                                        topLeadingRadius: 16,
-                                                        bottomLeadingRadius: 0,
-                                                        bottomTrailingRadius: 16,
-                                                        topTrailingRadius: 16
-                                                    )
-                                                    .fill(NLPColor.background)
-                                                    .strokeBorder(NLPColor.primary, lineWidth: 1)
-                                                )
-                                                .padding(.trailing, 16)
-                                            }
-                                            
-                                            ForEach(Array(conversationLogs.enumerated()), id: \ .element) { _, log in
-                                                if log.sender == .user {
-                                                    HStack {
-                                                        Text(log.content)
-                                                            .font(NLPFont.body)
-                                                            .foregroundStyle(NLPColor.label)
-                                                            .padding(16)
-                                                        Spacer()
-                                                    }
-                                                    .background(
-                                                        UnevenRoundedRectangle(
-                                                            topLeadingRadius: 16,
-                                                            bottomLeadingRadius: 16,
-                                                            bottomTrailingRadius: 0,
-                                                            topTrailingRadius: 16
-                                                        )
-                                                        .fill(NLPColor.background)
-                                                        .strokeBorder(NLPColor.white, lineWidth: 1)
-                                                    )
-                                                    .padding(.leading, 20)
-                                                } else {
+                                ScrollViewReader { proxy in
+                                    ScrollView {
+                                        VStack(alignment: .leading, spacing: 16) {
+                                            if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
+                                                if let initialMessage = initialMessage {
                                                     HStack(alignment: .center) {
-                                                        StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
+                                                        StreamingText(fullDialog: initialMessage, streamingSpeed: 0.03, skip: $skipStreaming)
                                                             .font(NLPFont.body)
                                                             .foregroundStyle(NLPColor.label)
                                                             .padding(20)
@@ -89,12 +49,80 @@ struct DialogChatView: View {
                                                         .strokeBorder(NLPColor.primary, lineWidth: 1)
                                                     )
                                                     .padding(.trailing, 16)
+                                                    .id("initial")
                                                 }
+                                                
+                                                ForEach(Array(conversationLogs.enumerated()), id: \.element) { index, log in
+                                                    if log.sender == .user {
+                                                        HStack {
+                                                            Text(log.content)
+                                                                .font(NLPFont.body)
+                                                                .foregroundStyle(NLPColor.label)
+                                                                .padding(16)
+                                                            Spacer()
+                                                        }
+                                                        .background(
+                                                            UnevenRoundedRectangle(
+                                                                topLeadingRadius: 16,
+                                                                bottomLeadingRadius: 16,
+                                                                bottomTrailingRadius: 0,
+                                                                topTrailingRadius: 16
+                                                            )
+                                                            .fill(NLPColor.background)
+                                                            .strokeBorder(NLPColor.white, lineWidth: 1)
+                                                        )
+                                                        .padding(.leading, 20)
+                                                        .id("user_\(index)")
+                                                    } else {
+                                                        HStack(alignment: .center) {
+                                                            StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
+                                                                .font(NLPFont.body)
+                                                                .foregroundStyle(NLPColor.label)
+                                                                .padding(20)
+                                                            Spacer()
+                                                        }
+                                                        .background(
+                                                            UnevenRoundedRectangle(
+                                                                topLeadingRadius: 16,
+                                                                bottomLeadingRadius: 0,
+                                                                bottomTrailingRadius: 16,
+                                                                topTrailingRadius: 16
+                                                            )
+                                                            .fill(NLPColor.background)
+                                                            .strokeBorder(NLPColor.primary, lineWidth: 1)
+                                                        )
+                                                        .padding(.trailing, 16)
+                                                        .id("partner_\(index)")
+                                                    }
+                                                }
+                                                
+                                                // 마지막 메시지 후 여백을 위한 투명 뷰
+                                                Color.clear
+                                                    .frame(height: 1)
+                                                    .id("bottom")
+                                            }
+                                        }
+                                        .padding(.top, 16)
+                                        .padding(.horizontal, 16)
+                                    }
+                                    .offset(y: -20) // 스크롤뷰를 20픽셀 위로 올림
+                                    .onChange(of: dialogManager.conversationLogs[dialogManager.currentPartner ?? .computer]?.count ?? 0) { _, _ in
+                                        // 새 메시지가 추가될 때마다 마지막으로 스크롤
+                                        withAnimation(.easeOut(duration: 0.3)) {
+                                            proxy.scrollTo("bottom", anchor: .bottom)
+                                        }
+                                    }
+                                    .onAppear {
+                                        // 뷰가 나타날 때 마지막으로 스크롤
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            withAnimation(.easeOut(duration: 0.3)) {
+                                                proxy.scrollTo("bottom", anchor: .bottom)
                                             }
                                         }
                                     }
                                 }
                                 XButton(isPresented: $isPresented)
+                                    .padding(.trailing, 20)
                             }
                         }
                     )
