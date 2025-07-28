@@ -21,6 +21,7 @@ let project = Project(
                     "UISupportedInterfaceOrientations": [
                         "UIInterfaceOrientationPortrait",
                     ],
+                    "UIStatusBarHidden": true,
                     "UIAppFonts": [
                         "Galmuri9.ttf",
                         "Galmuri11.ttf",

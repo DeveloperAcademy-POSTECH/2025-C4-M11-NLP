@@ -12,7 +12,7 @@ struct MonologueView<T: MonologuePhase>: View {
     @Binding var skip: Bool
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Rectangle()
                 .fill(.black.opacity(0.1))
             
@@ -62,7 +62,7 @@ struct MonologueView<T: MonologuePhase>: View {
             .padding(.all, 15)
             .background(
                 Rectangle()
-                    .fill(.gray.opacity(0.5))
+                    .fill(.black.opacity(0.4))
             )
             .frame(width: ConstantScreenSize.screenWidth, height: ConstantScreenSize.screenHeight*0.35)
         }

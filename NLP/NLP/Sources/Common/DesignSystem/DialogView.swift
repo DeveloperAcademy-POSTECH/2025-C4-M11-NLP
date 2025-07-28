@@ -25,25 +25,48 @@ struct DialogView: View {
             // 대화창(배경 + 로그)
             DialogBackgroundView(isPresented: $isPresented)
                 .overlay(
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 10) {
-                            if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
-                                ForEach(conversationLogs, id: \.self) { log in
-                                    if log.sender == .user {
-                                        Text(log.content)
-                                            .font(NLPFont.body)
-                                            .foregroundStyle(NLPColor.label)
-                                    } else {
-                                        StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
-                                            .font(NLPFont.body)
-                                            .foregroundStyle(NLPColor.label)
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 10) {
+                                if let currentPartner = dialogManager.currentPartner, let conversationLogs = dialogManager.conversationLogs[currentPartner] {
+                                    ForEach(Array(conversationLogs.enumerated()), id: \.element) { index, log in
+                                        if log.sender == .user {
+                                            Text(log.content)
+                                                .font(NLPFont.body)
+                                                .foregroundStyle(NLPColor.label)
+                                                .id("user_\(index)")
+                                        } else {
+                                            StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
+                                                .font(NLPFont.body)
+                                                .foregroundStyle(NLPColor.label)
+                                                .id("partner_\(index)")
+                                        }
                                     }
+                                    
+                                    // 마지막 메시지 후 여백을 위한 투명 뷰
+                                    Color.clear
+                                        .frame(height: 1)
+                                        .id("bottom")
+                                }
+                            }
+                            .padding(.top, 16)
+                            .padding(.horizontal, 16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .onChange(of: dialogManager.conversationLogs[dialogManager.currentPartner ?? .computer]?.count ?? 0) { _, _ in
+                            // 새 메시지가 추가될 때마다 마지막으로 스크롤
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                proxy.scrollTo("bottom", anchor: .bottom)
+                            }
+                        }
+                        .onAppear {
+                            // 뷰가 나타날 때 마지막으로 스크롤
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                withAnimation(.easeOut(duration: 0.3)) {
+                                    proxy.scrollTo("bottom", anchor: .bottom)
                                 }
                             }
                         }
-                        .padding(.top, 16)
-                        .padding(.horizontal, 16)
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 )
                 .padding(.bottom, 350) // 입력창+키보드 높이만큼 충분히 크게 패딩
@@ -58,6 +81,7 @@ struct DialogView: View {
                     inputText = ""
                 })
             }
+            .background(NLPColor.background)
             // XButton을 최상단에 오버레이로 배치
             VStack {
                 HStack {
