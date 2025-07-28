@@ -55,6 +55,7 @@ struct MiddleStoryView: View {
                 )
                 .font(NLPFont.body)
                 .foregroundColor(NLPColor.label)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
                 .padding(.horizontal, 24)
                 .onAppear {
