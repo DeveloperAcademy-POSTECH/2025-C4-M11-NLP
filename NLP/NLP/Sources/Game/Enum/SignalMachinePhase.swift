@@ -41,7 +41,7 @@ enum SignalMachinePhase {
             ]
         case .signal3:
             return [
-                ("제인 너 어디야\n\n", NLPColor.label),
+                ("제인 넌 어디야?\n\n", NLPColor.label),
                 (
                     """
                     회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.
@@ -51,12 +51,12 @@ enum SignalMachinePhase {
             ]
         case .signal4:
             return [
-                ("제인 너 어디야\n\n", NLPColor.label),
+                ("제인 넌 어디야?\n\n", NLPColor.label),
                 (
                     """
                     회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.
                     [SIGNAL ID] 20-FWD-RET 
-                    [JANE] 플라즈마실에 있을거다. 제인
+                    [JANE] 플라즈마실에 있을거다. 제인.
                     """,
                     NLPColor.primary
                 )

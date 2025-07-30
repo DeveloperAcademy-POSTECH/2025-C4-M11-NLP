@@ -128,6 +128,7 @@ struct DialogChatView: View {
                     )
                 // 키보드는 화면 전체 너비로 하단에 고정
                 Spacer()
+                // 커스텀 키보드
                 VStack{
                     CustomKeyboardView(
                         text: $inputText,

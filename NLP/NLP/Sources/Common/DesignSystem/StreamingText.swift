@@ -146,7 +146,7 @@ struct StreamingText: View {
 #Preview {
     StreamingText(
         coloredText: [
-            ("제인 너 어디야\n\n", NLPColor.label),
+            ("제인 너 어디야?\n\n", NLPColor.label),
             ("회신할 수 없는 메시지. 송신자와 수신자의 시간이 다릅니다.", NLPColor.primary)
         ],
         streamingSpeed: 0.03,

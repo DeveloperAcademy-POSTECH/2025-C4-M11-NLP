@@ -1,5 +1,5 @@
 import SwiftUI
-
+import ImagePlayground
 struct ChatBotInstructionInputView: View {
     @Binding var isPresented: Bool
     @Binding var instruction: String

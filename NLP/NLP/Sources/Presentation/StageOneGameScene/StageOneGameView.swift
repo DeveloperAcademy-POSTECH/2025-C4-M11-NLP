@@ -106,10 +106,9 @@ struct StageOneGameView: View {
                     ItemStreamingTextView(
                         isPresented: $viewModel.state.isNoteFoundPresented,
                         text: """
-컴퓨터는 우리 말을 끝내 못 알아듣지 못한다. 규칙을 따라 명령할 때 따를 뿐이다.
-나는 규칙을 따라 이곳까지 도달했고, 이제 화성으로 떠나겠지.
-help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언신 help만 입력하고 했었지..
-키리듐이 인류 구원이라는 말은 믿지 못하겠다. 나는 컴퓨터 말고는 더 이상 믿지 못하겠다.
+        컴퓨터는 우리 말을 곧바로 알아듣지 못한다. 정해진 규칙을 따라 명령할 때 따를 뿐이다.
+        나는 규칙을 따라 이곳까지 도달했고, 이제 화성으로 떠날 거다.
+        help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르니 연신 help만 입력하곤 했었지...
 """,
                         onClose: {
                             viewModel.state.isNoteStreamingText = false
