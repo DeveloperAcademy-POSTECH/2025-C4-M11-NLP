@@ -14,6 +14,7 @@ struct RootView: View {
     @State var loadedStageCount: Int = 0
     @State var stageAllLoaded: Bool = false
     
+    @State var isPresented: Bool = true
     init() {
         UINavigationBar.setAnimationsEnabled(false)
     }
@@ -21,6 +22,7 @@ struct RootView: View {
     var body: some View {
         NavigationStack(path: $coordinator.paths) {
             // MARK: 바로 아래 StartGameView는 앱 실행 시 처음 보이는 뷰로, 개발 Feature에 따라서 해당 부분 다른 뷰로 변경하여 테스트 하시면 됩니다!
+            // DialogChatView(dialogManager: dialogManager, isPresented: $isPresented)
             ZStack {
                 StartGameView(coordinator: coordinator)
                 GameLoadingView(stageAllLoaded: $stageAllLoaded)
