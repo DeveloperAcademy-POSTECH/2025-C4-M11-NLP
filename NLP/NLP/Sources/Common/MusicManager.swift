@@ -11,7 +11,7 @@ class MusicManager {
 
     private init() {}
 
-    func playMusic(named fileName: String, fileExtension: String = "mp3", loop: Bool = true) {
+    func playMusic(named fileName: String, fileExtension: String = "mp3", loop: Bool = true) async {
         // 이미 같은 음악이 재생 중이면 아무것도 하지 않음
         if currentFileName == fileName, let player = player, player.isPlaying {
             return
@@ -28,18 +28,12 @@ class MusicManager {
 
             guard let player = player else { return }
 
-            player.numberOfLoops = loop ? -1 : 0
-            player.prepareToPlay()
-            player.play()
-            currentFileName = fileName
-            if fileName == "heart" {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                    print("[MusicManager] heart.wav isPlaying(0.5s): \(self?.player?.isPlaying ?? false)")
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    print("[MusicManager] heart.wav isPlaying(1.0s): \(self?.player?.isPlaying ?? false)")
-                }
+            await MainActor.run {
+                player.numberOfLoops = loop ? -1 : 0
+                player.prepareToPlay()
+                player.play()
             }
+            currentFileName = fileName
         } catch {
             print("[MusicManager] 음악 재생 실패: \(error)")
         }

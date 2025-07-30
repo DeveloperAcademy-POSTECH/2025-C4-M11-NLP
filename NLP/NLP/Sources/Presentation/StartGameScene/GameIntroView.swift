@@ -214,11 +214,11 @@ struct GameIntroView: View {
                 .ignoresSafeArea()
         )
         .onAppear {
-            MusicManager.shared.playMusic(named: "bgm_2")
+            Task { await MusicManager.shared.playMusic(named: "bgm_2") }
         }
         .onChange(of: pageIndex) { newIndex in
             if newIndex == 5 {
-                MusicManager.shared.playMusic(named: "bgm_oxygen")
+                Task { await MusicManager.shared.playMusic(named: "bgm_oxygen") }
             }
         }
     }

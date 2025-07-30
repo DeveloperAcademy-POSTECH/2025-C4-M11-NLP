@@ -85,7 +85,7 @@ struct StageOneGameView: View {
                         }
                     },
                     successAction: {
-                        MusicManager.shared.playMusic(named: "bgm_4")
+                        Task { await  MusicManager.shared.playMusic(named: "bgm_4") }
                         viewModel.action(.hidePasswordView)
                         viewModel.coordinator.push(.middleStoryScene(.stageOneTwo))
                     },
@@ -229,7 +229,7 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
         }
         .onChange(of: viewModel.state.stageOnePhase) { newPhase in
             if newPhase == .decreaseOxygen && !viewModel.state.isOxygenResolved {
-                MusicManager.shared.playMusic(named: "bgm_oxygen")
+                Task { await MusicManager.shared.playMusic(named: "bgm_oxygen") }
                 viewModel.state.isOxygenDecreasingStarted = true
             }
         }
@@ -255,9 +255,9 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
         }
         .onChange(of: viewModel.state.oxygenGuageValue) { newValue in
             if newValue <= 32 {
-                MusicManager.shared.playMusic(named: "bgm_oxygen")
+                Task { await MusicManager.shared.playMusic(named: "bgm_oxygen") }
             } else if newValue > 32 {
-                MusicManager.shared.playMusic(named: "bgm_3")
+                Task { await MusicManager.shared.playMusic(named: "bgm_3") }
             }
         }
         .onChange(of: viewModel.state.isChatBotChatting) { isChatBotChatting in
@@ -330,7 +330,7 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
         }
         .onAppear {
             initializeScene()
-            MusicManager.shared.playMusic(named: "bgm_3")
+            Task { await MusicManager.shared.playMusic(named: "bgm_3") }
             dialogManager.initConversation(
                 dialogPartner: .computer,
                 instructions: DialogPartnerType.computer.instructions,

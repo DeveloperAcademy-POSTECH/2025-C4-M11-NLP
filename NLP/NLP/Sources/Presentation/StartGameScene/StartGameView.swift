@@ -122,7 +122,7 @@ struct StartGameView: View {
                 .ignoresSafeArea()
         )
         .onAppear {
-            MusicManager.shared.playMusic(named: "bgm_1")
+            Task { await MusicManager.shared.playMusic(named: "bgm_1") }
         }
     }
 }

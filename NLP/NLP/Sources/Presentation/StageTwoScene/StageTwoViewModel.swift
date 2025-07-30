@@ -99,7 +99,7 @@ final class StageTwoViewModel: ViewModelable {
             state.isTouchDisabled = false
         case .goToMiddleStory:
             Task {
-                MusicManager.shared.playMusic(named: "bgm_5")
+                await MusicManager.shared.playMusic(named: "bgm_5")
                 withAnimation(.linear(duration: 1)) {
                     state.isTransitioning = true
                 }

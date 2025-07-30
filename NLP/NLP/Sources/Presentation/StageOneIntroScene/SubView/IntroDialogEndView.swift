@@ -64,7 +64,7 @@ struct IntroDialogEndView: View {
         )
         .onAppear {
             print("[IntroDialogEndView] onAppear - beat.mp3 재생 시도")
-            MusicManager.shared.playMusic(named: "beat")
+            Task { await MusicManager.shared.playMusic(named: "beat") }
         }
     }
 }
