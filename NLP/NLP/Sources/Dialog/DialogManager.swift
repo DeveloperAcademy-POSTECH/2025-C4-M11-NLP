@@ -166,8 +166,6 @@ class DialogManager: ObservableObject {
         
         do {
             let response = try await session.respond(to: userInput)
-            print("대화 대상 \(dialogPartnerType)에 대해 답변을 요청했습니다.")
-            print("🤖 봇: \(response.content)")
             
             let partnerDialog = Dialog(content: response.content, sender: .partner)
             if isLogged {

@@ -11,4 +11,5 @@ struct ConstantValues {
     static var mapBlockSize: Int = 128
     static let playerMaxSpeed: CGFloat = 600
     static let joystickRadius: CGFloat = 100
+    static let scrollViewBottom: String = "scrollViewBottom"
 }

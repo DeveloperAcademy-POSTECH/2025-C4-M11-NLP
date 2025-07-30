@@ -18,7 +18,6 @@ struct DialogView: View {
 
     // 타이머로 커서 깜빡임 제어
     let cursorTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
-
     
     var body: some View {
         ZStack(alignment: .bottom) {
