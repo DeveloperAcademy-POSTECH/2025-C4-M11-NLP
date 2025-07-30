@@ -9,8 +9,6 @@ import SwiftUI
 
 struct StartGameView: View {
     @StateObject var viewModel: StartGameViewModel
-    @State private var showKeyboardTest: Bool = false
-    @State private var keyboardTestText: String = ""
     @State private var isFadingOut: Bool = false
     
     init(coordinator: Coordinator) {
@@ -114,66 +112,7 @@ struct StartGameView: View {
                     }
                 }
                 .padding(.horizontal, 40)
-                .padding(.bottom, 16)
-                // Keyboard Test 버튼
-                Button(isClickSoundAvailable: true, action: {
-                    withAnimation {
-                        showKeyboardTest.toggle()
-                    }
-                }) {
-                    Text("Keyboard Test")
-                        .font(.custom("Galmuri11-Bold", size: 22))
-                        .foregroundColor(NLPColor.label)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(
-                            Rectangle()
-                                .stroke(NLPColor.primary, lineWidth: 3)
-                                .background(NLPColor.background.cornerRadius(6))
-                        )
-                }
-                .padding(.horizontal, 80)
-                .padding(.bottom, 60)
-            }
-            // 키보드 테스트 뷰 (화면 하단에 오버레이)
-            if showKeyboardTest {
-                VStack {
-                    Spacer()
-                    ZStack {
-                        Color.black.opacity(0.7)
-                            .ignoresSafeArea()
-                        VStack(spacing: 0) {
-                            HStack {
-                                Text("Keyboard Test")
-                                    .font(.custom("Galmuri11-Bold", size: 18))
-                                    .foregroundColor(NLPColor.label)
-                                Spacer()
-                                Button(action: { withAnimation { showKeyboardTest = false } }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .font(.title2)
-                                        .foregroundColor(NLPColor.label)
-                                }
-                            }
-                            .padding(.horizontal)
-                            .padding(.top, 12)
-                            .padding(.bottom, 4)
-                            // 입력 결과 표시
-                            Text(keyboardTestText)
-                                .font(.custom("Galmuri11-Bold", size: 22))
-                                .foregroundColor(NLPColor.primary)
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(NLPColor.background)
-                                .cornerRadius(8)
-                                .padding(.horizontal)
-                            // 커스텀 키보드
-                            CustomKeyboardView(text: $keyboardTestText)
-                                .background(Color.black)
-                        }
-                        .padding(.bottom, 0)
-                    }
-                }
-                .transition(.move(edge: .bottom))
+                .padding(.bottom, 66)
             }
         }
         .overlay(
