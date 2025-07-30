@@ -12,17 +12,14 @@ class MusicManager {
     private init() {}
 
     func playMusic(named fileName: String, fileExtension: String = "mp3", loop: Bool = true) {
-        print("[MusicManager] playMusic called with: \(fileName).\(fileExtension)")
         // 이미 같은 음악이 재생 중이면 아무것도 하지 않음
         if currentFileName == fileName, let player = player, player.isPlaying {
-            print("[MusicManager] 이미 같은 음악 재생 중, 무시")
             return
         }
 
         stopMusic()
 
         guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
-            print("[MusicManager] 파일을 찾을 수 없음: \(fileName).\(fileExtension)")
             return
         }
 
@@ -33,9 +30,7 @@ class MusicManager {
 
             player.numberOfLoops = loop ? -1 : 0
             player.prepareToPlay()
-            print("[MusicManager] AVAudioPlayer prepared, try play()")
             player.play()
-            print("[MusicManager] AVAudioPlayer play() 호출됨")
             currentFileName = fileName
             if fileName == "heart" {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
@@ -51,7 +46,6 @@ class MusicManager {
     }
 
     func stopMusic(file: String = #file, function: String = #function, line: Int = #line) {
-        print("[MusicManager] stopMusic() called from \(file):\(function):\(line)")
         guard let player = player else { return }
         player.stop()
         self.player = nil
@@ -64,7 +58,6 @@ class MusicManager {
 
     func playClickSound() async {
         guard let url = Bundle.main.url(forResource: "click", withExtension: "wav") else {
-            print("[MusicManager] 효과음 파일을 찾을 수 없음: click.wav")
             return
         }
 
@@ -88,7 +81,6 @@ class MusicManager {
     // 범용 효과음 재생
     func playEffect(named fileName: String, fileExtension: String = "mp3") {
         guard let url = Bundle.main.url(forResource: fileName, withExtension: fileExtension) else {
-            print("[MusicManager] 효과음 파일을 찾을 수 없음: \(fileName).\(fileExtension)")
             return
         }
         do {
