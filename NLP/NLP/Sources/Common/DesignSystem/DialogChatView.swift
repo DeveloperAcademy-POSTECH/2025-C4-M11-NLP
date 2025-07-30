@@ -49,7 +49,8 @@ struct DialogChatView: View {
                     )
                     inputText = ""
                     onSend?()
-                }
+                },
+                dialogManager: dialogManager
             )
             .background(.black)
         }
@@ -62,16 +63,20 @@ struct ChatbotBubble: View {
     
     var body: some View {
         HStack {
+            if log.sender != .partner {
+                Spacer()
+            }
             StreamingText(fullDialog: log.content, streamingSpeed: 0.03, skip: $skipStreaming)
                 .font(NLPFont.body)
                 .frame(width: ConstantScreenSize.screenWidth / 3 * 2)
-                .padding(.horizontal, 10)
                 .padding(.vertical, 15)
                 .background(
                     RoundedCorners(radius: 10, corners: log.sender == .partner ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                         .stroke(log.sender == .partner ? .green : .white)
                 )
-                .padding(log.sender == .partner ? .trailing : .leading, 24)
+            if log.sender == .partner {
+                Spacer()
+            }
         }
     }
 }

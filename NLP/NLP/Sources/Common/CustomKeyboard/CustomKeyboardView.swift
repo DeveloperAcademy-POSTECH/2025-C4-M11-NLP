@@ -12,6 +12,8 @@ import UIKit
 import Combine
 
 public struct CustomKeyboardView: View {
+    @ObservedObject var dialogManager: DialogManager
+    
     @Binding var text: String
     var onCommit: (() -> Void)?
     @State private var inputMode: InputMode = .korean
@@ -24,47 +26,55 @@ public struct CustomKeyboardView: View {
 
     public enum InputMode { case korean, english, number, symbol }
 
-    public init(text: Binding<String>, onCommit: (() -> Void)? = nil) {
+    init(text: Binding<String>, onCommit: (() -> Void)? = nil, dialogManager: DialogManager) {
         self._text = text
         self.onCommit = onCommit
+        self.dialogManager = dialogManager
     }
 
     public var body: some View {
         VStack(spacing: 6) {
             // 입력창
             HStack {
-                Text(text + HangulComposer.compose(jamoBuffer))
-                    .font(.custom("Galmuri11-Bold", size: 20))
-                    .foregroundColor(.white)
-                    .padding(.vertical, 18)
-                    .padding(.horizontal, 12)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        Rectangle()
-                            .fill(Color.black)
-                            .overlay(
+                Group {
+                    if dialogManager.isGenerating {
+                        LLMGeneratingView()
+                            .frame(height: 20)
+                    } else {
+                        Text(text + HangulComposer.compose(jamoBuffer))
+                    }
+                }
+                .font(.custom("Galmuri11-Bold", size: 20))
+                .foregroundColor(.white)
+                .padding(.vertical, 18)
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    Rectangle()
+                        .fill(Color.black)
+                        .overlay(
+                            Rectangle()
+                                .stroke(Color.green, lineWidth: 2)
+                        )
+                )
+                .overlay(
+                    // 커서 효과
+                    VStack {
+                        Spacer()
+                        HStack {
+                            if text.isEmpty && jamoBuffer.isEmpty {
                                 Rectangle()
-                                    .stroke(Color.green, lineWidth: 2)
-                            )
-                    )
-                    .overlay(
-                        // 커서 효과
-                        VStack {
-                            Spacer()
-                            HStack {
-                                if text.isEmpty && jamoBuffer.isEmpty {
-                                    Rectangle()
-                                        .fill(Color.white)
-                                        .frame(width: 20, height: 2)
-                                        .opacity(showCursor ? 1:0)
-                                        .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCursor)
-                                }
-                                Spacer()
+                                    .fill(Color.white)
+                                    .frame(width: 20, height: 2)
+                                    .opacity(showCursor ? 1:0)
+                                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCursor)
                             }
-                            .padding(.leading, 12)
-                            .padding(.bottom, 8)
+                            Spacer()
                         }
-                    )
+                        .padding(.leading, 12)
+                        .padding(.bottom, 8)
+                    }
+                )
             }
             .frame(height: 44)
             .offset(y: -10)
@@ -184,6 +194,7 @@ public struct CustomKeyboardView: View {
                     }
                 }
             }
+            .allowsHitTesting(dialogManager.isGenerating ? false : true)
             // 하단: 한/영, 스페이스(길게), 엔터만 배치
             HStack(spacing: 8) {
                 ForEach(bottomRow, id: \.self) { key in
@@ -211,6 +222,7 @@ public struct CustomKeyboardView: View {
                 }
             }
             .frame(height: 45)
+            .allowsHitTesting(dialogManager.isGenerating ? false : true)
         }
         .offset(y: -20)
         .onDisappear {
@@ -413,5 +425,38 @@ public struct CustomKeyboardView: View {
     private func stopCursorBlink() {
         cursorTimer?.invalidate()
         cursorTimer = nil
+    }
+}
+
+import SwiftUI
+
+struct LLMGeneratingView: View {
+    @State private var animate = false
+
+    var body: some View {
+        HStack(spacing: 5) {
+            ForEach(0..<3) { index in
+                DotView(delay: Double(index) * 0.2)
+            }
+        }
+    }
+
+    struct DotView: View {
+        let delay: Double
+        @State private var offsetY: CGFloat = 0
+
+        var body: some View {
+            Text(".")
+                .font(.largeTitle)
+                .offset(y: offsetY)
+                .onAppear {
+                    withAnimation(Animation
+                        .easeInOut(duration: 0.6)
+                        .delay(delay)
+                        .repeatForever(autoreverses: true)) {
+                            offsetY = -10
+                        }
+                }
+        }
     }
 }
