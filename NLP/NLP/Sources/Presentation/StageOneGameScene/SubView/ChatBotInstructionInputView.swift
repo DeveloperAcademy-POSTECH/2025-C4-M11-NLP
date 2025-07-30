@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ChatBotInstructionInputView: View {
+    @ObservedObject var dialogManager: DialogManager
     @Binding var isPresented: Bool
     @Binding var instruction: String
     var onConfirm: (() -> Void)? = nil
@@ -31,7 +32,8 @@ struct ChatBotInstructionInputView: View {
             VStack(spacing: 0) {
                 CustomKeyboardView(
                     text: $instruction,
-                    onCommit: {}
+                    onCommit: {},
+                    dialogManager: dialogManager
                 )
                 Button("확인") {
                     isPresented = false
