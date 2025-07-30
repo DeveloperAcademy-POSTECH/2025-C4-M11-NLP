@@ -63,9 +63,9 @@ class MusicManager {
 
         do {
             let player = try AVAudioPlayer(contentsOf: url)
-            player.prepareToPlay()
-            player.play()
             await MainActor.run { [weak self] in
+                player.prepareToPlay()
+                player.play()
                 self?.effectPlayers.append(player)
             }
 
