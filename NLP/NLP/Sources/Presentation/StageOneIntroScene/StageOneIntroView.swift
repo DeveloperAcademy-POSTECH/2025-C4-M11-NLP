@@ -41,7 +41,7 @@ struct StageOneIntroView: View {
         }
         .onAppear {
             print("[StageOneIntroView] 전체 뷰 onAppear - heart.mp3 재생 시도")
-            MusicManager.shared.playMusic(named: "heart")
+            Task { await MusicManager.shared.playMusic(named: "heart") }
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 print("[StageOneIntroView] heart.mp3 4초 후 stopMusic() 호출")
                 MusicManager.shared.stopMusic()

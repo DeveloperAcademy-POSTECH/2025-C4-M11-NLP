@@ -243,7 +243,7 @@ struct StageThreeView: View {
                 MonologueAction(
                     monologue: "다음",
                     action: {
-                        MusicManager.shared.playMusic(named: "bgm_6")
+                        Task { await MusicManager.shared.playMusic(named: "bgm_6") }
                         viewModel.coordinator.push(.middleStoryScene(.stageThreeFour))
                     }
                 )
