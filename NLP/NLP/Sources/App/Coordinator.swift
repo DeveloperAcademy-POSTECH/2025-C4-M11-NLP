@@ -23,6 +23,10 @@ class Coordinator: ObservableObject {
         paths.removeAll()
     }
     
+    func popAllAndPush(_ path: CoordinatorPath) {
+        paths = [path]
+    }
+    
     func popToRoot() {
         let root = paths.first
         guard let root = root else { return }

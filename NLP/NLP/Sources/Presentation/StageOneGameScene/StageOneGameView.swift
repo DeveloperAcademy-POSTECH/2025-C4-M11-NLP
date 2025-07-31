@@ -184,6 +184,9 @@ help 명령어를 치던 그 시절이 떠오른다. 아무것도 모르는 언�
                         withAnimation(.linear(duration: 1)) {
                             viewModel.state.isTransitioning = true
                         }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            viewModel.coordinator.popAllAndPush(.gameOverScene)
+                        }
                     }
                     Spacer()
                 }
